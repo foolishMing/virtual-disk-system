@@ -8,10 +8,17 @@ VirtualDisk是一款基于C++语言，运行在命令行模式下的虚拟磁盘
 
 ## document
 
-[需求分析文档（markdown）]: ./document/需求分析文档.md
-[需求分析文档（pdf）]: ./document/需求分析文档.pdf
-[系统设计文档（markdown）]: ./document/系统设计文档.md
-[系统设计文档（pdf）]: ./document/系统设计文档.pdf
+### 需求分析
+
+[虚拟磁盘需求分析（markdown）]: ./document/需求分析/markdown/虚拟磁盘需求分析.md
+[虚拟磁盘需求分析（pdf）]: ./document/需求分析/pdf/虚拟磁盘需求分析.pdf
+[虚拟磁盘需求分析（html）]: ./document/需求分析/html/虚拟磁盘需求分析.html
+
+### 逻辑设计
+
+[虚拟磁盘逻辑设计（markdown）]: ./document/逻辑设计/markdown/虚拟磁盘逻辑设计.md
+[虚拟磁盘逻辑设计（pdf）]: ./document/逻辑设计/pdf/虚拟磁盘逻辑设计.pdf
+[虚拟磁盘逻辑设计（html）]: ./document/逻辑设计/html/虚拟磁盘逻辑设计.html
 
 ## reference
 

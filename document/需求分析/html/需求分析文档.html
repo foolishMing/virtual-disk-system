@@ -1,0 +1,608 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+
+<link href='https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css' /><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; --title-bar-height:20px; }
+.mac-os-11 { --title-bar-height:28px; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0px; padding: 0px; height: auto; bottom: 0px; top: 0px; left: 0px; right: 0px; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; tab-size: 4; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; overflow-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 36px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+.typora-export .task-list-item input { pointer-events: none; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+#write li > figure:last-child { margin-bottom: 0.5rem; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; image-orientation: from-image; }
+button, input, select, textarea { color: inherit; font: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p { position: relative; }
+p { line-height: inherit; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 4; }
+p { orphans: 4; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.7); color: rgb(85, 85, 85); border-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right: 0px; background-color: inherit; }
+.CodeMirror-linenumber { user-select: none; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-fences-adv-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: 0px 0px; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li blockquote { margin: 1rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print {
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; font-variant-ligatures: no-common-ligatures; }
+  #write { margin-top: 0px; padding-top: 0px; border-color: transparent !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  .typora-export #write { break-after: avoid; }
+  .typora-export #write::after { height: 0px; }
+  .is-mac table { break-inside: avoid; }
+  .typora-export-show-outline .typora-export-sidebar { display: none; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+#write.first-line-indent p > .md-image:only-child:not(.md-img-error) img { left: -2em; position: relative; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+.MathJax_ref { fill: currentcolor; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus, [contenteditable="false"]:active, [contenteditable="false"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.8; font-family: var(--monospace); }
+code { text-align: left; vertical-align: initial; }
+a.md-print-anchor { white-space: pre !important; border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+.md-inline-math .MathJax_SVG .noError { display: none !important; }
+.html-for-mac .inline-math-svg .MathJax_SVG { vertical-align: 0.2px; }
+.md-fences-math .MathJax_SVG_Display, .md-math-block .MathJax_SVG_Display { text-align: center; margin: 0px; position: relative; text-indent: 0px; max-width: none; max-height: none; min-height: 0px; min-width: 100%; width: auto; overflow-y: visible; display: block !important; }
+.MathJax_SVG_Display, .md-inline-math .MathJax_SVG_Display { width: auto; margin: inherit; display: inline-block !important; }
+.MathJax_SVG .MJX-monospace { font-family: var(--monospace); }
+.MathJax_SVG .MJX-sans-serif { font-family: sans-serif; }
+.MathJax_SVG { display: inline; font-style: normal; font-weight: 400; line-height: normal; text-indent: 0px; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; overflow-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0px; min-height: 0px; border: 0px; padding: 0px; margin: 0px; zoom: 90%; }
+#math-inline-preview-content { zoom: 1.1; }
+.MathJax_SVG * { transition: none 0s ease 0s; }
+.MathJax_SVG_Display svg { vertical-align: middle !important; margin-bottom: 0px !important; margin-top: 0px !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; height: auto; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom: 0px; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: none; }
+.highlight td, .highlight tr { border: 0px; }
+mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
+.md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
+.md-expand mark .md-meta { opacity: 0.3 !important; }
+mark .md-meta { color: rgb(0, 0, 0); }
+@media print {
+  .typora-export h1, .typora-export h2, .typora-export h3, .typora-export h4, .typora-export h5, .typora-export h6 { break-inside: avoid; }
+}
+.md-diagram-panel .messageText { stroke: none !important; }
+.md-diagram-panel .start-state { fill: var(--node-fill); }
+.md-diagram-panel .edgeLabel rect { opacity: 1 !important; }
+.md-require-zoom-fix foreignobject { font-size: var(--mermaid-font-zoom); }
+.md-fences.md-fences-math { font-size: 1em; }
+.md-fences-math .MathJax_SVG_Display { margin-top: 8px; cursor: default; }
+.md-fences-advanced:not(.md-focus) { padding: 0px; white-space: nowrap; border: 0px; }
+.md-fences-advanced:not(.md-focus) { background: inherit; }
+.typora-export-show-outline .typora-export-content { max-width: 1440px; margin: auto; display: flex; flex-direction: row; }
+.typora-export-sidebar { width: 300px; font-size: 0.8rem; margin-top: 80px; margin-right: 18px; }
+.typora-export-show-outline #write { --webkit-flex:2; flex: 2 1 0%; }
+.typora-export-sidebar .outline-content { position: fixed; top: 0px; max-height: 100%; overflow: hidden auto; padding-bottom: 30px; padding-top: 60px; width: 300px; }
+@media screen and (max-width: 1024px) {
+  .typora-export-sidebar, .typora-export-sidebar .outline-content { width: 240px; }
+}
+@media screen and (max-width: 800px) {
+  .typora-export-sidebar { display: none; }
+}
+.outline-content li, .outline-content ul { margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px; list-style: none; }
+.outline-content ul { margin-top: 0px; margin-bottom: 0px; }
+.outline-content strong { font-weight: 400; }
+.outline-expander { width: 1rem; height: 1.42857rem; position: relative; display: table-cell; vertical-align: middle; cursor: pointer; padding-left: 4px; }
+.outline-expander::before { content: ""; position: relative; font-family: Ionicons; display: inline-block; font-size: 8px; vertical-align: middle; }
+.outline-item { padding-top: 3px; padding-bottom: 3px; cursor: pointer; }
+.outline-expander:hover::before { content: ""; }
+.outline-h1 > .outline-item { padding-left: 0px; }
+.outline-h2 > .outline-item { padding-left: 1em; }
+.outline-h3 > .outline-item { padding-left: 2em; }
+.outline-h4 > .outline-item { padding-left: 3em; }
+.outline-h5 > .outline-item { padding-left: 4em; }
+.outline-h6 > .outline-item { padding-left: 5em; }
+.outline-label { cursor: pointer; display: table-cell; vertical-align: middle; text-decoration: none; color: inherit; }
+.outline-label:hover { text-decoration: underline; }
+.outline-item:hover { border-color: rgb(245, 245, 245); background-color: var(--item-hover-bg-color); }
+.outline-item:hover { margin-left: -28px; margin-right: -28px; border-left: 28px solid transparent; border-right: 28px solid transparent; }
+.outline-item-single .outline-expander::before, .outline-item-single .outline-expander:hover::before { display: none; }
+.outline-item-open > .outline-item > .outline-expander::before { content: ""; }
+.outline-children { display: none; }
+.info-panel-tab-wrapper { display: none; }
+.outline-item-open > .outline-children { display: block; }
+.typora-export .outline-item { padding-top: 1px; padding-bottom: 1px; }
+.typora-export .outline-item:hover { margin-right: -8px; border-right: 8px solid transparent; }
+.typora-export .outline-expander::before { content: "+"; font-family: inherit; top: -1px; }
+.typora-export .outline-expander:hover::before, .typora-export .outline-item-open > .outline-item > .outline-expander::before { content: "−"; }
+.typora-export-collapse-outline .outline-children { display: none; }
+.typora-export-collapse-outline .outline-item-open > .outline-children, .typora-export-no-collapse-outline .outline-children { display: block; }
+.typora-export-no-collapse-outline .outline-expander::before { content: "" !important; }
+.typora-export-show-outline .outline-item-active > .outline-item .outline-label { font-weight: 700; }
+
+
+:root {
+    --side-bar-bg-color: #fafafa;
+    --control-text-color: #777;
+}
+
+@include-when-export url(https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext);
+
+/* open-sans-regular - latin-ext_latin */
+  /* open-sans-italic - latin-ext_latin */
+    /* open-sans-700 - latin-ext_latin */
+    /* open-sans-700italic - latin-ext_latin */
+  html {
+    font-size: 16px;
+}
+
+body {
+    font-family: "Open Sans","Clear Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: rgb(51, 51, 51);
+    line-height: 1.6;
+}
+
+#write {
+    max-width: 860px;
+  	margin: 0 auto;
+  	padding: 30px;
+    padding-bottom: 100px;
+}
+
+@media only screen and (min-width: 1400px) {
+	#write {
+		max-width: 1024px;
+	}
+}
+
+@media only screen and (min-width: 1800px) {
+	#write {
+		max-width: 1200px;
+	}
+}
+
+#write > ul:first-child,
+#write > ol:first-child{
+    margin-top: 30px;
+}
+
+a {
+    color: #4183C4;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.4;
+    cursor: text;
+}
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+    text-decoration: none;
+}
+h1 tt,
+h1 code {
+    font-size: inherit;
+}
+h2 tt,
+h2 code {
+    font-size: inherit;
+}
+h3 tt,
+h3 code {
+    font-size: inherit;
+}
+h4 tt,
+h4 code {
+    font-size: inherit;
+}
+h5 tt,
+h5 code {
+    font-size: inherit;
+}
+h6 tt,
+h6 code {
+    font-size: inherit;
+}
+h1 {
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+h2 {
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+
+/*@media print {
+    .typora-export h1,
+    .typora-export h2 {
+        border-bottom: none;
+        padding-bottom: initial;
+    }
+
+    .typora-export h1::after,
+    .typora-export h2::after {
+        content: "";
+        display: block;
+        height: 100px;
+        margin-top: -96px;
+        border-top: 1px solid #eee;
+    }
+}*/
+
+h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+h4 {
+    font-size: 1.25em;
+}
+h5 {
+    font-size: 1em;
+}
+h6 {
+   font-size: 1em;
+    color: #777;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table{
+    margin: 0.8em 0;
+}
+li>ol,
+li>ul {
+    margin: 0 0;
+}
+hr {
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+li p.first {
+    display: inline-block;
+}
+ul,
+ol {
+    padding-left: 30px;
+}
+ul:first-child,
+ol:first-child {
+    margin-top: 0;
+}
+ul:last-child,
+ol:last-child {
+    margin-bottom: 0;
+}
+blockquote {
+    border-left: 4px solid #dfe2e5;
+    padding: 0 15px;
+    color: #777777;
+}
+blockquote blockquote {
+    padding-right: 0;
+}
+table {
+    padding: 0;
+    word-break: initial;
+}
+table tr {
+    border: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 0;
+}
+table tr:nth-child(2n),
+thead {
+    background-color: #f8f8f8;
+}
+table th {
+    font-weight: bold;
+    border: 1px solid #dfe2e5;
+    border-bottom: 0;
+    margin: 0;
+    padding: 6px 13px;
+}
+table td {
+    border: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 6px 13px;
+}
+table th:first-child,
+table td:first-child {
+    margin-top: 0;
+}
+table th:last-child,
+table td:last-child {
+    margin-bottom: 0;
+}
+
+.CodeMirror-lines {
+    padding-left: 4px;
+}
+
+.code-tooltip {
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,.3);
+    border-top: 1px solid #eef2f2;
+}
+
+.md-fences,
+code,
+tt {
+    border: 1px solid #e7eaed;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 0;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+}
+
+code {
+    background-color: #f3f4f4;
+    padding: 0 2px 0 2px;
+}
+
+.md-fences {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding-top: 8px;
+    padding-bottom: 6px;
+}
+
+
+.md-task-list-item > input {
+  margin-left: -1.3em;
+}
+
+@media print {
+    html {
+        font-size: 13px;
+    }
+    table,
+    pre {
+        page-break-inside: avoid;
+    }
+    pre {
+        word-wrap: break-word;
+    }
+}
+
+.md-fences {
+	background-color: #f8f8f8;
+}
+#write pre.md-meta-block {
+	padding: 1rem;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border: 0;
+    border-radius: 3px;
+    color: #777777;
+    margin-top: 0 !important;
+}
+
+.mathjax-block>.code-tooltip {
+	bottom: .375rem;
+}
+
+.md-mathjax-midline {
+    background: #fafafa;
+}
+
+#write>h3.md-focus:before{
+	left: -1.5625rem;
+	top: .375rem;
+}
+#write>h4.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h5.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h6.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+.md-image>.md-meta {
+    /*border: 1px solid #ddd;*/
+    border-radius: 3px;
+    padding: 2px 0px 0px 4px;
+    font-size: 0.9em;
+    color: inherit;
+}
+
+.md-tag {
+    color: #a7a7a7;
+    opacity: 1;
+}
+
+.md-toc { 
+    margin-top:20px;
+    padding-bottom:20px;
+}
+
+.sidebar-tabs {
+    border-bottom: none;
+}
+
+#typora-quick-open {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+}
+
+#typora-quick-open-item {
+    background-color: #FAFAFA;
+    border-color: #FEFEFE #e5e5e5 #e5e5e5 #eee;
+    border-style: solid;
+    border-width: 1px;
+}
+
+/** focus mode */
+.on-focus-mode blockquote {
+    border-left-color: rgba(85, 85, 85, 0.12);
+}
+
+header, .context-menu, .megamenu-content, footer{
+    font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+.file-node-content:hover .file-node-icon,
+.file-node-content:hover .file-node-open-state{
+    visibility: visible;
+}
+
+.mac-seamless-mode #typora-sidebar {
+    background-color: #fafafa;
+    background-color: var(--side-bar-bg-color);
+}
+
+.md-lang {
+    color: #b4654d;
+}
+
+/*.html-for-mac {
+    --item-hover-bg-color: #E6F0FE;
+}*/
+
+#md-notification .btn {
+    border: 0;
+}
+
+.dropdown-menu .divider {
+    border-color: #e5e5e5;
+    opacity: 0.4;
+}
+
+.ty-preferences .window-content {
+    background-color: #fafafa;
+}
+
+.ty-preferences .nav-group-item.active {
+    color: white;
+    background: #999;
+}
+
+.menu-item-container a.menu-style-btn {
+    background-color: #f5f8fa;
+    background-image: linear-gradient( 180deg , hsla(0, 0%, 100%, 0.8), hsla(0, 0%, 100%, 0)); 
+}
+
+
+
+</style><title>需求分析文档</title>
+</head>
+<body class='typora-export os-windows'><div class='typora-export-content'>
+<div id='write'  class=''><h1 id='虚拟磁盘系统需求分析文档'><span>虚拟磁盘系统需求分析文档</span></h1><ul><li><p><a href='#1-修订记录'><span>1. 修订记录</span></a></p></li><li><p><a href='#2-撰写目的'><span>2. 撰写目的</span></a></p></li><li><p><a href='#3-需求背景'><span>3. 需求背景</span></a></p><ul><li><a href='#31-系统名称'><span>3.1 系统名称</span></a></li><li><a href='#32-系统简介'><span>3.2 系统简介</span></a></li><li><a href='#33-功能说明'><span>3.3 功能说明</span></a></li></ul></li><li><p><a href='#4-用例描述'><span>4. 用例描述</span></a></p><ul><li><p><a href='#41-dir'><span>4.1 dir</span></a></p><ul><li><a href='#411-dir'><span>4.1.1 dir</span></a></li><li><a href='#412-dir-ad'><span>4.1.2 dir [/ad]</span></a></li><li><a href='#413-dir-s'><span>4.1.3 dir [/s]</span></a></li></ul></li><li><p><a href='#42-md'><span>4.2 md</span></a></p></li><li><p><a href='#43-rd'><span>4.3 rd</span></a></p><ul><li><a href='#431-rd'><span>4.3.1 rd</span></a></li><li><a href='#432-rd-s'><span>4.3.2 rd [/s]</span></a></li></ul></li><li><p><a href='#44-cd'><span>4.4 cd</span></a></p></li><li><p><a href='#45-del'><span>4.5 del</span></a></p><ul><li><a href='#451-del'><span>4.5.1 del</span></a></li><li><a href='#452-del-s'><span>4.5.2 del [/s]</span></a></li></ul></li><li><p><a href='#46-copy'><span>4.6 copy</span></a></p><ul><li><a href='#461-copy'><span>4.6.1 copy</span></a></li><li><a href='#462-copy-y'><span>4.6.2 copy [/y]</span></a></li></ul></li><li><p><a href='#47-ren'><span>4.7 ren</span></a></p></li><li><p><a href='#48-move'><span>4.8 move</span></a></p><ul><li><a href='#481-move'><span>4.8.1 move</span></a></li><li><a href='#482-move-y'><span>4.8.2 move [/y]</span></a></li></ul></li><li><p><a href='#49-mklink'><span>4.9 mklink</span></a></p><ul><li><a href='#491-mklink'><span>4.9.1 mklink</span></a></li><li><a href='#492-mklink-d'><span>4.9.2 mklink [/d]</span></a></li></ul></li><li><p><a href='#410-save'><span>4.10 save</span></a></p></li><li><p><a href='#411-load'><span>4.11 load</span></a></p></li><li><p><a href='#412-cls'><span>4.12 cls</span></a></p></li></ul></li></ul><h2 id='1-修订记录'><span>1. 修订记录</span></h2><figure><table><thead><tr><th><span>版本</span></th><th><span>更新时间</span></th><th><span>更新内容</span></th><th><span>更新人</span></th></tr></thead><tbody><tr><td><span>V1.0</span></td><td><span>2021.06.24</span></td><td><span>确定文档结构</span></td><td><span>郝绍明</span></td></tr><tr><td><span>V1.1</span></td><td><span>2021.06.25</span></td><td><span>完善用例描述</span></td><td><span>郝绍明</span></td></tr><tr><td><span>v1.2</span></td><td><span>2021.06.28</span></td><td><span>生成目录</span></td><td><span>郝绍明</span></td></tr></tbody></table></figure><p>&nbsp;</p><h2 id='2-撰写目的'><span>2. 撰写目的</span></h2><p><span>本文的主要内容为对虚拟磁盘系统界面、功能、使用场景的说明与描述。</span></p><p><span>预期读者：项目管理人员、项目开发人员、用户。</span></p><p>&nbsp;</p><h2 id='3-需求背景'><span>3. 需求背景</span></h2><h3 id='31-系统名称'><span>3.1 系统名称</span></h3><p><span>虚拟磁盘系统</span></p><h3 id='32-系统简介'><span>3.2 系统简介</span></h3><p><span>虚拟磁盘软件能够在内存中模拟一个磁盘，通过接受命令，可以在内存中完成一些文件操作的功能。</span></p><h3 id='33-功能说明'><span>3.3 功能说明</span></h3><figure><table><thead><tr><th><span>命令</span></th><th><span>释义</span></th></tr></thead><tbody><tr><td><span>dir</span></td><td><span>列出当前目录下的目录和文件</span></td></tr><tr><td><span>md</span></td><td><span>创建目录</span></td></tr><tr><td><span>rd</span></td><td><span>删除目录</span></td></tr><tr><td><span>cd</span></td><td><span>切换当前目录</span></td></tr><tr><td><span>del</span></td><td><span>删除文件</span></td></tr><tr><td><span>copy</span></td><td><span>拷贝文件</span></td></tr><tr><td><span>ren</span></td><td><span>重命名</span></td></tr><tr><td><span>move</span></td><td><span>移动</span></td></tr><tr><td><span>mklink</span></td><td><span>创建符号链接</span></td></tr><tr><td><span>save</span></td><td><span>将虚拟磁盘序列化为文件</span></td></tr><tr><td><span>load</span></td><td><span>将文件反序列化为虚拟磁盘</span></td></tr><tr><td><span>cls</span></td><td><span>清屏</span></td></tr></tbody></table></figure><p>&nbsp;</p><h2 id='4-用例描述'><span>4. 用例描述</span></h2><h3 id='41-dir'><span>4.1 dir</span></h3><h4 id='411-dir'><span>4.1.1 dir</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>dir</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0001-01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：列出目录中的文件和子目录</span><br><span>格式：dir  [path1] [path2]......</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、列出目录中的文件和子目录列表;</span><br><span>2、分别显示文件数量及目录数量；</span><br><span>3、分别显示已使用字节数量及可用字节数量</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、该路径不存在</span><br><span>2、路径长度超出限制</span><br><span>3、参数格式不正确</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h4 id='412-dir-ad'><span>4.1.2 dir [/ad]</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>dir</span><span>_</span><span>ad</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0001-02</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：列出目录中的子目录</span><br><span>格式：dir  /ad [path1] [path2]......</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>列出目录中的子目录列表;</span><br><span>分别显示文件数量及目录数量；</span><br><span>分别显示已使用字节数量及可用字节数量</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、该路径不存在</span><br><span>2、路径长度超出限制</span><br><span>3、参数格式不正确</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h4 id='413-dir-s'><span>4.1.3 dir [/s]</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>dir_s</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0001-03</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：列出目录及子目录下所有的文件</span><br><span>格式：dir  /s [path1] [path2]......</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>列出目录及其子目录下所有文件;</span><br><span>分别显示文件数量及目录数量；</span><br><span>分别显示已使用字节数量及可用字节数量</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、该路径不存在</span><br><span>2、路径长度超出限制</span><br></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='42-md'><span>4.2 md</span></h3><figure><table><thead><tr><th><span>用例名称</span></th><th><span>md</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0002-01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：创建目录 </span><br><span>格式：mkdir path</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>在当前目录下，创建一个子目录</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、可用内存空间不足，创建失败</span><br><span>2、目录路径层次超出限制，创建失败</span><br><span>3、同名目录或文件已存在，创建失败</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='43-rd'><span>4.3 rd</span></h3><h4 id='431-rd'><span>4.3.1 rd</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>rd</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0003-01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：删除一个空目录</span><br><span>格式：rd path [path1] ...</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、判断该目录是否为空</span><br><span>2、若为空目录，则删除</span><br><span>3、打印删除记录</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、非空目录，删除失败</span><br><span>2、该路径不存在</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h4 id='432-rd-s'><span>4.3.2 rd [/s]</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>rd_s</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0003-02</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：递归删除目录及其所有子目录下所有文件</span><br><span>格式：rd /s path [path1] ...</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、递归遍历当前目录</span><br><span>2、对任意子目录，递归删除其下所有子目录及文件</span><br><span>3、对任意文件，直接删除</span><br><span>4、打印删除记录</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、该路径不存在</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='44-cd'><span>4.4 cd</span></h3><figure><table><thead><tr><th><span>用例名称</span></th><th><span>cd</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0004-01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：显示当前目录名，或切换当前目录</span><br><span>格式：cd [path]</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、若path为当前路径，则显示当前目录名</span><br><span>2、若path为子目录，则将当前目录切换为path</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、该路径不存在</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='45-del'><span>4.5 del</span></h3><h4 id='451-del'><span>4.5.1 del</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>del</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0005-01</span></td></tr><tr><td><span>简要说明</span></td><td><span>删除指定文件</span><br><span>del [/s] path [path1]...</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、遍历当前目录</span><br><span>2、对于文件，若为指定文件，则删除</span><br><span>3、打印删除记录</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、该路径不存在，删除失败</span><br><span>2、该路径指向目录，删除失败</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h4 id='452-del-s'><span>4.5.2 del [/s]</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>del_s</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0005-02</span></td></tr><tr><td><span>简要说明</span></td><td><span>删除当前目录及其所有子目录下的指定文件</span><br><span>del [/s] path [path1]...</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、遍历当前目录</span><br><span>2、对于文件，若为指定文件，则删除</span><br><span>3、对于子目录，遍历并删除其中的指定文件</span><br><span>4、打印删除记录</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、该路径不存在，删除失败</span><br><span>2、该路径指向目录，删除失败</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='46-copy'><span>4.6 copy</span></h3><h4 id='461-copy'><span>4.6.1 copy</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>copy</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0006-01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：将本地指定文件拷贝到虚拟磁盘指定目录中，路径信息需要支持通配符 </span><br><span>格式：copy path1 path2</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、创建虚拟文件</span><br><span>2、打开本地文件</span><br><span>3、将本地文件内容按字节复制到虚拟文件中</span><br><span>4、关闭本地文件</span><br><span>5、关闭虚拟文件</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、虚拟文件路径已存在，提示用户覆盖文件或取消操作</span><br><span>2、本地文件路径不存在，打开失败</span><br><span>3、复制过程被打断，虚拟磁盘中产生脏数据</span><br><span>4、虚拟磁盘可用空间不足，复制失败</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h4 id='462-copy-y'><span>4.6.2 copy [/y]</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>copy</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0006-02</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：将本地指定文件拷贝到虚拟磁盘指定目录中，如果目标文件已存在，则默认强制覆盖</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、创建虚拟文件</span><br><span>2、打开本地文件</span><br><span>3、将本地文件内容按字节复制到虚拟文件中</span><br><span>4、关闭本地文件</span><br><span>5、关闭虚拟文件</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、虚拟文件路径已存在，强制覆盖</span><br><span>2、本地文件路径不存在，打开失败</span><br><span>3、复制过程被打断，虚拟磁盘中产生脏数据</span><br><span>4、虚拟磁盘可用空间不足，复制失败</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='47-ren'><span>4.7 ren</span></h3><figure><table><thead><tr><th><span>用例名称</span></th><th><span>ren</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0007-01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：给一个文件或目录改名</span><br><span>格式：ren src dst</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、查找路径src下的目标文件</span><br><span>2、将目标文件改名为dst</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、src路径不存在，提示用户“系统找不到指定的文件”</span><br><span>2、dst路径已存在，提示用户“存在重名文件”</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='48-move'><span>4.8 move</span></h3><h4 id='481-move'><span>4.8.1 move</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>move</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0008-01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能： 移动一个或者多个（文件/文件夹）</span><br><span>格式：move  src dst</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、若src是目录路径，dst是目录路径，则将src整体复制到dst目录下</span><br><span>2、若src是文件路径，dst是目录路径，则将src所匹配的所有源文件复制到dst目录下</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、dst不是合法的目录路径</span><br><span>2、src不是合法的（文件或目录）路径</span><br><span>3、若目标路径下存在同名目录或文件，提示用户强制覆盖或取消操作</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h4 id='482-move-y'><span>4.8.2 move [/y]</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>move_y</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0008-02</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能： 移动一个或者多个（文件/文件夹），并默认强制覆盖</span><br><span>格式：move  src dst</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、若src是目录路径，dst是目录路径，则将src整体复制到dst目录下</span><br><span>2、若src是文件路径，dst是目录路径，则将src所匹配的所有源文件复制到dst目录下</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、dst不是合法的目录路径</span><br><span>2、src不是合法的（文件或目录）路径</span><br><span>3、若目标路径下存在同名目录或文件，默认强制覆盖</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='49-mklink'><span>4.9 mklink</span></h3><h4 id='491-mklink'><span>4.9.1 mklink</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>mklink</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0009-01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：创建一个文件符号链接</span><br><span>格式：mklink srcPath symbolLinkPath</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、为源目录/文件创建一个文件符号链接</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、路径不存在</span><br><span>2、目标链接已存在，无法重复创建</span><br></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h4 id='492-mklink-d'><span>4.9.2 mklink [/d]</span></h4><figure><table><thead><tr><th><span>用例名称</span></th><th><span>mklink_d</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0009-02</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：创建一个目录符号链接</span><br><span>格式：mklink [/d] dir_link dir</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、为源目录/文件创建一个目录符号链接</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、路径不存在</span><br><span>2、目标链接已存在，无法重复创建</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='410-save'><span>4.10 save</span></h3><figure><table><thead><tr><th><span>用例名称</span></th><th><span>save</span></th></tr></thead><tbody><tr><td><span>用例标识</span></td><td><span>VD0010-01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：将虚拟磁盘序列化为本地文件</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、创建并打开本地文件</span><br><span>2、将序列化后的虚拟磁盘信息写入本地文件</span><br><span>3、关闭本地文件</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、本地文件已存在，提示用户，可选择强制覆盖或取消命令</span><br><span>2、序列化过程被打断，本地文件成为脏数据</span><br><span>3、本地磁盘可用空间不足，写入失败</span><br><span>4、存在不合法的路径</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='411-load'><span>4.11 load</span></h3><figure><table><thead><tr><th><span>用例名称</span></th><th><span>load</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0011_01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：从磁盘载入文件，重建虚拟磁盘</span><br><span>格式：load dstPath</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、打开本地文件</span><br><span>2、建立虚拟磁盘</span><br><span>3、载入该虚拟磁盘，同时销毁当前磁盘</span><br><span>4、关闭本地文件</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td><span>1、文件数据格式错误，无法解析</span><br><span>2、虚拟磁盘可用空间不足，写入失败</span><br><span>3、本地文件路径不存在，加载失败</span></td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><h3 id='412-cls'><span>4.12 cls</span></h3><figure><table><thead><tr><th><span>用例名称</span></th><th><span>cls</span></th></tr></thead><tbody><tr><td><span>用例标识号</span></td><td><span>VD0012_01</span></td></tr><tr><td><span>简要说明</span></td><td><span>功能：清空屏幕，并将光标定位在屏幕第一行</span><br><span>格式：cls</span></td></tr><tr><td><span>前置条件</span></td><td><span>接收一条合法的命令行语句</span></td></tr><tr><td><span>基本事件流</span></td><td><span>1、清空屏幕</span><br><span>2、将光标重定位</span></td></tr><tr><td><span>其他事件流</span></td><td>&nbsp;</td></tr><tr><td><span>异常事件流</span></td><td>&nbsp;</td></tr><tr><td><span>后置条件</span></td><td><span>打印当前路径，并等待用户的输入</span></td></tr><tr><td><span>注释</span></td><td>&nbsp;</td></tr></tbody></table></figure><p>&nbsp;</p></div></div>
+</body>
+</html>
