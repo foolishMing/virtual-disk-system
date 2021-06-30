@@ -84,13 +84,14 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,16 +152,40 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
+    <ClCompile Include="application.cpp" />
+    <ClCompile Include="command\BaseCommand.cpp" />
+    <ClCompile Include="command\CdCommand.cpp" />
+    <ClCompile Include="command\CopyCommand.cpp" />
+    <ClCompile Include="command\DelCommand.cpp" />
+    <ClCompile Include="command\DirCommand.cpp" />
+    <ClCompile Include="command\LoadCommand.cpp" />
+    <ClCompile Include="command\MdCommand.cpp" />
+    <ClCompile Include="command\MklinkCommand.cpp" />
+    <ClCompile Include="command\MoveCommand.cpp" />
+    <ClCompile Include="command\RdCommand.cpp" />
+    <ClCompile Include="command\RenCommand.cpp" />
+    <ClCompile Include="command\SaveCommand.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="node\TreeProcessor.cpp" />
+    <ClCompile Include="util\Common.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="virtual-disk-system.cpp" />
+    <ClInclude Include="application.h" />
+    <ClInclude Include="command\BaseCommand.h" />
+    <ClInclude Include="command\CdCommand.h" />
+    <ClInclude Include="command\CopyCommand.h" />
+    <ClInclude Include="command\DelCommand.h" />
+    <ClInclude Include="command\DirCommand.h" />
+    <ClInclude Include="command\LoadCommand.h" />
+    <ClInclude Include="command\MdCommand.h" />
+    <ClInclude Include="command\MkLinkCommand.h" />
+    <ClInclude Include="command\MoveCommand.h" />
+    <ClInclude Include="command\RdCommand.h" />
+    <ClInclude Include="command\RenCommand.h" />
+    <ClInclude Include="command\SaveCommand.h" />
+    <ClInclude Include="node\TreeProcessor.h" />
+    <ClInclude Include="util\Common.h" />
+    <ClInclude Include="util\ScreenPrinter.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

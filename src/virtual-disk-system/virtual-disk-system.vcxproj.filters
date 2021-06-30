@@ -1,30 +1,127 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="源文件">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="header">
+      <UniqueIdentifier>{b13c5f0c-94c8-4791-817b-e1f1b4a33904}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="source">
+      <UniqueIdentifier>{01064ae5-c864-4bc9-b7e5-d11900a1c994}</UniqueIdentifier>
     </Filter>
-    <Filter Include="资源文件">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="header\util">
+      <UniqueIdentifier>{1d050467-40da-4184-84bc-09c95e0cd680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\util">
+      <UniqueIdentifier>{c159d3bc-91dc-4b3a-891e-96cee1f33c3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\node">
+      <UniqueIdentifier>{28f5e0fe-e634-414b-926f-fddd71bdcea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\node">
+      <UniqueIdentifier>{9aa3b078-47d6-4a94-869c-182887129b9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\command">
+      <UniqueIdentifier>{c9e463a2-f3d7-4dfc-8fa9-9fabf9b1521f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\command">
+      <UniqueIdentifier>{ec612a96-6522-4557-99e6-2ebc7ff36154}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>头文件</Filter>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="util\Common.cpp">
+      <Filter>source\util</Filter>
+    </ClCompile>
+    <ClCompile Include="node\TreeProcessor.cpp">
+      <Filter>source\node</Filter>
+    </ClCompile>
+    <ClCompile Include="command\BaseCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\CdCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\CopyCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\DelCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\DirCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\LoadCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\MdCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\MklinkCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\MoveCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\RdCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\RenCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\SaveCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="application.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="util\ScreenPrinter.hpp">
+      <Filter>header\util</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="virtual-disk-system.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
+    <ClInclude Include="util\Common.h">
+      <Filter>header\util</Filter>
+    </ClInclude>
+    <ClInclude Include="node\TreeProcessor.h">
+      <Filter>header\node</Filter>
+    </ClInclude>
+    <ClInclude Include="command\BaseCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\CdCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\CopyCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\DelCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\DirCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\LoadCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\MdCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\MkLinkCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\MoveCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\RdCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\RenCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\SaveCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="application.h">
+      <Filter>header</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
