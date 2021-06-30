@@ -42,14 +42,21 @@ Application::RunStatus Application::exec(const std::wstring& strCmd)
 	if (L"cls" == strCmd)
 	{
 		system("cls");
-		return RunStatus::normal;
 	}
 	//路径类（测试）
-	std::filesystem::path p(strCmd);
-	if (exists(p)) {
+	else if (isPathExist(strCmd))
+	{
 		Console::Write::print(strCmd);
-		Console::Write::println(L" : 是合法的真实路径");
-		return RunStatus::normal;
+		Console::Write::println(L" 是合法的真实路径");
 	}
 	return RunStatus::normal;
+}
+
+bool Application::isPathExist(const std::wstring& str)
+{
+	std::filesystem::path p(str);
+	if (exists(p)) {
+		return true;
+	}
+	return false;
 }

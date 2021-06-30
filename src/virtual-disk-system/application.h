@@ -23,4 +23,6 @@ public:
 	Application::RunStatus exec(const std::wstring& strCmd);		//返回程序运行状态
 private:
 	bool m_isCreate = false;
+
+	bool isPathExist(const std::wstring& str);
 };
