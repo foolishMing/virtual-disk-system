@@ -31,9 +31,6 @@
     <ClCompile Include="util\Common.cpp">
       <Filter>source\util</Filter>
     </ClCompile>
-    <ClCompile Include="node\TreeProcessor.cpp">
-      <Filter>source\node</Filter>
-    </ClCompile>
     <ClCompile Include="command\BaseCommand.cpp">
       <Filter>source\command</Filter>
     </ClCompile>
@@ -73,16 +70,28 @@
     <ClCompile Include="application.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="util\Path.cpp">
+      <Filter>source\util</Filter>
+    </ClCompile>
+    <ClCompile Include="util\Name.cpp">
+      <Filter>source\util</Filter>
+    </ClCompile>
+    <ClCompile Include="node\BaseNode.cpp">
+      <Filter>source\node</Filter>
+    </ClCompile>
+    <ClCompile Include="node\NodeTree.cpp">
+      <Filter>source\node</Filter>
+    </ClCompile>
+    <ClCompile Include="command\CommandFactory.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="node\NodeTreeProxy.cpp">
+      <Filter>source\node</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="util\ScreenPrinter.hpp">
-      <Filter>header\util</Filter>
-    </ClInclude>
     <ClInclude Include="util\Common.h">
       <Filter>header\util</Filter>
-    </ClInclude>
-    <ClInclude Include="node\TreeProcessor.h">
-      <Filter>header\node</Filter>
     </ClInclude>
     <ClInclude Include="command\BaseCommand.h">
       <Filter>header\command</Filter>
@@ -122,6 +131,27 @@
     </ClInclude>
     <ClInclude Include="application.h">
       <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="util\Path.h">
+      <Filter>header\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\Name.h">
+      <Filter>header\util</Filter>
+    </ClInclude>
+    <ClInclude Include="node\BaseNode.h">
+      <Filter>header\node</Filter>
+    </ClInclude>
+    <ClInclude Include="node\NodeTree.h">
+      <Filter>header\node</Filter>
+    </ClInclude>
+    <ClInclude Include="command\CommandFactory.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="node\NodeTreeProxy.h">
+      <Filter>header\node</Filter>
+    </ClInclude>
+    <ClInclude Include="util\Console.hpp">
+      <Filter>header\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

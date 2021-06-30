@@ -6,7 +6,6 @@ interface IBaseCommand
 
 };
 
-
 class BaseCommand : IBaseCommand {
 public:
 	static enum CommandType {

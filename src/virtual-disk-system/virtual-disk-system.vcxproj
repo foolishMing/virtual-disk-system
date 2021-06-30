@@ -100,13 +100,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,6 +156,7 @@
     <ClCompile Include="application.cpp" />
     <ClCompile Include="command\BaseCommand.cpp" />
     <ClCompile Include="command\CdCommand.cpp" />
+    <ClCompile Include="command\CommandFactory.cpp" />
     <ClCompile Include="command\CopyCommand.cpp" />
     <ClCompile Include="command\DelCommand.cpp" />
     <ClCompile Include="command\DirCommand.cpp" />
@@ -166,13 +168,18 @@
     <ClCompile Include="command\RenCommand.cpp" />
     <ClCompile Include="command\SaveCommand.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="node\TreeProcessor.cpp" />
+    <ClCompile Include="node\BaseNode.cpp" />
+    <ClCompile Include="node\NodeTreeProxy.cpp" />
+    <ClCompile Include="node\NodeTree.cpp" />
     <ClCompile Include="util\Common.cpp" />
+    <ClCompile Include="util\Name.cpp" />
+    <ClCompile Include="util\Path.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="command\BaseCommand.h" />
     <ClInclude Include="command\CdCommand.h" />
+    <ClInclude Include="command\CommandFactory.h" />
     <ClInclude Include="command\CopyCommand.h" />
     <ClInclude Include="command\DelCommand.h" />
     <ClInclude Include="command\DirCommand.h" />
@@ -183,9 +190,13 @@
     <ClInclude Include="command\RdCommand.h" />
     <ClInclude Include="command\RenCommand.h" />
     <ClInclude Include="command\SaveCommand.h" />
-    <ClInclude Include="node\TreeProcessor.h" />
+    <ClInclude Include="node\BaseNode.h" />
+    <ClInclude Include="node\NodeTreeProxy.h" />
+    <ClInclude Include="node\NodeTree.h" />
     <ClInclude Include="util\Common.h" />
-    <ClInclude Include="util\ScreenPrinter.hpp" />
+    <ClInclude Include="util\Name.h" />
+    <ClInclude Include="util\Path.h" />
+    <ClInclude Include="util\Console.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

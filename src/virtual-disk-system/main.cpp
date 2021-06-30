@@ -1,22 +1,20 @@
 #include "./application.h"
 #include "./command/BaseCommand.h"
-
 int main()
 {
+	//app : create() -> printCurrentPath() -> exec() 
+	typedef Application::RunStatus stat;
+	std::wstring input;
 	std::shared_ptr<Application> app = std::make_shared<Application>();
+	app.get()->create();
 	while (true)
 	{
 		app.get()->printCurrentPath();
-		std::string input;
-		std::getline(std::cin, input);
-		Application::RunStatus ret = app.get()->exec(input);
-		if (ret == Application::RunStatus::normal) 
+		app.get()->readln(input);
+		stat ret = app.get()->exec(input); 
+		if (ret == stat::exit)	//ÍË³öÓ¦ÓÃ
 		{
-			continue;
-		}
-		if (ret == Application::RunStatus::exit)
-		{
-			break;
+			break; 
 		}
 	}
 	return 0;

@@ -12,13 +12,15 @@
 class Application {
 public:
 	static enum RunStatus{										//程序运行状态
-		normal,
+		normal = 0,
 		exit,
 	};
 	explicit Application();
 	virtual ~Application();
+	void create();
 	void printCurrentPath();
-	Application::RunStatus exec(const std::string& strCmd);		//返回程序运行状态
+	void readln(std::wstring& input);								//读取用户输入
+	Application::RunStatus exec(const std::wstring& strCmd);		//返回程序运行状态
 private:
-
+	bool m_isCreate = false;
 };
