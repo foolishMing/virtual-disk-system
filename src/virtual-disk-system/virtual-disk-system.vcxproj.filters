@@ -52,9 +52,6 @@
     <ClCompile Include="command\MdCommand.cpp">
       <Filter>source\command</Filter>
     </ClCompile>
-    <ClCompile Include="command\MklinkCommand.cpp">
-      <Filter>source\command</Filter>
-    </ClCompile>
     <ClCompile Include="command\MoveCommand.cpp">
       <Filter>source\command</Filter>
     </ClCompile>
@@ -88,6 +85,12 @@
     <ClCompile Include="node\NodeTreeProxy.cpp">
       <Filter>source\node</Filter>
     </ClCompile>
+    <ClCompile Include="command\UndefinedCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\MklinkCommand.cpp">
+      <Filter>source\command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util\Common.h">
@@ -112,9 +115,6 @@
       <Filter>header\command</Filter>
     </ClInclude>
     <ClInclude Include="command\MdCommand.h">
-      <Filter>header\command</Filter>
-    </ClInclude>
-    <ClInclude Include="command\MkLinkCommand.h">
       <Filter>header\command</Filter>
     </ClInclude>
     <ClInclude Include="command\MoveCommand.h">
@@ -152,6 +152,12 @@
     </ClInclude>
     <ClInclude Include="util\Console.hpp">
       <Filter>header\util</Filter>
+    </ClInclude>
+    <ClInclude Include="command\UndefinedCommand.h">
+      <Filter>header\command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\MklinkCommand.h">
+      <Filter>header\command</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

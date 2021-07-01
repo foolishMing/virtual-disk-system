@@ -2,28 +2,28 @@
 using namespace nsUtil;
 
 ///基本路径类
-void BasePath::serialize(std::wstring& target)
+void BasePath::serialize(string_local& target)
 {
 	for (auto item : m_path_name_vec) {
 		target.append(L"/" + item.getName());
 	}
 }
 
-void BasePath::split(const std::wstring& target)
+void BasePath::split(const string_local& target)
 {
-
+	
 }
 
-std::wstring BasePath::toString()
+string_local BasePath::toString()
 {
-	std::wstring ret = L"";
+	string_local ret = L"";
 	serialize(ret);
 	return ret;
 }
 
 
 /// 磁盘路径类
-DiskPath::DiskPath(const std::wstring& str)
+DiskPath::DiskPath(const string_local& str)
 {
 	assert(str.empty() || m_disk_identifier_const == str[0]);
 	m_path_str = str.substr(1, str.length() - 1);
@@ -33,9 +33,9 @@ DiskPath::~DiskPath()
 {
 }
 
-std::wstring DiskPath::toString()
+string_local DiskPath::toString()
 {
-	std::wstring ret = L"";
+	string_local ret = L"";
 	ret.append(1,m_disk_identifier_const);
 	serialize(ret);
 	return ret;
@@ -43,7 +43,7 @@ std::wstring DiskPath::toString()
 
 
 /// 内存路径类
-MemoryPath::MemoryPath(const std::wstring& str)
+MemoryPath::MemoryPath(const string_local& str)
 {
 	
 }
@@ -53,9 +53,9 @@ MemoryPath::~MemoryPath()
 
 }
 
-std::wstring MemoryPath::toString()
+string_local MemoryPath::toString()
 {
-	std::wstring ret = L"";
+	string_local ret = L"";
 	serialize(ret);
 	return ret;
 }

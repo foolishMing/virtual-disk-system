@@ -7,27 +7,59 @@ Application::Application()
 
 Application::~Application()
 {
-}
 
+}
 
 void Application::create()
 {
-	m_isCreate = true;
+	//输入输出本地化
 	Console::Init();
+	//创建命令工厂
+	m_command_factory = new CommandFactory();
+	m_command_factory->create();
+	//创建文件树
+	m_node_tree = new NodeTree();
+	m_node_tree->create();
+	//创建文件树代理
+	m_node_tree_proxy = new NodeTreeProxy();
+	m_node_tree_proxy->create();
+	m_isCreate = true;
 }
 
-void Application::readln(std::wstring& input)
+void Application::destroy()
+{
+	assert(m_isCreate == true);
+	if (nullptr != m_command_factory)
+	{
+		m_command_factory->destroy();
+		m_command_factory = nullptr;
+	}
+	if (nullptr != m_node_tree)
+	{
+		m_node_tree->destroy();
+		m_node_tree == nullptr;
+	}
+	if (nullptr != m_node_tree_proxy)
+	{
+		m_node_tree->destroy();
+		m_node_tree_proxy = nullptr;
+	}
+}
+
+void Application::readln(string_local& input)
 {
 	Console::Read::readln(input);
 }
 
 void Application::printCurrentPath()
 {
+	assert(m_isCreate == true);
 	Console::Write::print(L"C:>");
 }
 
-Application::RunStatus Application::exec(const std::wstring& strCmd)
+Application::RunStatus Application::exec(const string_local& strCmd)
 {
+	assert(m_isCreate == true);
 	if (!m_isCreate) 
 	{
 		Console::Write::println(L"应用程序未初始化");
@@ -52,7 +84,9 @@ Application::RunStatus Application::exec(const std::wstring& strCmd)
 	return RunStatus::normal;
 }
 
-bool Application::isPathExist(const std::wstring& str)
+
+//error:这个方法接收宽字符之后path创建失败
+bool Application::isPathExist(const string_local& str)
 {
 	std::filesystem::path p(str);
 	if (exists(p)) {

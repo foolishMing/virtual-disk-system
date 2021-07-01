@@ -14,7 +14,7 @@ public:
 	static class Read 
 	{
 	public:
-		static void readln(std::wstring& input)
+		static void readln(string_local& input)
 		{
 			std::getline(std::wcin, input);
 		}
@@ -22,17 +22,16 @@ public:
 	static class Write 
 	{
 	public:
-		static void print(const std::wstring& str)
+		static void print(const string_local& str)
 		{
 			std::wcout << str << L" ";
 		}
 
-		static void println(const std::wstring& str)
+		static void println(const string_local& str)
 		{
 			std::wcout << str << L"\n";
 		}
 	};
-	
 };
 
 

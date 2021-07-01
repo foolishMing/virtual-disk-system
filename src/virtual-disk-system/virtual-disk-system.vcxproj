@@ -167,6 +167,7 @@
     <ClCompile Include="command\RdCommand.cpp" />
     <ClCompile Include="command\RenCommand.cpp" />
     <ClCompile Include="command\SaveCommand.cpp" />
+    <ClCompile Include="command\UndefinedCommand.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="node\BaseNode.cpp" />
     <ClCompile Include="node\NodeTreeProxy.cpp" />
@@ -185,11 +186,12 @@
     <ClInclude Include="command\DirCommand.h" />
     <ClInclude Include="command\LoadCommand.h" />
     <ClInclude Include="command\MdCommand.h" />
-    <ClInclude Include="command\MkLinkCommand.h" />
+    <ClInclude Include="command\MklinkCommand.h" />
     <ClInclude Include="command\MoveCommand.h" />
     <ClInclude Include="command\RdCommand.h" />
     <ClInclude Include="command\RenCommand.h" />
     <ClInclude Include="command\SaveCommand.h" />
+    <ClInclude Include="command\UndefinedCommand.h" />
     <ClInclude Include="node\BaseNode.h" />
     <ClInclude Include="node\NodeTreeProxy.h" />
     <ClInclude Include="node\NodeTree.h" />

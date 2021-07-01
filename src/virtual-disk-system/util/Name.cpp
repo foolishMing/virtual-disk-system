@@ -1,6 +1,11 @@
 #include "Name.h"
 
-Name::Name(std::wstring name)
+Name::Name() 
+{
+
+}
+
+Name::Name(string_local& name)
 {
 	m_name = name;
 	m_internal_name = toLowercase(m_name);
@@ -13,13 +18,13 @@ Name::~Name()
 
 bool Name::isStrictEqualTo(const Name& rhs) const
 {
-	std::wstring pattern_string = toLowercase(rhs.getName());
+	string_local pattern_string = toLowercase(rhs.getName());
 	return (m_internal_name == pattern_string);
 }
 
 bool Name::isFuzzyEqualTo(const Name& rhs) const
 {
-	std::wstring pattern_string = toLowercase(rhs.getName());
+	string_local pattern_string = toLowercase(rhs.getName());
 	if (IsFuzzyMatch(m_name.c_str(), pattern_string.c_str()))
 	{
 		return true;
@@ -27,21 +32,21 @@ bool Name::isFuzzyEqualTo(const Name& rhs) const
 	return isStrictEqualTo(rhs);
 }
 
-std::wstring Name::getName() const
+string_local Name::getName() const
 {
 	return m_name;
 }
 
-std::wstring Name::toLowercase(const std::wstring& str) const 
+string_local Name::toLowercase(const string_local& str) const 
 {
-	std::wstring ret;
+	string_local ret;
 	ret.assign(str);
 	std::transform(ret.begin(), ret.end(), ret.begin(), tolower);
 	return ret;
 }
 
 //×Ö·û´®Ä£ºýÆ¥Åä£¬Ö§³ÖÍ¨Åä·û"*"ºÍ"?"
-bool Name::IsFuzzyMatch(const wchar_t* str, const wchar_t* pattern) const
+bool Name::IsFuzzyMatch(const char_local* str, const char_local* pattern) const
 {
 	if (*pattern == L'\0')
 	{
@@ -51,7 +56,7 @@ bool Name::IsFuzzyMatch(const wchar_t* str, const wchar_t* pattern) const
 	{
 		while (*str != L'\0')
 		{
-			if (IsFuzzyMatch((const wchar_t*)str++, (const wchar_t*)pattern + 1))
+			if (IsFuzzyMatch((const char_local*)str++, (const char_local*)pattern + 1))
 			{
 				return true;
 			}
@@ -69,4 +74,5 @@ bool Name::IsFuzzyMatch(const wchar_t* str, const wchar_t* pattern) const
 	{
 		return false;
 	}
+	return false;
 }

@@ -3,19 +3,17 @@
 
 class Name {
 public:
-	Name(std::wstring name);
+	Name();
+	Name(string_local& name);
 	~Name();
-	//判断是否同名（精确匹配）,大小写不敏感
-	bool isStrictEqualTo(const Name& rhs) const;
-	//判断是否同名（模糊匹配），大小写不敏感
-	bool isFuzzyEqualTo(const Name& rhs) const;
-	std::wstring getName() const;
-	//字符串模糊匹配，支持通配符"*"和"?"
-    bool IsFuzzyMatch(const wchar_t* str, const wchar_t* pattern) const;
+	string_local getName() const;
+	bool isStrictEqualTo(const Name& rhs) const;//判断是否同名（精确匹配）,大小写不敏感
+	bool isFuzzyEqualTo(const Name& rhs) const;//判断是否同名（模糊匹配），大小写不敏感
+    bool IsFuzzyMatch(const char_local* str, const char_local* pattern) const;//字符串模糊匹配，支持通配符"*"和"?"
 
 private:
-	std::wstring m_name = L"";
-	std::wstring m_internal_name = L"";
-	std::wstring toLowercase(const std::wstring& str) const;
+	string_local m_name = L"";
+	string_local m_internal_name = L"";
+	string_local toLowercase(const string_local& str) const;
 };
 

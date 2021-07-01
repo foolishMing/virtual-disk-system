@@ -4,7 +4,7 @@ int main()
 {
 	//app : create() -> printCurrentPath() -> exec() 
 	typedef Application::RunStatus stat;
-	std::wstring input;
+	string_local input;
 	std::shared_ptr<Application> app = std::make_shared<Application>();
 	app.get()->create();
 	while (true)
@@ -17,5 +17,6 @@ int main()
 			break; 
 		}
 	}
+	app.get()->destroy();
 	return 0;
 }
