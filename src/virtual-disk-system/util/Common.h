@@ -21,6 +21,8 @@ typedef std::wstring string_local;
 typedef wchar_t char_local;
 
 
+
+
 //元对象，所有对象都必须继承
 interface Object
 {
@@ -31,7 +33,10 @@ interface Object
 #endif // !COMMON_H
 
 
-
+//全局常量
+namespace Tips {
+	extern const string_local gsUndefinedCommand;	//不是内部或外部命令,也不是可运行的程序
+}
 
 
 

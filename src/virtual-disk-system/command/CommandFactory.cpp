@@ -1,5 +1,6 @@
 #include "CommandFactory.h"
 #include <cassert>
+#include <sstream>
 
 CommandFactory::CommandFactory()
 {
@@ -73,3 +74,5 @@ BaseCommand* CommandFactory::GetCommand(CommandType type)
 	auto item = m_command_map.find(type);
 	return item->second;
 }
+
+

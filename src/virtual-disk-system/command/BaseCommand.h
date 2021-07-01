@@ -1,4 +1,7 @@
 #pragma once
+#ifndef __BASECOMMAND_H__
+#define __BASECOMMAND_H__
+
 #include "../util/common.h"
 #include "../node/NodeTreeProxy.h"
 
@@ -21,7 +24,7 @@ enum CommandType {
 
 interface IBaseCommand
 {
-	virtual void handle() = 0;	
+	virtual void handle() = 0;
 	virtual void destroy() = 0;
 };
 
@@ -37,4 +40,5 @@ private:
 	std::vector<string_local> m_args;
 };
 
+#endif // !__BASECOMMAND_H__
 

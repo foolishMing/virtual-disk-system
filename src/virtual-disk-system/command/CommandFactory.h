@@ -24,9 +24,9 @@ public:
 	~CommandFactory();
 	void create();
 	void destroy();
-	BaseCommand* GetCommand(CommandType type);
 
 private:
 	std::map<CommandType, BaseCommand*> m_command_map;
+	BaseCommand* GetCommand(CommandType type);
 	BaseCommand* CreateCommand(CommandType type);
 };

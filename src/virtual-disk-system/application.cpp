@@ -94,3 +94,18 @@ bool Application::isPathExist(const string_local& str)
 	}
 	return false;
 }
+
+std::vector<string_local> Application::stringSplit(const string_local& in, const string_local& delimit)
+{
+	std::vector<string_local> vec;
+	string_local tmp = in;
+	size_t nPos = in.find(delimit.c_str());
+	while (string_local::npos != nPos)
+	{
+		string_local item = tmp.substr(0, nPos);
+		vec.push_back(item);
+		tmp = tmp.substr(nPos + delimit.length());
+		nPos = tmp.find(delimit.c_str());
+	}
+	return vec;
+}

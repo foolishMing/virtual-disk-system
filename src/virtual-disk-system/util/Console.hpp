@@ -32,6 +32,7 @@ public:
 			std::wcout << str << L"\n";
 		}
 	};
+
 };
 
 
