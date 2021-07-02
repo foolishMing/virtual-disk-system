@@ -7,5 +7,5 @@ class MklinkCommand : public BaseCommand
 public:
 	explicit MklinkCommand();
 	~MklinkCommand();
-	virtual void handle();
+	virtual void Handle(std::vector<string_local>& args, NodeTreeProxy& proxy);
 };

@@ -10,20 +10,26 @@ BaseCommand::~BaseCommand()
 
 }
 
-void BaseCommand::handle()
+void BaseCommand::Handle()
 {
 
 }
 
-void BaseCommand::handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
+void BaseCommand::Handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
+{
+
+}
+
+void BaseCommand::Create()
+{
+
+}
+
+void BaseCommand::Destroy()
 {
 
 }
 
 
-void BaseCommand::destroy()
-{
-
-}
 
 

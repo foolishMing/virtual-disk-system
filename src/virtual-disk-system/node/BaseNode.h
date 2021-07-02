@@ -3,11 +3,6 @@
 #define __BASENODE_H__
 
 #include "../util/Common.h"
-#include "../util/Name.h"
-
-interface IBaseNode {
-
-};
 
 //节点类型
 enum NodeType {
@@ -17,17 +12,28 @@ enum NodeType {
 	SymlinkF		//快捷方式(文件)	
 };
 
-class BaseNode : IBaseNode {
+class BaseNode{
 public:
 	explicit BaseNode();
-	explicit BaseNode(Name& name);
+	explicit BaseNode(string_local& name, BaseNode* parent = nullptr);
 	virtual ~BaseNode();
+	
+	NodeType GetType();
+
+	string_local GetName();
+	void SetName(const string_local& name);
+
+	virtual uint64_t GetSize() = 0;
+	
+	BaseNode* GetParent();	//获取父节点指针
+	void SetParent(BaseNode* parent);	//设置父节点指针
+
+	bool IsNameEqualsTo(const string_local& name);	//判断该字符串是否与节点名称相同
 protected:
 	uint64_t size;						
-	Name m_name;
-	string_local data;
+	string_local m_name;
+	NodeType m_type;
 	BaseNode* m_parent = nullptr;
-	std::vector<BaseNode*> children;
 };
 
 #endif // !__BASENODE_H__

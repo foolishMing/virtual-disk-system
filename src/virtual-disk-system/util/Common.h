@@ -26,8 +26,8 @@ typedef wchar_t char_local;
 //元对象，所有对象都必须继承
 interface Object
 {
-	virtual void create() = 0;
-	virtual void destroy() = 0;
+	virtual void Create() = 0;
+	virtual void Destroy() = 0;
 };
 
 #endif // !COMMON_H

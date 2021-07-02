@@ -7,5 +7,5 @@ class LoadCommand : public BaseCommand
 public:
 	explicit LoadCommand();
 	~LoadCommand();
-	virtual void handle();
+	virtual void Handle(std::vector<string_local>& args, NodeTreeProxy& proxy);
 };

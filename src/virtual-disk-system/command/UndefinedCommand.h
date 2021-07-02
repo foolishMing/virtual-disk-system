@@ -6,5 +6,5 @@ class UndefinedCommand : public BaseCommand
 public:
 	explicit UndefinedCommand();
 	virtual ~UndefinedCommand();
-	virtual void handle();
+	virtual void Handle(std::vector<string_local>& args, NodeTreeProxy& proxy);
 };

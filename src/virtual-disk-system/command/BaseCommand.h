@@ -3,7 +3,7 @@
 #define __BASECOMMAND_H__
 
 #include "../util/common.h"
-#include "../node/NodeTreeProxy.h"
+#include "../node/NodeTreeManager.h"
 
 enum CommandType {
 	undefine = 0,	//未定义类型
@@ -19,25 +19,25 @@ enum CommandType {
 	mklink,		//创建符号链接
 	save,		//序列化
 	load,		//反序列化
+	cls,		//清屏
 	tail,		//结束符，无实际意义
 };
 
 interface IBaseCommand
 {
-	virtual void handle() = 0;
-	virtual void destroy() = 0;
+	virtual void Handle() = 0;
 };
 
-class BaseCommand : IBaseCommand {
+class BaseCommand : IBaseCommand, Object{
 public:
 	explicit BaseCommand();
 	~BaseCommand();
-	virtual void handle();
-	virtual void handle(std::vector<string_local>& args, NodeTreeProxy& proxy);
-	virtual void destroy();
+	virtual void Handle();
+	virtual void Handle(std::vector<string_local>& args, NodeTreeManager& proxy);
+	virtual void Create();
+	virtual void Destroy();
 private:
 	CommandType	m_type;
-	std::vector<string_local> m_args;
 };
 
 #endif // !__BASECOMMAND_H__

@@ -10,7 +10,7 @@ CdCommand::~CdCommand()
 
 }
 
-void CdCommand::handle()
+void CdCommand::Handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
 {
 
 }

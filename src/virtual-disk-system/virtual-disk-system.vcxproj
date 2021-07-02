@@ -156,6 +156,7 @@
     <ClCompile Include="application.cpp" />
     <ClCompile Include="command\BaseCommand.cpp" />
     <ClCompile Include="command\CdCommand.cpp" />
+    <ClCompile Include="command\ClsCommand.cpp" />
     <ClCompile Include="command\CommandFactory.cpp" />
     <ClCompile Include="command\CopyCommand.cpp" />
     <ClCompile Include="command\DelCommand.cpp" />
@@ -170,16 +171,19 @@
     <ClCompile Include="command\UndefinedCommand.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="node\BaseNode.cpp" />
+    <ClCompile Include="node\DirNode.cpp" />
+    <ClCompile Include="node\FileNode.cpp" />
     <ClCompile Include="node\NodeTreeProxy.cpp" />
     <ClCompile Include="node\NodeTree.cpp" />
+    <ClCompile Include="node\SymlinkNode.cpp" />
+    <ClCompile Include="util\Banner.cpp" />
     <ClCompile Include="util\Common.cpp" />
-    <ClCompile Include="util\Name.cpp" />
-    <ClCompile Include="util\Path.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="command\BaseCommand.h" />
     <ClInclude Include="command\CdCommand.h" />
+    <ClInclude Include="command\ClsCommand.h" />
     <ClInclude Include="command\CommandFactory.h" />
     <ClInclude Include="command\CopyCommand.h" />
     <ClInclude Include="command\DelCommand.h" />
@@ -193,11 +197,13 @@
     <ClInclude Include="command\SaveCommand.h" />
     <ClInclude Include="command\UndefinedCommand.h" />
     <ClInclude Include="node\BaseNode.h" />
+    <ClInclude Include="node\DirNode.h" />
+    <ClInclude Include="node\FileNode.h" />
     <ClInclude Include="node\NodeTreeProxy.h" />
     <ClInclude Include="node\NodeTree.h" />
+    <ClInclude Include="node\SymlinkNode.h" />
+    <ClInclude Include="util\Banner.h" />
     <ClInclude Include="util\Common.h" />
-    <ClInclude Include="util\Name.h" />
-    <ClInclude Include="util\Path.h" />
     <ClInclude Include="util\Console.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

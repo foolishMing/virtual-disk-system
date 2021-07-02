@@ -7,5 +7,5 @@ class CopyCommand : public BaseCommand
 public:
 	explicit CopyCommand();
 	~CopyCommand();
-	virtual void handle();
+	virtual void Handle(std::vector<string_local>& args, NodeTreeProxy& proxy);
 };

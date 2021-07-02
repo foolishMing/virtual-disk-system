@@ -11,12 +11,12 @@ NodeTree::~NodeTree()
 
 }
 
-void NodeTree::create()
+void NodeTree::Create()
 {
 
 }
 
-void NodeTree::destroy()
+void NodeTree::Destroy()
 {
 
 }

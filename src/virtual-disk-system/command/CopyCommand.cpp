@@ -11,7 +11,7 @@ CopyCommand::~CopyCommand()
 
 }
 
-void CopyCommand::handle()
+void CopyCommand::Handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
 {
 
 }

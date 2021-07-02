@@ -12,66 +12,75 @@ CommandFactory::~CommandFactory()
 
 }
 
-void CommandFactory::create()
+void CommandFactory::Create()
 {
 	for (auto type = CommandType::undefine; type < CommandType::tail; type = (CommandType)(type + 1)) {
-		m_command_map.insert(std::pair<CommandType,BaseCommand*>(type, CreateCommand(type)));
+		m_cmd_instance_map.insert(std::pair<CommandType,BaseCommand*>(type, CreateCommandInstance(type)));
 	}
 }
 
-void CommandFactory::destroy()
+void CommandFactory::Destroy()
 {
-	auto iter = m_command_map.begin();
-	while (iter != m_command_map.end()) 
+	auto iter = m_cmd_instance_map.begin();
+	while (iter != m_cmd_instance_map.end()) 
 	{
-		delete iter->second;
+	    iter->second->Destroy();
 		iter->second = nullptr;
-		iter = m_command_map.erase(iter);
+		iter = m_cmd_instance_map.erase(iter);
 	}
-	m_command_map.clear();
+	m_cmd_instance_map.clear();
 }
 
-BaseCommand* CommandFactory::CreateCommand(CommandType type)
+BaseCommand* CommandFactory::CreateCommandInstance(CommandType type)
 {
-	assert(type != CommandType::tail);
-	BaseCommand* cmd = nullptr;
+	BaseCommand* instance = nullptr;
 	switch (type)
 	{
-	case quit:
-		break;
 	case dir:
+		instance = new DirCommand();
 		break;
 	case md:
+		instance = new MdCommand();
 		break;
 	case rd:
+		instance = new RdCommand();
 		break;
 	case cd:
+		instance = new CdCommand();
 		break;
 	case del:
+		instance = new DelCommand();
 		break;
 	case copy:
+		instance = new CopyCommand();
 		break;
 	case ren:
+		instance = new RenCommand();
 		break;
 	case move:
+		instance = new MoveCommand();
 		break;
 	case mklink:
+		instance = new MklinkCommand();
 		break;
 	case save:
+		instance = new SaveCommand();
 		break;
 	case load:
+		instance = new LoadCommand();
 		break;
 	default:
-		cmd = new UndefinedCommand();
+		instance = new UndefinedCommand();
 		break;
 	}
-	return cmd;
+	instance->Create();
+	return instance;
 }
 
-BaseCommand* CommandFactory::GetCommand(CommandType type)
+BaseCommand* CommandFactory::GetCommandInstance(CommandType type)
 {
 	assert(type != CommandType::tail);
-	auto item = m_command_map.find(type);
+	auto item = m_cmd_instance_map.find(type);
 	return item->second;
 }
 

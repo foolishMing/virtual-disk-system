@@ -11,7 +11,7 @@ SaveCommand::~SaveCommand()
 
 }
 
-void SaveCommand::handle()
+void SaveCommand::Handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
 {
 
 }

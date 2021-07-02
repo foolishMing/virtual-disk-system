@@ -11,7 +11,7 @@ MklinkCommand::~MklinkCommand()
 
 }
 
-void MklinkCommand::handle()
+void MklinkCommand::Handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
 {
 
 }

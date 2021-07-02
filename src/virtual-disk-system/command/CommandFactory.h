@@ -13,20 +13,16 @@
 #include "SaveCommand.h"
 #include "UndefinedCommand.h"
 
-interface ICommandFactory {
-	void create();
-	void destroy();
-};
 
-class CommandFactory : ICommandFactory{
+
+class CommandFactory : Object{
 public:
 	explicit CommandFactory();
 	~CommandFactory();
-	void create();
-	void destroy();
-
+	void Create();
+	void Destroy();
+	BaseCommand* GetCommandInstance(CommandType type);
 private:
-	std::map<CommandType, BaseCommand*> m_command_map;
-	BaseCommand* GetCommand(CommandType type);
-	BaseCommand* CreateCommand(CommandType type);
+	std::map<CommandType, BaseCommand*> m_cmd_instance_map;
+	BaseCommand* CreateCommandInstance(CommandType type);
 };

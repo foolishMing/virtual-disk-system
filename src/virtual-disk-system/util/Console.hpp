@@ -2,7 +2,7 @@
 
 #include <string>
 #include <iostream>
-
+#include "Common.h"
 
 static class Console {
 public:
@@ -14,7 +14,7 @@ public:
 	static class Read 
 	{
 	public:
-		static void readln(string_local& input)
+		static void ReadLine(string_local& input)
 		{
 			std::getline(std::wcin, input);
 		}
@@ -22,14 +22,14 @@ public:
 	static class Write 
 	{
 	public:
-		static void print(const string_local& str)
+		static void Print(const string_local& output)
 		{
-			std::wcout << str << L" ";
+			std::wcout << output << L" ";
 		}
 
-		static void println(const string_local& str)
+		static void PrintLine(const string_local& output)
 		{
-			std::wcout << str << L"\n";
+			std::wcout << output << L"\n";
 		}
 	};
 

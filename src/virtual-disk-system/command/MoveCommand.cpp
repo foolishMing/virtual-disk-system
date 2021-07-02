@@ -11,7 +11,7 @@ MoveCommand::~MoveCommand()
 
 }
 
-void MoveCommand::handle()
+void MoveCommand::Handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
 {
 
 }

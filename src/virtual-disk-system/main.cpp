@@ -6,17 +6,17 @@ int main()
 	typedef Application::RunStatus stat;
 	string_local input;
 	std::shared_ptr<Application> app = std::make_shared<Application>();
-	app.get()->create();
+	app.get()->Create();
 	while (true)
 	{
-		app.get()->printCurrentPath();
-		app.get()->readln(input);
-		stat ret = app.get()->exec(input); 
+		app.get()->PrintCurrentPath();
+		app.get()->ReadLine(input);
+		stat ret = app.get()->Exec(input); 
 		if (ret == stat::exit)	//ÍË³öÓ¦ÓÃ
 		{
 			break; 
 		}
 	}
-	app.get()->destroy();
+	app.get()->Destroy();
 	return 0;
 }

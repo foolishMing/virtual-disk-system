@@ -10,7 +10,7 @@ RenCommand::~RenCommand()
 
 }
 
-void RenCommand::handle()
+void RenCommand::Handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
 {
 
 }
