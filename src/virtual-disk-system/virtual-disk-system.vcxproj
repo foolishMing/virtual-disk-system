@@ -75,6 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>C:\Users\Administrator\Documents\github\foolishMing\virtual-disk-system\src\include;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -104,10 +105,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -173,7 +175,7 @@
     <ClCompile Include="node\BaseNode.cpp" />
     <ClCompile Include="node\DirNode.cpp" />
     <ClCompile Include="node\FileNode.cpp" />
-    <ClCompile Include="node\NodeTreeProxy.cpp" />
+    <ClCompile Include="node\NodeTreeManager.cpp" />
     <ClCompile Include="node\NodeTree.cpp" />
     <ClCompile Include="node\SymlinkNode.cpp" />
     <ClCompile Include="util\Banner.cpp" />
@@ -199,7 +201,7 @@
     <ClInclude Include="node\BaseNode.h" />
     <ClInclude Include="node\DirNode.h" />
     <ClInclude Include="node\FileNode.h" />
-    <ClInclude Include="node\NodeTreeProxy.h" />
+    <ClInclude Include="node\NodeTreeManager.h" />
     <ClInclude Include="node\NodeTree.h" />
     <ClInclude Include="node\SymlinkNode.h" />
     <ClInclude Include="util\Banner.h" />

@@ -24,7 +24,7 @@ public:
 	public:
 		static void Print(const string_local& output)
 		{
-			std::wcout << output << L" ";
+			std::wcout << output;
 		}
 
 		static void PrintLine(const string_local& output)
@@ -32,7 +32,6 @@ public:
 			std::wcout << output << L"\n";
 		}
 	};
-
 };
 
 

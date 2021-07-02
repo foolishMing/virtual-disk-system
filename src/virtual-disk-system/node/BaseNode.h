@@ -15,7 +15,7 @@ enum NodeType {
 class BaseNode{
 public:
 	explicit BaseNode();
-	explicit BaseNode(string_local& name, BaseNode* parent = nullptr);
+	explicit BaseNode(string_local name, BaseNode* parent = nullptr);
 	virtual ~BaseNode();
 	
 	NodeType GetType();

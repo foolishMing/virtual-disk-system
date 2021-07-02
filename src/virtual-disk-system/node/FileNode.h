@@ -7,7 +7,7 @@
 class FileNode : public BaseNode 
 {
 public:
-	explicit FileNode(string_local& name, BaseNode* parent = nullptr);
+	explicit FileNode(string_local name, BaseNode* parent = nullptr);
 	virtual ~FileNode();
 
 	string_local GetDataByCopy();

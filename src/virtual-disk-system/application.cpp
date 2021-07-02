@@ -17,15 +17,12 @@ void Application::Create()
 	Console::Init();
 	//输出首页横幅
 	PrintBanner();
+	//创建文件树管理器
+	m_node_tree_manager = new NodeTreeManager();
+	m_node_tree_manager->Create();
 	//创建命令工厂
 	m_command_factory = new CommandFactory();
 	m_command_factory->Create();
-	//创建文件树
-	m_node_tree = new NodeTree();
-	m_node_tree->Create();
-	//创建文件树代理
-	m_node_tree_proxy = new NodeTreeProxy();
-	m_node_tree_proxy->Create();
 	m_isCreate = true;
 }
 
@@ -37,16 +34,18 @@ void Application::Destroy()
 		m_command_factory->Destroy();
 		m_command_factory = nullptr;
 	}
-	if (nullptr != m_node_tree)
+	if (nullptr != m_node_tree_manager)
 	{
-		m_node_tree->Destroy();
-		m_node_tree = nullptr;
+		m_node_tree_manager->Destroy();
+		m_node_tree_manager = nullptr;
 	}
-	if (nullptr != m_node_tree_proxy)
-	{
-		m_node_tree->Destroy();
-		m_node_tree_proxy = nullptr;
-	}
+}
+
+void Application::PrintCurrentPath()
+{
+	assert(m_isCreate == true);
+	Console::Write::Print(m_node_tree_manager->GetCurrentPath());
+	Console::Write::Print(L">");
 }
 
 void Application::ReadLine(string_local& input)
@@ -54,20 +53,29 @@ void Application::ReadLine(string_local& input)
 	Console::Read::ReadLine(input);
 }
 
-void Application::PrintCurrentPath()
+void Application::Run()
 {
 	assert(m_isCreate == true);
-	Console::Write::Print(L"C:>");
-}
-
-Application::RunStatus Application::Exec(const string_local& strCmd)
-{
-	assert(m_isCreate == true);
-	if (!m_isCreate) 
+	if (!m_isCreate)
 	{
 		Console::Write::PrintLine(L"应用程序未初始化");
-		return RunStatus::exit;
+		return;
 	}
+	typedef Application::RunStatus stat;
+	string_local input;
+	while (true)
+	{
+		PrintCurrentPath();
+		ReadLine(input);
+		if(stat::exit == ExecCommand(input))	
+		{
+			return;
+		}
+	}
+}
+
+Application::RunStatus Application::ExecCommand(const string_local& strCmd)
+{
 	//退出程序
 	if (L"quit" == strCmd || L"exit" == strCmd)
 	{
@@ -78,12 +86,6 @@ Application::RunStatus Application::Exec(const string_local& strCmd)
 	{
 		system("cls");
 		PrintBanner();
-	}
-	//路径类（测试）
-	else if (IsPathExist(strCmd))
-	{
-		Console::Write::Print(strCmd);
-		Console::Write::PrintLine(L" 是合法的真实路径");
 	}
 	return RunStatus::normal;
 }
@@ -110,6 +112,32 @@ std::vector<string_local> Application::StringSplit(const string_local& in, const
 		vec.push_back(item);
 		tmp = tmp.substr(nPos + delimit.length());
 		nPos = tmp.find(delimit.c_str());
+	}
+	return vec;
+}
+
+//update : 待测试
+std::vector<string_local> Application::StringSplits(const string_local& in, const std::vector<string_local>& delimits)
+{
+	std::vector<string_local> vec;
+	string_local tmp = in;
+	size_t nPos = string_local::npos;
+	string_local cur_delimit;
+	for (auto item : delimits)
+	{
+		auto next_pos = in.find(item.c_str());
+		if (next_pos < nPos)
+		{
+			nPos = next_pos;
+			cur_delimit = item;
+		}
+	}
+	while (string_local::npos != nPos)
+	{
+		string_local item = tmp.substr(0, nPos);
+		vec.push_back(item);
+		tmp = tmp.substr(nPos + cur_delimit.length());
+		nPos = tmp.find(cur_delimit.c_str());
 	}
 	return vec;
 }

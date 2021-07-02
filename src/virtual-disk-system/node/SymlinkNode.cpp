@@ -1,10 +1,10 @@
 #include "SymlinkNode.h"
 
-SymlinkNode::SymlinkNode(string_local& name, BaseNode* parent)
+SymlinkNode::SymlinkNode(string_local name, BaseNode* parent)
 {
 	m_type = NodeType::SymlinkF;	//默认是文件链接
+	m_parent = parent;	
 	m_name = name;
-	m_parent = parent;
 }
 SymlinkNode::~SymlinkNode()
 {

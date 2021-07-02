@@ -11,7 +11,7 @@ MdCommand::~MdCommand()
 
 }
 
-void MdCommand::Handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
+void MdCommand::Handle(std::vector<string_local>& args, NodeTreeManager& proxy)
 {
 
 }

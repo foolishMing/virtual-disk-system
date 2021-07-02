@@ -7,7 +7,7 @@
 class SymlinkNode : public BaseNode
 {
 public:
-	explicit SymlinkNode(string_local& name, BaseNode* parent = nullptr);
+	explicit SymlinkNode(string_local name, BaseNode* parent = nullptr);
 	virtual ~SymlinkNode();
 	void SetSymlink(NodeType type, BaseNode* dst_node);	//设置链接对象
 	virtual uint64_t GetSize();

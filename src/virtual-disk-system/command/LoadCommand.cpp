@@ -11,7 +11,7 @@ LoadCommand::~LoadCommand()
 
 }
 
-void LoadCommand::Handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
+void LoadCommand::Handle(std::vector<string_local>& args, NodeTreeManager& proxy)
 {
 
 }

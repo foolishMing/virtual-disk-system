@@ -11,7 +11,7 @@ ClsCommand::~ClsCommand()
 
 }
 
-void ClsCommand::Handle(std::vector<string_local>& args, NodeTreeProxy& proxy)
+void ClsCommand::Handle(std::vector<string_local>& args, NodeTreeManager& proxy)
 {
 	system("cls");
 	PrintBanner();

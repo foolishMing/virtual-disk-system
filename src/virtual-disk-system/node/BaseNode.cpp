@@ -3,7 +3,7 @@
 
 BaseNode::BaseNode() {}
 
-BaseNode::BaseNode(string_local& name, BaseNode* parent)
+BaseNode::BaseNode(string_local name, BaseNode* parent)
 {
 	m_name = name;
 	m_parent = parent;

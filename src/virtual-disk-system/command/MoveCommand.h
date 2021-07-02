@@ -7,5 +7,5 @@ class MoveCommand : public BaseCommand
 public:
 	explicit MoveCommand();
 	~MoveCommand();
-	virtual void Handle(std::vector<string_local>& args, NodeTreeProxy& proxy);
+	virtual void Handle(std::vector<string_local>& args, NodeTreeManager& proxy);
 };

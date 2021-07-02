@@ -1,10 +1,11 @@
 #include "DirNode.h"
 
 
-DirNode::DirNode(string_local& name, BaseNode* parent)
+DirNode::DirNode(string_local name, BaseNode* parent)
 {
 	m_type = NodeType::Directory;
 	m_parent = parent;
+	m_name = name;
 }
 
 DirNode::~DirNode()
@@ -51,4 +52,16 @@ void DirNode::DisposeChildByName(const string_local& node_name)
 void DirNode::DeleteChildByName(const string_local& node_name)
 {
 	//update
+}
+
+bool DirNode::ContainsChild(const string_local& node_name)
+{
+	for (auto item : m_children)
+	{
+		if (item->IsNameEqualsTo(node_name))
+		{
+			return true;
+		}
+	}
+	return false;
 }
