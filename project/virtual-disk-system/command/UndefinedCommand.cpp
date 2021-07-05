@@ -11,7 +11,7 @@ UndefinedCommand::~UndefinedCommand()
 
 }
 
-void UndefinedCommand::Handle(std::vector<string_local>& args, NodeTreeManager& proxy)
+void UndefinedCommand::Handle(const CommandArg& arg, NodeTreeManager& proxy)
 {
 	Console::Write::PrintLine(Tips::gsUndefinedCommand);	//ÎŞĞ§µÄÃüÁî
 }

@@ -1,9 +1,11 @@
 #include "application.h"
+#include "./command/CommandArgs.h"
 #include "./util/Banner.h"
-#include "./util/Console.hpp"
 
 Application::Application()
 {
+	//spdlog::error("...");
+	//spdlog::critical("...");
 }
 
 Application::~Application()
@@ -18,8 +20,8 @@ void Application::Create()
 	//创建资源管理器
 	m_node_tree_manager.Create();
 	//创建命令工厂
-	m_command_factory = new CommandFactory();
-	m_command_factory->Create();
+	m_cmd_factory = new CommandFactory();
+	m_cmd_factory->Create();
 	PrintBanner();
 	m_isCreate = true;
 }
@@ -28,10 +30,10 @@ void Application::Destroy()
 {
 	assert(m_isCreate == true);
 	//销毁命令工厂
-	if (nullptr != m_command_factory)
+	if (nullptr != m_cmd_factory)
 	{
-		m_command_factory->Destroy();
-		m_command_factory = nullptr;
+		m_cmd_factory->Destroy();
+		m_cmd_factory = nullptr;
 	}
 	//销毁资源管理器
 	m_node_tree_manager.Destroy();	
@@ -54,7 +56,7 @@ void Application::Run()
 	assert(m_isCreate == true);
 	if (!m_isCreate)
 	{
-		Console::Write::PrintLine(L"应用程序未初始化");
+		Log::LogError(L"应用程序未初始化");
 		return;
 	}
 	typedef Application::RunStatus stat;
@@ -63,7 +65,15 @@ void Application::Run()
 	{
 		PrintCurrentPath();
 		ReadLine(input);
-		if(stat::exit == ExecCommand(input))	
+		input = StringTools::StringTrimed(input);
+		//忽略空串
+		if (input.length() == 0)
+		{
+			continue;
+		}
+		auto stat = ExecCommand(input);
+		//结束程序
+		if(stat::exit == stat)	
 		{
 			return;
 		}
@@ -71,72 +81,33 @@ void Application::Run()
 }
 
 /*
-* 1、in -> tokens
-* 2、tokens -> command
+* 1、in -> args{cmd_type + options + paths}
+* 2、args -> cmd_instance
+* 3、cmd_instance->exec()
 */
 Application::RunStatus Application::ExecCommand(const string_local& in)
 {
-	CommandType cmd_type;
-	std::vector<string_local> cmd_args = {};
-	m_command_factory->TokenSplit(in, cmd_type, cmd_args);
+	assert(0 != in.length());	//输入串长度不能为0
+	//std::vector<string_local> delimits{ L" " };
+	//解析输入字串得到指令参数
+	CommandArg arg;
+	arg.Analyse(in);
+	//获取命令类型
+	auto lowercase_cmd_token = arg.GetLowercaseToken();
+	auto cmd_type = m_cmd_factory->GetCommandTypeByToken(lowercase_cmd_token);
 	//退出应用程序
 	if (cmd_type == CommandType::quit) {
 		return RunStatus::exit;
 	}
-	auto cmd_instance = m_command_factory->GetCommandInstance(cmd_type);
-	cmd_instance->Handle(cmd_args, m_node_tree_manager);
-
+	//获取命令实例
+	auto cmd_instance = m_cmd_factory->GetCommandInstance(cmd_type);
+	//执行命令
+	cmd_instance->Handle(arg, m_node_tree_manager);
 	return RunStatus::normal;
 }
 
 
-//error:这个方法接收宽字符之后path创建失败
-bool Application::IsPathExist(const string_local& str)
-{
-	std::filesystem::path p(str);
-	if (exists(p)) {
-		return true;
-	}
-	return false;
-}
 
-std::vector<string_local> Application::StringSplit(const string_local& in, const string_local& delimit)
-{
-	std::vector<string_local> vec;
-	string_local tmp = in;
-	size_t nPos = in.find(delimit.c_str());
-	while (string_local::npos != nPos)
-	{
-		string_local item = tmp.substr(0, nPos);
-		vec.push_back(item);
-		tmp = tmp.substr(nPos + delimit.length());
-		nPos = tmp.find(delimit.c_str());
-	}
-	return vec;
-}
 
-//update : 待测试
-std::vector<string_local> Application::StringSplits(const string_local& in, const std::vector<string_local>& delimits)
-{
-	std::vector<string_local> vec;
-	string_local tmp = in;
-	size_t nPos = string_local::npos;
-	string_local cur_delimit;
-	for (auto item : delimits)
-	{
-		auto next_pos = in.find(item.c_str());
-		if (next_pos < nPos)
-		{
-			nPos = next_pos;
-			cur_delimit = item;
-		}
-	}
-	while (string_local::npos != nPos)
-	{
-		string_local item = tmp.substr(0, nPos);
-		vec.push_back(item);
-		tmp = tmp.substr(nPos + cur_delimit.length());
-		nPos = tmp.find(cur_delimit.c_str());
-	}
-	return vec;
-}
+
+

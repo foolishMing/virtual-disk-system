@@ -10,7 +10,7 @@ RdCommand::~RdCommand()
 
 }
 
-void RdCommand::Handle(std::vector<string_local>& args, NodeTreeManager& proxy)
+void RdCommand::Handle(const CommandArg& arg, NodeTreeManager& proxy)
 {
 
 }

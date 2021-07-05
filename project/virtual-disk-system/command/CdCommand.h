@@ -7,5 +7,5 @@ class CdCommand : public BaseCommand
 public:
 	explicit CdCommand();
 	~CdCommand();
-	virtual void Handle(const std::vector<string_local>& args, NodeTreeManager& node_tree_manager);
+	virtual void Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager);
 };

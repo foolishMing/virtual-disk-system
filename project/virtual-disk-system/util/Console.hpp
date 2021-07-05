@@ -1,8 +1,11 @@
 #pragma once
 
+#ifndef __CONSOLE_H__
+#define __CONSOLE_H__
+
 #include <string>
 #include <iostream>
-#include "Common.h"
+#include "Define.h"
 
 class Console {
 public:
@@ -12,16 +15,17 @@ public:
 		std::wcout.imbue(std::locale(std::locale(), "", LC_CTYPE)); // ÖÐÎÄÊä³ö
 	}
 
-    class Read 
+	class Read
 	{
 	public:
 		static void ReadLine(string_local& input)
 		{
 			std::getline(std::wcin, input);
+			//Log::LogInfo(fmt::format(L"getline : {}", input).c_str());
 		}
 	};
-    
-	class Write 
+
+	class Write
 	{
 	public:
 		static void Print(const string_local& output)
@@ -35,6 +39,10 @@ public:
 		}
 	};
 };
+
+#endif // !__CONSOLE_H__
+
+
 
 
 

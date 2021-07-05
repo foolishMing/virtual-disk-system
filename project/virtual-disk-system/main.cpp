@@ -1,5 +1,4 @@
 #include "./application.h"
-#include "./command/BaseCommand.h"
 
 int main(int argc, char* argv[])
 {	

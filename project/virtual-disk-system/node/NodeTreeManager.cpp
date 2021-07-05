@@ -16,6 +16,7 @@ void NodeTreeManager::Create()
 	m_tree = new NodeTree();
 	m_tree->Create();
 	InitDrivers();
+	Log::LogInfo(L"node tree manager is created.");
 }
 
 void NodeTreeManager::Destroy()
@@ -25,16 +26,17 @@ void NodeTreeManager::Destroy()
 		m_tree->Destroy();
 		m_tree = nullptr;
 	}
-	if (m_drivers.size() != 0) //删除驱动列表里的指针
+	if (m_drivens.size() != 0) //删除驱动列表里的指针
 	{
-		m_drivers.clear();	
+		m_drivens.clear();	
 	}
+	Log::LogInfo(L"node tree manager is destroyed.");
 }
 
-string_local NodeTreeManager::GetCurrentPath()
+string_local NodeTreeManager::GetCurrentPath() const
 {
 	assert(nullptr != m_tree);
-	auto node = m_cur_dir;
+	BaseNode* node = m_working_dir;
 	string_local ret = L"";
 	while (node != nullptr)
 	{
@@ -59,8 +61,8 @@ void NodeTreeManager::InitDrivers()
 	{
 		auto node = new DirNode(item);
 		m_tree->InsertNode(m_tree->GetRoot(), node);
-		m_drivers.push_back(node);
+		m_drivens.push_back(node);
 	}
-	m_cur_driver = m_drivers[0];
-	m_cur_dir = m_cur_driver;
+	m_cur_driven = m_drivens[0];
+	m_working_dir = m_cur_driven;
 }

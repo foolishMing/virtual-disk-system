@@ -15,6 +15,7 @@ void NodeTree::Create()
 {
 	string_local nil_str = L"";
 	m_root = new DirNode(nil_str);
+	Log::LogInfo(L"node tree is created.");
 }
 
 void NodeTree::Destroy()

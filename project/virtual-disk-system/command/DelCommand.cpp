@@ -10,7 +10,7 @@ DelCommand::~DelCommand()
 
 }
 
-void DelCommand::Handle(std::vector<string_local>& args, NodeTreeManager& proxy)
+void DelCommand::Handle(const CommandArg& arg, NodeTreeManager& proxy)
 {
 
 }

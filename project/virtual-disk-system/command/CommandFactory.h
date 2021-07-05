@@ -11,6 +11,7 @@
 #include "RdCommand.h"
 #include "RenCommand.h"
 #include "SaveCommand.h"
+#include "ClsCommand.h"
 #include "UndefinedCommand.h"
 
 enum CommandType {
@@ -40,7 +41,6 @@ public:
 	BaseCommand* GetCommandInstance(CommandType type);	//获取命令实例
 	CommandType GetCommandTypeByToken(string_local& token);	//获取命令类型
 
-	void TokenSplit(const string_local& in, CommandType& type, std::vector<string_local>& args);	//对用户输入进行分割
 
 private:
 	std::map<CommandType, BaseCommand*> m_cmd_instance_map;

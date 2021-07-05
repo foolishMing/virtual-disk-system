@@ -5,7 +5,6 @@
 #include <atlstr.h>
 #include <cstring>
 #include <cstdlib>
-#include <filesystem>
 #include <iostream>
 #include <string>
 #include "./command/BaseCommand.h"
@@ -15,7 +14,7 @@
 
 class Application : Object {
 public:
-    enum class RunStatus {										//程序运行状态
+    enum class RunStatus { //程序运行状态
 		normal = 0,
 		exit,
 	};
@@ -25,17 +24,14 @@ public:
 	virtual void Destroy();
 	void Run();
 	void PrintCurrentPath();
-	void ReadLine(string_local& input);								//读取用户输入
-	Application::RunStatus ExecCommand(const string_local& strCmd);		//返回程序运行状态
+	void ReadLine(string_local& input);	//读取用户输入
+	Application::RunStatus ExecCommand(const string_local& strCmd); //返回程序运行状态
 private:
 	bool m_isCreate = false;
 
-	NodeTreeManager m_node_tree_manager;	//文件树管理类
-	CommandFactory* m_command_factory = nullptr; //指令工厂
+	NodeTreeManager m_node_tree_manager; //文件树管理类
+	CommandFactory* m_cmd_factory = nullptr; //指令工厂
 
-	bool IsPathExist(const string_local& str);
-	std::vector<string_local> StringSplit(const string_local& in, const string_local& delimit = L" ");//字符串分割，默认分隔符为空格
-	std::vector<string_local> StringSplits(const string_local& in, const std::vector<string_local>& delimits); //字符串分割，传入分隔符列表
 };
 
 #endif // !__APPLICATION_H__

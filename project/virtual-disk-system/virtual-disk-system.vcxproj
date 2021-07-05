@@ -23,7 +23,7 @@
     <ProjectGuid>{0D828E25-6A1A-4BD4-BD21-2B3ED958EC3E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>virtualdisksystem</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -109,12 +109,13 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Administrator\Documents\github\foolishMing\virtual-disk-system\project\virtual-disk-system\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>./include/spdlogd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -160,6 +161,7 @@
     <ClCompile Include="command\BaseCommand.cpp" />
     <ClCompile Include="command\CdCommand.cpp" />
     <ClCompile Include="command\ClsCommand.cpp" />
+    <ClCompile Include="command\CommandArgs.cpp" />
     <ClCompile Include="command\CommandFactory.cpp" />
     <ClCompile Include="command\CopyCommand.cpp" />
     <ClCompile Include="command\DelCommand.cpp" />
@@ -181,12 +183,16 @@
     <ClCompile Include="node\SymlinkNode.cpp" />
     <ClCompile Include="util\Banner.cpp" />
     <ClCompile Include="util\Common.cpp" />
+    <ClCompile Include="util\Define.cpp" />
+    <ClCompile Include="util\Log.cpp" />
+    <ClCompile Include="util\StringTool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="command\BaseCommand.h" />
     <ClInclude Include="command\CdCommand.h" />
     <ClInclude Include="command\ClsCommand.h" />
+    <ClInclude Include="command\CommandArgs.h" />
     <ClInclude Include="command\CommandFactory.h" />
     <ClInclude Include="command\CopyCommand.h" />
     <ClInclude Include="command\DelCommand.h" />
@@ -208,6 +214,9 @@
     <ClInclude Include="util\Banner.h" />
     <ClInclude Include="util\Common.h" />
     <ClInclude Include="util\Console.hpp" />
+    <ClInclude Include="util\Define.h" />
+    <ClInclude Include="util\Log.h" />
+    <ClInclude Include="util\StringTool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

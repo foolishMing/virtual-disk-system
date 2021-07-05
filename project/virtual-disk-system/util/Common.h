@@ -1,42 +1,26 @@
 #pragma once
-#ifndef COMMON_H
-#define COMMON_H
-#include <algorithm>
-#include <cstdio>
-#include <cstdlib>
-#include <iostream>
-#include <memory>
-#include <map>
-#include <string>
-#include <vector>
-#include <cassert>
-
-#ifndef interface
-#define __struct__ struct
-#define interface __struct__
-#endif 
-
-//定义本地字符集
-typedef std::wstring string_local;
-typedef wchar_t char_local;
+#ifndef __COMMON_H__
+#define __COMMON_H__
 
 
 
+#include "StringTool.h"
+#include "Log.h"
+#include "Console.hpp"
+//#define SPDLOG_WCHAR_TO_UTF8_SUPPORT
+//#include "../include/spdlog/spdlog.h"
+//#include "../include/spdlog/sinks/rotating_file_sink.h"
 
-//元对象，所有对象都必须继承
-interface Object
+namespace PathTools
 {
-	virtual void Create() = 0;
-	virtual void Destroy() = 0;
-};
+	bool IsDiskPathExist(const string_local& str);
+}
+
 
 #endif // !COMMON_H
 
 
-//全局常量
-namespace Tips {
-	extern const string_local gsUndefinedCommand;	//不是内部或外部命令,也不是可运行的程序
-}
+
 
 
 

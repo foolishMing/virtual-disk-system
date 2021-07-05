@@ -13,7 +13,7 @@ public:
 	~NodeTreeManager();
 	virtual void Create();
 	virtual void Destroy();
-	string_local GetCurrentPath(); //获取当前(目录)节点的路径
+	string_local GetCurrentPath() const; //获取当前(目录)节点的路径
 
 	/////dir [/s] [/ad] [path1] [path2] ...
 	//void DisplayNodeByPathsWithArgs(std::vector<string_local>& paths, std::vector<string_local>& args);	//列出目录中的文件和子目录列表
@@ -56,9 +56,9 @@ private:
 
 private:
 	NodeTree* m_tree = nullptr;
-	std::vector<BaseNode*> m_drivers;	//驱动列表(根目录)
-	BaseNode* m_cur_driver = nullptr;	//当前驱动(根目录)
-	BaseNode* m_cur_dir = nullptr;		//当前目录
+	std::vector<BaseNode*> m_drivens;	//驱动列表(根目录)
+	BaseNode* m_cur_driven = nullptr;	//当前驱动(根目录)
+	BaseNode* m_working_dir = nullptr;		//工作目录
 
 	std::vector<string_local> m_driver_name_vec = { L"C:", L"D:", L"E:", L"F:", L"G" };
 	void InitDrivers();

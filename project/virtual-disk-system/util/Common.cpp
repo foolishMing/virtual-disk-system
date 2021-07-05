@@ -1,7 +1,22 @@
 #include "Common.h"
 
 
-using namespace Tips;
-namespace Tips {
-	const string_local gsUndefinedCommand = L"不是内部或外部命令,也不是可运行的程序";
-};
+
+
+
+
+
+
+namespace PathTools
+{
+	bool IsDiskPathExist(const string_local& str)
+	{
+		std::filesystem::path p(str);
+		if (exists(p)) {
+			return true;
+		}
+		return false;
+	}
+}
+
+

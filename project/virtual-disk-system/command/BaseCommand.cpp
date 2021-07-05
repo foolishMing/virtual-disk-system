@@ -15,7 +15,7 @@ void BaseCommand::Handle()
 
 }
 
-void BaseCommand::Handle(const std::vector<string_local>& args, NodeTreeManager& node_tree_manager)
+void BaseCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager)
 {
 
 }

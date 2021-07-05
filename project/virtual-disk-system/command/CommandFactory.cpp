@@ -84,6 +84,9 @@ BaseCommand* CommandFactory::CreateCommandInstance(CommandType type)
 	case load:
 		instance = new LoadCommand();
 		break;
+	case cls:
+		instance = new ClsCommand();
+		break;
 	default:
 		instance = new UndefinedCommand();
 		break;
@@ -92,24 +95,25 @@ BaseCommand* CommandFactory::CreateCommandInstance(CommandType type)
 	return instance;
 }
 
+//约束 ： tail是不可达的CommandType
 BaseCommand* CommandFactory::GetCommandInstance(CommandType type)
 {
-	assert(type != CommandType::tail);
+	assert(CommandType::tail != type);
 	auto item = m_cmd_instance_map.find(type);
 	return item->second;
 }
 
 
+//约束 ： token中不能出现大写字母
 CommandType CommandFactory::GetCommandTypeByToken(string_local& token)
 {
+	assert(false == StringTools::HasUppercase(token));
+	//查找指令
 	if (m_cmd_token_map.count(token)) {
 		return m_cmd_token_map[token];
 	}
 	return CommandType::undefine;
 }
 
-void CommandFactory::TokenSplit(const string_local& in, CommandType& type, std::vector<string_local>& args)
-{
 
-}
 

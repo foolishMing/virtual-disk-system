@@ -9,8 +9,12 @@
     - [开发环境](#开发环境)
     - [第三方工具](#第三方工具)
       - [Catch2](#catch2)
+        - [下载地址](#下载地址)
+        - [VS项目配置](#vs项目配置)
       - [CrashRpt](#crashrpt)
-      - [Log4CPP](#log4cpp)
+      - [spdLog](#spdlog)
+        - [下载地址](#下载地址-1)
+        - [VS项目配置](#vs项目配置-1)
   - [参考资料](#参考资料)
 ## 工作进度
 
@@ -19,7 +23,8 @@
 | 2021-06-25 | [doc] 创建需求分析文档                                       | v0.0     |
 | 2021-06-28 | [doc] 完成需求分析文档                                       | v0.0     |
 | 2021-06-29 | [doc] 逻辑方案完成了类图的框架设计;<br />[tools] 引入单元测试框架Catch2 | v0.0     |
-| 2021-07-02 | [doc] 完成了类的详细设计及代码逻辑框架 | v0.1     |
+| 2021-07-02 | [doc] 完成了类的详细设计及代码逻辑框架                       | v0.1     |
+| 2021-07-05 | [tools]引入日志框架spdlog<br />[update]完成了对用户输入的解析 | v0.2     |
 
 ## 概述
 
@@ -57,11 +62,29 @@ C++17
 
 #### Catch2
 
-[项目地址](https://github.com/catchorg/Catch2)
+##### 下载地址
+
+https://github.com/catchorg/Catch2
+
+##### VS项目配置
 
 #### CrashRpt
 
-#### Log4CPP
+#### spdLog
+
+##### 下载地址
+
+https://github.com/gabime/spdlog
+
+##### VS项目配置
+
++ 添加静态库文件
+
+![image-20210705090403131](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210705090403131.png)
+
++ 添加头文件包含路径
+
+![image-20210705090504251](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210705090504251.png)
 
 
 

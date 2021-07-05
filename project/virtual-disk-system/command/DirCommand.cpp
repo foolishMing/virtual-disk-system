@@ -10,6 +10,6 @@ DirCommand::~DirCommand()
 
 }
 
-void DirCommand::Handle(std::vector<string_local>& args, NodeTreeManager& proxy)
+void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& proxy)
 {
 }
