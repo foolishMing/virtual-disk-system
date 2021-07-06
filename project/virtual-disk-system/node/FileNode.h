@@ -12,7 +12,7 @@ public:
 
 	string_local GetDataByCopy();
 	void SetDataByCopy(const string_local str);
-	virtual uint64_t GetSize();
+	virtual size_t GetSize();
 
 private:
 	string_local m_file_data;

@@ -19,7 +19,7 @@ public:
 	//字符串分割（基于空格），但不处理被引号包裹的空格
 	static bool StringSplitBySpaceWithQuotes(const string_local& in, std::vector<string_local>& out);
 	//去除首尾空格
-	static string_local& StringTrimed(string_local& s);
+	static string_local StringTrimed(const string_local& s);
 	//判断字符串是否相等
 	static bool IsEqual(const string_local& lhs, const string_local& rhs);
 	//字符串转小写

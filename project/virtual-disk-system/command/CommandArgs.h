@@ -4,7 +4,6 @@
 
 #include "../util/Common.h"
 
-
 class CommandArg
 {
 public :
@@ -16,16 +15,14 @@ public :
 	//而args和paths可以以任意顺序排列
 	//paths可以接收任意合法字符
 	void Analyse(const string_local& in);
-	string_local GetLowercaseToken()
-	{
-		return StringTools::ToLowercase(cmd_token);
-	}
+	string_local GetLowercaseToken();
+	//测试用，格式化打印参数列表
+	void Print();
 
 public:
 	string_local cmd_token = L"";
 	std::vector<string_local> options = {};	//选项列表
 	std::vector<string_local> paths = {};	//路径列表
 };
-
 
 #endif // !__COMMANDARGS_H__

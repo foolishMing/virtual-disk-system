@@ -2,18 +2,21 @@
 * 文件树管理类
 */
 #pragma once
+#ifndef __NODETREEMANAGER_H__
+#define __NODETREEMANAGER_H__
+
 #include "../util/Common.h"
 #include "NodeTree.h"
 
-
-
-class NodeTreeManager : Object{
+class NodeTreeManager : Object {
 public:
 	explicit NodeTreeManager();
 	~NodeTreeManager();
 	virtual void Create();
 	virtual void Destroy();
+public:
 	string_local GetCurrentPath() const; //获取当前(目录)节点的路径
+	void PrintDirectoryInfo(BaseNode* node);	//打印当前目录的信息
 
 	/////dir [/s] [/ad] [path1] [path2] ...
 	//void DisplayNodeByPathsWithArgs(std::vector<string_local>& paths, std::vector<string_local>& args);	//列出目录中的文件和子目录列表
@@ -63,3 +66,5 @@ private:
 	std::vector<string_local> m_driver_name_vec = { L"C:", L"D:", L"E:", L"F:", L"G" };
 	void InitDrivers();
 };
+
+#endif // !__NODETREEMANAGER_H__

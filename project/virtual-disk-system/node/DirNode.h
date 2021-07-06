@@ -13,8 +13,8 @@ public:
 	void DeleteChildByName(const string_local& node_name);	//根据节点名称删除子节点
 	void DisposeChildByName(const string_local& node_name);	//根据节点名称移除该节点(不删除)
 	void AppendChild(BaseNode* node);	//向Children列表末尾追加(非空)子节点
-	virtual uint64_t GetSize();
-
+	virtual size_t GetSize();
+	std::vector<BaseNode*> Children() { return m_children; }
 private:
 	std::vector<BaseNode*> m_children;
 };

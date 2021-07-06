@@ -59,23 +59,22 @@ void Application::Run()
 		Log::LogError(L"应用程序未初始化");
 		return;
 	}
-	typedef Application::RunStatus stat;
 	string_local input;
 	while (true)
 	{
 		PrintCurrentPath();
 		ReadLine(input);
-		input = StringTools::StringTrimed(input);
+		auto input_trim = StringTools::StringTrimed(input);
 		//忽略空串
-		if (input.length() == 0)
+		if (input_trim.length() == 0)
 		{
 			continue;
 		}
-		auto stat = ExecCommand(input);
-		//结束程序
-		if(stat::exit == stat)	
+		auto stat = ExecCommand(input_trim);
+		//退出循环
+		if(Application::RunStatus::quit == stat)
 		{
-			return;
+			break;
 		}
 	}
 }
@@ -97,7 +96,7 @@ Application::RunStatus Application::ExecCommand(const string_local& in)
 	auto cmd_type = m_cmd_factory->GetCommandTypeByToken(lowercase_cmd_token);
 	//退出应用程序
 	if (cmd_type == CommandType::quit) {
-		return RunStatus::exit;
+		return RunStatus::quit;
 	}
 	//获取命令实例
 	auto cmd_instance = m_cmd_factory->GetCommandInstance(cmd_type);

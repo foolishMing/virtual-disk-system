@@ -16,7 +16,7 @@ class Application : Object {
 public:
     enum class RunStatus { //³ÌÐòÔËÐÐ×´Ì¬
 		normal = 0,
-		exit,
+		quit,
 	};
 	explicit Application();
 	virtual ~Application();

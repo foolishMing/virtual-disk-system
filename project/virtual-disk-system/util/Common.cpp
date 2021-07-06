@@ -1,11 +1,5 @@
 #include "Common.h"
-
-
-
-
-
-
-
+#include "time.h"
 
 namespace PathTools
 {
@@ -16,6 +10,14 @@ namespace PathTools
 			return true;
 		}
 		return false;
+	}
+}
+
+namespace DateTimeTools
+{
+	int StampToStandardDateTime(time_t stc, string_local& dst)
+	{
+		return 0;
 	}
 }
 

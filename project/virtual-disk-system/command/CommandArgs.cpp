@@ -1,6 +1,5 @@
 #include "CommandArgs.h"
 
-
 CommandArg::CommandArg()
 {
 
@@ -60,3 +59,33 @@ void CommandArg::Analyse(const string_local& in)
 		}
 	}
 }
+
+string_local CommandArg::GetLowercaseToken()
+{
+	return StringTools::ToLowercase(cmd_token);
+}
+
+void CommandArg::Print()
+{
+	//token
+	Console::Write::PrintLine(L"-cmd : " + cmd_token);
+	//options
+	Console::Write::PrintLine(L"-args : ");
+	for (auto item : options)
+	{
+		Console::Write::PrintLine(item);
+	}
+	//paths
+	Console::Write::PrintLine(L"-paths : ");
+	for (auto item : paths)
+	{
+		Console::Write::PrintLine(item);
+	}
+}
+
+
+
+
+
+
+

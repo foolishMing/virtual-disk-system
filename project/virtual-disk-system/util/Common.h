@@ -2,8 +2,6 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-
-
 #include "StringTool.h"
 #include "Log.h"
 #include "Console.hpp"
@@ -17,15 +15,9 @@ namespace PathTools
 }
 
 
+namespace DateTimeTools
+{
+	int StampToStandardDateTime(time_t stc, string_local& dst);
+}
+
 #endif // !COMMON_H
-
-
-
-
-
-
-
-
-
-
-

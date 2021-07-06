@@ -1,4 +1,8 @@
 #pragma once
+
+#ifndef __COMMANDFACTORY_H__
+#define __COMMANDFACTORY_H
+
 #include "BaseCommand.h"
 #include "CdCommand.h"
 #include "CopyCommand.h"
@@ -32,7 +36,7 @@ enum CommandType {
 	tail,		//结束符，无实际意义
 };
 
-class CommandFactory : Object{
+class CommandFactory : Object {
 public:
 	explicit CommandFactory();
 	~CommandFactory();
@@ -45,6 +49,11 @@ public:
 private:
 	std::map<CommandType, BaseCommand*> m_cmd_instance_map;
 	std::map<string_local, CommandType> m_cmd_token_map;
-	
+
 	BaseCommand* CreateCommandInstance(CommandType type);
 };
+
+#endif // !__COMMANDFACTORY_H__
+
+
+

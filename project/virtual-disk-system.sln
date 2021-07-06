@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "virtual-disk-system", "virtual-disk-system\virtual-disk-system.vcxproj", "{0D828E25-6A1A-4BD4-BD21-2B3ED958EC3E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{B9C75B93-5467-47E0-94C4-5D146C5C68E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{0D828E25-6A1A-4BD4-BD21-2B3ED958EC3E}.Release|x64.Build.0 = Release|x64
 		{0D828E25-6A1A-4BD4-BD21-2B3ED958EC3E}.Release|x86.ActiveCfg = Release|Win32
 		{0D828E25-6A1A-4BD4-BD21-2B3ED958EC3E}.Release|x86.Build.0 = Release|Win32
+		{B9C75B93-5467-47E0-94C4-5D146C5C68E3}.Debug|x64.ActiveCfg = Debug|x64
+		{B9C75B93-5467-47E0-94C4-5D146C5C68E3}.Debug|x64.Build.0 = Debug|x64
+		{B9C75B93-5467-47E0-94C4-5D146C5C68E3}.Debug|x86.ActiveCfg = Debug|Win32
+		{B9C75B93-5467-47E0-94C4-5D146C5C68E3}.Debug|x86.Build.0 = Debug|Win32
+		{B9C75B93-5467-47E0-94C4-5D146C5C68E3}.Release|x64.ActiveCfg = Release|x64
+		{B9C75B93-5467-47E0-94C4-5D146C5C68E3}.Release|x64.Build.0 = Release|x64
+		{B9C75B93-5467-47E0-94C4-5D146C5C68E3}.Release|x86.ActiveCfg = Release|Win32
+		{B9C75B93-5467-47E0-94C4-5D146C5C68E3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

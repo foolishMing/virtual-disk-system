@@ -44,3 +44,13 @@ bool BaseNode::IsNameEqualsTo(const string_local& name)
 	//update : ÐèÒªÖØÐ´
 	return (name == m_name);
 }
+
+time_t BaseNode::GetLatestModifiedTimeStamp() 
+{
+	return m_latest_modify_time_stamp;
+}
+
+void BaseNode::SetLatestModifiedTimeStamp(time_t ts) 
+{
+	m_latest_modify_time_stamp = ts;
+}

@@ -60,16 +60,17 @@ bool StringTools::StringSplitBySpaceWithQuotes(const string_local& in, std::vect
 }
 
 
-string_local& StringTools::StringTrimed(string_local& s)
+string_local StringTools::StringTrimed(const string_local& in)
 {
-	if (s.empty())
+	string_local out = in;
+	if (out.empty())
 	{
 		Log::LogWarn(L"不合法的操作：试图对空串进行Trimed()操作");
-		return s;
+		return out;
 	}
-	s.erase(0, s.find_first_not_of(L" "));
-	s.erase(s.find_last_not_of(L" ") + 1);
-	return s;
+	out.erase(0, out.find_first_not_of(L" "));
+	out.erase(out.find_last_not_of(L" ") + 1);
+	return out;
 }
 
 string_local StringTools::ToLowercase(const string_local& s)
