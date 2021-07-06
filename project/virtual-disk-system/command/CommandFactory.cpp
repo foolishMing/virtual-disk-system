@@ -40,7 +40,6 @@ void CommandFactory::Destroy()
 	while (iter != m_cmd_instance_map.end()) 
 	{
 	    iter->second->Destroy();
-		iter->second = nullptr;
 		iter = m_cmd_instance_map.erase(iter);
 	}
 	m_cmd_instance_map.clear();
@@ -95,7 +94,8 @@ BaseCommand* CommandFactory::CreateCommandInstance(CommandType type)
 	return instance;
 }
 
-//约束 ： tail是不可达的CommandType
+//-constraints
+//tail是不可达的CommandType
 BaseCommand* CommandFactory::GetCommandInstance(CommandType type)
 {
 	assert(CommandType::tail != type);
@@ -103,8 +103,8 @@ BaseCommand* CommandFactory::GetCommandInstance(CommandType type)
 	return item->second;
 }
 
-
-//约束 ： token中不能出现大写字母
+//-constraints
+//token中不能出现大写字母
 CommandType CommandFactory::GetCommandTypeByToken(string_local& token)
 {
 	assert(false == StringTools::HasUppercase(token));

@@ -11,7 +11,7 @@ ClsCommand::~ClsCommand()
 
 }
 
-void ClsCommand::Handle(const CommandArg& arg, NodeTreeManager& proxy)
+void ClsCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager)
 {
 	system("cls");
 	PrintBanner();

@@ -54,7 +54,7 @@ string_local NodeTreeManager::GetCurrentPath() const
 	return ret;
 }
 
-void NodeTreeManager::PrintDirectoryInfo(BaseNode* node)	//打印当前目录的信息
+void NodeTreeManager::PrintDirectoryInfo(BaseNode* node)//打印目录信息
 {
 	assert(nullptr != node);
 	assert(NodeType::Directory == node->GetType());
@@ -64,8 +64,9 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* node)	//打印当前目录的信息
 		return;
 	}
 	auto dir = static_cast<DirNode*>(node);
-	int file_cnt = 0, dir_cnt = 0;
-	size_t tot_size;
+	int file_cnt = 0;//文件数量
+	int dir_cnt = 0;//目录数量
+	size_t tot_size;//总大小
 	//遍历子节点，统计并打印节点信息{修改时间、节点类型、节点大小、节点名称}
 	for (BaseNode* node : dir->Children())
 	{
@@ -80,6 +81,7 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* node)	//打印当前目录的信息
 		}
 	}
 	//打印统计信息{文件数量、目录数量、总大小}
+	//udpate ...
 }
 
 void NodeTreeManager::InitDrivers()

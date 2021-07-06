@@ -27,7 +27,7 @@ void BaseCommand::Create()
 
 void BaseCommand::Destroy()
 {
-
+	delete this;
 }
 
 

@@ -15,6 +15,11 @@ void StringTools::StringSplitBySpace(const string_local& in, std::vector<string_
 	}
 }
 
+/*
+-constraints:
+1、以空格为分隔符
+2、引号中的空格当作普通字符处理
+*/
 bool StringTools::StringSplitBySpaceWithQuotes(const string_local& in, std::vector<string_local>& out)
 {
 	if (in.empty())
@@ -23,37 +28,35 @@ bool StringTools::StringSplitBySpaceWithQuotes(const string_local& in, std::vect
 		return false;
 	}
 	bool is_quote = false;	
-	auto char_space = L' ';
-	auto char_quote = L'"';
-	string_local buf = {};
+	string_local buffer = {};
 	for (auto item : in)
 	{
-		if (item == char_space) {//遇到空格
-			if (is_quote) //在引号中，当普通字符处理
+		if (item == CharSet::char_space) {//遇到空格
+			if (is_quote) //在引号中，空格当作普通字符处理
 			{	
-				buf += item;
+				buffer += item;
 				continue;
 			}
-			out.push_back(buf);
-			buf = {};
+			out.push_back(buffer);
+			buffer = {};
 		}
-		else if (item == char_quote)//遇到引号，改变引号状态
+		else if (item == CharSet::char_doublequote)//遇到引号，改变引号状态
 		{
 			is_quote = !is_quote;
-			buf += item ;
+			buffer += item ;
 		}
 		else
 		{
-			buf += item;
+			buffer += item;
 		}
 	}
-	//读取最后一个字符串，清空缓冲区
-	if (!buf.empty())
+	//清空缓冲区
+	if (!buffer.empty())
 	{
-		out.push_back(buf);
-		buf = {};
+		out.push_back(buffer);
 	}
-	if (is_quote == true) { //存在未匹配的单引号，不合法的输入
+	//存在未匹配的单引号，不合法的输入
+	if (is_quote == true) { 
 		return false;
 	}
 	return true;
@@ -119,7 +122,7 @@ string_local StringTools::GetStringSuffix(const string_local& in, size_t cnt)
 		Log::LogWarn(L"不合法的操作：试图获取空串的后缀子串");
 		return L"";
 	}
-	int max_len = std::min(in.length(), cnt);
+	int max_len = static_cast<int>(std::min(in.length(), cnt));
 	return in.substr(in.size() - cnt, cnt);
 }
 

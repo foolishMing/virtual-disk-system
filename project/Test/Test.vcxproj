@@ -118,6 +118,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="test_PathTool.cpp" />
     <ClCompile Include="test_StringTool.cpp" />
   </ItemGroup>
   <ItemGroup>

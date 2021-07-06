@@ -13,4 +13,3 @@ public:
 };
 
 #endif // !__MDCOMMAND_H__
-

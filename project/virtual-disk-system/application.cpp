@@ -80,15 +80,14 @@ void Application::Run()
 }
 
 /*
-* 1、in -> args{cmd_type + options + paths}
+* 1、in -> 
 * 2、args -> cmd_instance
 * 3、cmd_instance->exec()
 */
 Application::RunStatus Application::ExecCommand(const string_local& in)
 {
-	assert(0 != in.length());	//输入串长度不能为0
-	//std::vector<string_local> delimits{ L" " };
-	//解析输入字串得到指令参数
+	assert(0 != in.length());
+	//解析输入字串得到指令参数args{cmd_type + options + paths}
 	CommandArg arg;
 	arg.Analyse(in);
 	//获取命令类型

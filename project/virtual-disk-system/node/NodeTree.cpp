@@ -55,7 +55,7 @@ bool NodeTree::FindNode(std::vector<BaseNode*>& node_path_vec, std::vector<strin
 {
 	assert(0 == node_path_vec.size());
 	auto parrent = m_root;
-	int len = name_list.size();
+	int len = static_cast<int>(name_list.size());
 	for (int i = 0; i < len; i++)
 	{
 		bool is_find = false;

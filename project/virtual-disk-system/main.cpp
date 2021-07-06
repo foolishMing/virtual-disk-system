@@ -1,5 +1,8 @@
 #include "./application.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/common.h"
 
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 int main(int argc, char* argv[])
 {	
@@ -7,5 +10,6 @@ int main(int argc, char* argv[])
 	app.get()->Create();
 	app.get()->Run();
 	app.get()->Destroy();
+
 	return 0;
 }

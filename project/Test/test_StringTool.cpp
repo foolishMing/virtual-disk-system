@@ -2,6 +2,8 @@
 
 TEST_CASE("IsStringFuzzyEqualTo(const string_local& text, const string_local& pattern)")
 {
+	string_local text_str;
+	string_local pattern_str;
 	SECTION("“Ï≥£¥¶¿Ì")
 	{
 		//update ...
@@ -13,17 +15,19 @@ TEST_CASE("IsStringFuzzyEqualTo(const string_local& text, const string_local& pa
 		{
 			SECTION("require true")
 			{
-				string_local text_str = L"";
-				string_local pattern_str = L"";
+				text_str = L"ajkfbvw";
+				pattern_str = L"ajkfbvw";
 				bool ret = StringTools::IsStringFuzzyEqualTo(text_str, pattern_str);
 				REQUIRE(ret == true);
 			}
 
 			SECTION("require false")
 			{
-
-			}
-			
+				text_str = L"ajkfbvw";
+				pattern_str = L"ajkfbv";
+				bool ret = StringTools::IsStringFuzzyEqualTo(text_str, pattern_str);
+				REQUIRE(ret == false);
+			}			
 		}
 		SECTION("alphabet + number")
 		{

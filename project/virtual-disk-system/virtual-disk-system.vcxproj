@@ -185,6 +185,7 @@
     <ClCompile Include="util\Common.cpp" />
     <ClCompile Include="util\Define.cpp" />
     <ClCompile Include="util\Log.cpp" />
+    <ClCompile Include="util\PathTool.cpp" />
     <ClCompile Include="util\StringTool.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +217,7 @@
     <ClInclude Include="util\Console.hpp" />
     <ClInclude Include="util\Define.h" />
     <ClInclude Include="util\Log.h" />
+    <ClInclude Include="util\PathTool.h" />
     <ClInclude Include="util\StringTool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

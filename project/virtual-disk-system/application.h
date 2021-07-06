@@ -28,10 +28,8 @@ public:
 	Application::RunStatus ExecCommand(const string_local& strCmd); //返回程序运行状态
 private:
 	bool m_isCreate = false;
-
 	NodeTreeManager m_node_tree_manager; //文件树管理类
 	CommandFactory* m_cmd_factory = nullptr; //指令工厂
-
 };
 
 #endif // !__APPLICATION_H__

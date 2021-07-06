@@ -14,13 +14,7 @@ void CommandArg::Analyse(const string_local& in)
 {
 	assert(0 != in.size());
 	std::vector<string_local> vec = {};
-	//StringTools::StringSplitBySpace(in, vec);
 	bool ok = StringTools::StringSplitBySpaceWithQuotes(in, vec);
-	//test ：打印分割得到的参数列表
-	for (auto item : vec)
-	{
-		Console::Write::PrintLine(item);
-	}
 	//所有字符串转小写
 	for (auto item : vec)
 	{
