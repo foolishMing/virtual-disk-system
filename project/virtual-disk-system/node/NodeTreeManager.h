@@ -35,8 +35,9 @@ public:
 	//md path [path1] ...
 	bool MkdirByTokens(const std::vector<string_local>& tokens);
 
-	/////cd [path]
-	//void ChangeDirToPathWithArgs(string_local& memory_path, std::vector<string_local>& args);	//切换路径或显示当前路径
+	//切换路径或显示当前路径
+	//cd [path]
+	bool ChangeDirByTokens(const std::vector<string_local>& tokens);	
 
 	/////copy path1 path2 [/y]
 	//void CopyFileFromSrcToDstWithArgs(string_local& src_path, string_local& dst_path, std::vector<string_local>& args); //复制文件，需要支持磁盘路径与通配符
@@ -83,7 +84,10 @@ private:
 	bool IsAbsolutePath(const std::vector<string_local>& tokens);
 	
 	//查找节点
-	bool FindNodeByTokens(const std::vector<string_local>& tokens, BaseNode* target_node = nullptr);
+	bool FindNodeByTokens(const std::vector<string_local>& tokens, BaseNode** target_node = nullptr);
+
+	//获得节点路径信息
+	string_local GetPathByNode(BaseNode* node) const;
 };
 
 #endif // !__NODETREEMANAGER_H__
