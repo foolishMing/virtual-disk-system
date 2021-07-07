@@ -18,9 +18,9 @@ void PrintBanner() {
 	//std::cout << "     \\  \\ \\`-.   \\_ __\\ /__ _/   .-\\` /  /" << std::endl;
 	//std::cout << "======\\`-.____\\`-.___\\_____/___.-\\`____.-\'=====" << std::endl;
 	//std::cout << "                   \\`=---=\'" << std::endl;
+	//std::cout << "*                                             *" << std::endl;
 	std::cout << "* * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
-	std::cout << "*                                             *" << std::endl;
-	std::cout << "*            Virtual Disk System              *" << std::endl;
-	std::cout << "*                                             *" << std::endl;
+	std::cout << "*           [Virtual Disk System]             *" << std::endl;
+	std::cout << "*                 by hsm :)                   *" << std::endl;
 	std::cout << "* * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
 }

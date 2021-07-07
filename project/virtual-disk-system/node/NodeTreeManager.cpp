@@ -1,5 +1,6 @@
 #include "NodeTreeManager.h"
-
+#include <queue>
+#include <deque>
 
 NodeTreeManager::NodeTreeManager()
 {
@@ -15,7 +16,7 @@ void NodeTreeManager::Create()
 {
 	m_tree = new NodeTree();
 	m_tree->Create();
-	InitDrivers();
+	InitDrivens();
 	Log::LogInfo(L"node tree manager is created.");
 }
 
@@ -54,6 +55,7 @@ string_local NodeTreeManager::GetCurrentPath() const
 	return ret;
 }
 
+//<udpate ...>
 void NodeTreeManager::PrintDirectoryInfo(BaseNode* node)//打印目录信息
 {
 	assert(nullptr != node);
@@ -81,10 +83,9 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* node)//打印目录信息
 		}
 	}
 	//打印统计信息{文件数量、目录数量、总大小}
-	//udpate ...
 }
 
-void NodeTreeManager::InitDrivers()
+void NodeTreeManager::InitDrivens()
 {
 	assert(nullptr != m_tree);
 	for (auto item : m_driver_tokens)
@@ -98,25 +99,8 @@ void NodeTreeManager::InitDrivers()
 }
 
 
-//<update ...>
 //-constraints:
-//1、path可以是绝对路径或相对路径，如果是相对路径，需要先转化为绝对路径
-//2、path的最后一个token为.或..时返回true
-//3、不支持模糊匹配
-bool NodeTreeManager::IsPathExist(const std::vector<string_local>& tokens)
-{
-	return true;
-}
-
-
-//<update ...>
-bool NodeTreeManager::MkdirByPathByTokens(const std::vector<string_local>& tokens)
-{
-	return false;
-}
-
-//-constraints:
-//1、第一个token是盘符
+//1、绝对路径的第一个token一定是盘符
 bool NodeTreeManager::IsAbsolutePath(const std::vector<string_local>& tokens)
 {
 	if (0 == tokens.size())
@@ -128,5 +112,116 @@ bool NodeTreeManager::IsAbsolutePath(const std::vector<string_local>& tokens)
 		return true;
 	}
 	return false;
+}
+
+
+//<update ...>
+//-constraints
+//1、可以是绝对路径或相对路径，需要进行判断
+//2、token为.或..是合法的
+//3、token为..时，需要判断空指针
+//4、如果待查找的尾节点是.或..应当进行特殊处理
+bool NodeTreeManager::IsPathExist(const std::vector<string_local>& tokens)
+{
+	bool ret = FindNodeByTokens(tokens);
+	return ret;
+}
+
+
+bool NodeTreeManager::FindNodeByTokens(const std::vector<string_local>& tokens, BaseNode* target_node)
+{
+	auto cur_dir = static_cast<DirNode*>((IsAbsolutePath(tokens)) ? m_tree->GetRoot() : m_working_dir);
+	int tail = tokens.size();
+	//搜索目录节点
+	for (int index = 0; index < tail - 1; index++)
+	{
+		string_local cur_name = tokens[index];
+		DirNode* next_dir = nullptr;
+		if (Constant::gs_cur_dir_token == cur_name) continue;//.
+		if (Constant::gs_parent_dir_token == cur_name)//..
+		{
+			BaseNode* parent = cur_dir->GetParent();
+			if (nullptr == parent) return false;//父节点不存在
+			next_dir = static_cast<DirNode*>(parent);
+		}
+		//查找后继节点
+		for (BaseNode* child : cur_dir->Children())
+		{
+			if (child->GetName() != cur_name) continue;
+			if (NodeType::Directory != child->GetType()) return false;//查找到了同名文件，无法继续完成搜索
+			next_dir = static_cast<DirNode*>(child);
+			break;
+		}
+		if (nullptr == next_dir) return false; //目标节点不存在
+		//更新当前所在目录
+		cur_dir = next_dir;
+	}
+	//处理尾节点
+	auto cur_name = tokens.back();
+	if (Constant::gs_cur_dir_token == cur_name)return true;//.
+	if (Constant::gs_parent_dir_token == cur_name)//..
+	{
+		auto parent = cur_dir->GetParent();
+		return (nullptr == parent) ? false : true;
+	}
+	bool is_find = false;
+	for (auto child : cur_dir->Children())
+	{
+		if (child->GetName() == cur_name)
+		{
+			target_node = child;//找到了目标节点，更新之
+			is_find = true;
+			break;
+		}
+	}
+	return is_find;
+}
+
+
+//<update ...>
+//先判断能否在cur_dir下获取到以token为名的节点
+//如果目标节点是文件节点，则mkdir失败，跳出循环
+//在cur_dir下创建以token为名的节点
+bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
+{
+	DirNode* cur_dir = static_cast<DirNode*>((IsAbsolutePath(tokens)) ? m_tree->GetRoot() : m_working_dir);
+	std::queue<string_local, std::deque<string_local>> q(std::deque<string_local>(tokens.begin(),tokens.end()));
+	while (!q.empty())
+	{
+		string_local token = q.front();
+		q.pop();
+		//先判断待插入节点是否在cur_dir下
+		BaseNode* next_node = nullptr;
+		for (auto child : cur_dir->Children())
+		{
+			if (child->GetName() == token)
+			{
+				next_node = child;
+				break;
+			}
+		}
+		//若目标节点已存在
+		if (nullptr != next_node)
+		{
+			//如果目标节点是目录节点，则更新当前节点，并向后查询
+			if (NodeType::Directory == next_node->GetType())
+			{
+				cur_dir = static_cast<DirNode*>(next_node);
+				continue;
+			}
+			//如果目标节点是文件节点，则mkdir失败，跳出循环
+			else
+			{
+				return false;
+			}
+		}
+		//在cur_dir下创建以token为名的节点
+		else
+		{
+			bool ok = m_tree->InsertNode(cur_dir, new DirNode(token));
+			if (!ok) return false;
+		}
+	}
+	return true;
 }
 

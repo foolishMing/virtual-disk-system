@@ -14,12 +14,12 @@ BaseNode::~BaseNode()
 
 }
 
-NodeType BaseNode::GetType()
+const NodeType BaseNode::GetType()
 {
 	return m_type;
 }
 
-string_local BaseNode::GetName()
+const string_local BaseNode::GetName()
 {
 	return m_name;
 }
@@ -41,11 +41,10 @@ void BaseNode::SetParent(BaseNode* parent)
 
 bool BaseNode::IsNameEqualsTo(const string_local& name)
 {
-	//update : ÐèÒªÖØÐ´
 	return (name == m_name);
 }
 
-time_t BaseNode::GetLatestModifiedTimeStamp() 
+const time_t BaseNode::GetLatestModifiedTimeStamp() 
 {
 	return m_latest_modify_time_stamp;
 }

@@ -35,4 +35,9 @@ namespace Constant
 {
 	const string_local gs_cur_dir_token = L".";
 	const string_local gs_parent_dir_token = L"..";
+
+	const string_local gs_option_ad = L"/ad";	
+	const string_local gs_option_d = L"/d";
+	const string_local gs_option_s = L"/s";
+	const string_local gs_option_y = L"/y";
 }

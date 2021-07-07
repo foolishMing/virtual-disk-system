@@ -35,34 +35,41 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& tree_manager)
 	{
 		//获得tokens
 		std::vector<string_local> tokens = {};
-		bool split_success = PathTools::SplitPathToTokens(path, tokens);
-		//检查tokens语法是否正确
-		if (!split_success)//error : 目录名语法不正确
 		{
-			Console::Write::PrintLine(Tips::gsTokenNameIsIllegal);
-			if(path_cnt > 1) Console::Write::PrintLine(L"处理 : " + path + L" 时出错");
-			continue;
-		}
+			bool split_success = PathTools::SplitPathToTokens(path, tokens);
+			if (!split_success)//error : 目录名语法不正确
+			{
+				Console::Write::PrintLine(Tips::gsTokenNameIsIllegal);
+				if (path_cnt > 1) Console::Write::PrintLine(L"处理 : " + path + L" 时出错");
+				continue;
+			}
+		}		
 		//检查路径是否存在
-		bool exist_path = tree_manager.IsPathExist(tokens);
-		if (exist_path)//error : 路径已存在
 		{
-			Console::Write::PrintLine(Tips::gsMemoryPathIsExist);
-			if (path_cnt > 1) Console::Write::PrintLine(L"处理 : " + path + L" 时出错");
-			continue;
-		}
-		assert(split_success && !exist_path);
-		assert(0 != tokens.size());//空路径
-		assert(tokens.back() != Constant::gs_cur_dir_token);//当前路径
-		assert(tokens.back() != Constant::gs_parent_dir_token);//上级路径
-		bool success = tree_manager.MkdirByPathByTokens(tokens);
-		if (!split_success)
+			bool exist_path = tree_manager.IsPathExist(tokens);
+			if (exist_path)//error : 路径已存在
+			{
+				Console::Write::PrintLine(L"子目录或文件 " + path + L" 已存在");
+				if (path_cnt > 1) Console::Write::PrintLine(L"处理: " + path + L" 时出错");
+				continue;
+			}
+		}	
+		assert(0 != tokens.size());//不能创建空路径
+		assert(tokens.back() != Constant::gs_cur_dir_token);//不能创建当前路径
+		assert(tokens.back() != Constant::gs_parent_dir_token);//不能创建上级路径
+		//创建目录
 		{
-			Log::LogError(L"未知错误：创建目录失败");
-		}
-		else 
-		{
-			Console::Write::PrintLine(L"目录 " + path + L" 创建成功");
+			bool md_success = tree_manager.MkdirByTokens(tokens);
+			if (false == md_success)
+			{
+				Log::LogError(Tips::gsMemoryPathIsNotFound);//error : 系统找不到指定的虚拟磁盘路径
+				Console::Write::PrintLine(Tips::gsMemoryPathIsNotFound);
+			}
+			else
+			{
+				Console::Write::PrintLine(L"目录 " + path + L" 创建成功");
+				Log::LogInfo(L"目录 " + path + L" 创建成功");
+			}
 		}
 	}
 }

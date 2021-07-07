@@ -10,6 +10,7 @@ CommandArg::~CommandArg()
 
 }
 
+//option是以/开头的不定长字符串
 void CommandArg::Analyse(const string_local& in)
 {
 	assert(0 != in.size());
@@ -43,7 +44,7 @@ void CommandArg::Analyse(const string_local& in)
 	//分离options和paths
 	for (auto item : vec)
 	{
-		if (item.length() == 2 && item[0] == '/')
+		if (item[0] == '/')
 		{
 			options.push_back(item);
 		}

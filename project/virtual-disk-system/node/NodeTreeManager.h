@@ -31,7 +31,7 @@ public:
 	//void DisplayNodeByPathsWithArgs(std::vector<string_local>& paths, std::vector<string_local>& args);	//列出目录中的文件和子目录列表
 
 	//创建路径md path
-	bool MkdirByPathByTokens(const std::vector<string_local>& tokens);
+	bool MkdirByTokens(const std::vector<string_local>& tokens);
 
 	/////cd [path]
 	//void ChangeDirToPathWithArgs(string_local& memory_path, std::vector<string_local>& args);	//切换路径或显示当前路径
@@ -73,11 +73,15 @@ private:
 	DirNode* m_working_dir = nullptr;		//工作目录
 
 	std::vector<string_local> m_driver_tokens = { L"C:", L"D:", L"E:", L"F:", L"G" };
-	void InitDrivers();
+	
+	//初始化驱动（盘符）
+	void InitDrivens();
 
 	//是否为绝对路径
 	bool IsAbsolutePath(const std::vector<string_local>& tokens);
-
+	
+	//查找节点
+	bool FindNodeByTokens(const std::vector<string_local>& tokens, BaseNode* target_node = nullptr);
 };
 
 #endif // !__NODETREEMANAGER_H__
