@@ -90,6 +90,7 @@ Application::RunStatus Application::ExecCommand(const string_local& in)
 	//解析输入字串得到指令参数args{cmd_type + options + paths}
 	CommandArg arg;
 	arg.Analyse(in);
+
 	//获取命令类型
 	auto lowercase_cmd_token = arg.GetLowercaseToken();
 	auto cmd_type = m_cmd_factory->GetCommandTypeByToken(lowercase_cmd_token);

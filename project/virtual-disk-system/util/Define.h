@@ -38,13 +38,28 @@ typedef wchar_t char_local;
 typedef std::wistringstream string_stream_local;
 
 
+//选项开关
+struct OptionSwitch
+{
+	bool _s = false;
+	bool _ad = false;
+	bool _y = false;
+	bool _d = false;
+};
+
 //错误提示
-namespace Tips {
+namespace ErrorTips {
 	//不是内部或外部命令,也不是可运行的程序
 	extern const string_local gsCommandIsNotFound;	
 
 	//命令语法不正确
 	extern const string_local gsCommandIsIllegal;	
+
+	//参数格式不正确
+	extern const string_local gsOptionsIsIllegal;
+
+	//无效的开关
+	extern const string_local gsOptionsIsInvalid;
 
 	//文件名、目录名或卷标语法不正确
 	extern const string_local gsTokenNameIsIllegal; 

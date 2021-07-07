@@ -178,7 +178,6 @@ bool NodeTreeManager::FindNodeByTokens(const std::vector<string_local>& tokens, 
 }
 
 
-//<update ...>
 //先判断能否在cur_dir下获取到以token为名的节点
 //如果目标节点是文件节点，则mkdir失败，跳出循环
 //在cur_dir下创建以token为名的节点
@@ -225,3 +224,11 @@ bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 	return true;
 }
 
+
+//如果tokens为空，则等价于dir .
+//查询tokens所对应目录节点是否存在
+//
+bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch)	//列出目录中的文件和子目录列表
+{
+	return false;
+}

@@ -13,5 +13,5 @@ UndefinedCommand::~UndefinedCommand()
 
 void UndefinedCommand::Handle(const CommandArg& arg, NodeTreeManager& proxy)
 {
-	Console::Write::PrintLine(Tips::gsCommandIsNotFound);	//无效的命令
+	Console::Write::PrintLine(ErrorTips::gsCommandIsNotFound);	//无效的命令
 }

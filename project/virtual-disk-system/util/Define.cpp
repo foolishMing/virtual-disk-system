@@ -1,9 +1,13 @@
 #include "Define.h"
 
-namespace Tips 
+namespace ErrorTips 
 {
 	const string_local gsCommandIsNotFound = L"不是内部或外部命令,也不是可运行的程序";
 	const string_local gsCommandIsIllegal = L"命令语法不正确";
+
+	const string_local gsOptionsIsIllegal = L"参数格式不正确";
+	const string_local gsOptionsIsInvalid = L"无效的开关";
+
 
 	const string_local gsTokenNameIsIllegal = L"文件名、目录名或卷标语法不正确";
 

@@ -4,6 +4,8 @@
 
 #include "../util/Common.h"
 
+
+
 class CommandArg
 {
 public :
@@ -23,6 +25,7 @@ public:
 	string_local cmd_token = L"";
 	std::vector<string_local> options = {};	//选项列表
 	std::vector<string_local> paths = {};	//路径列表
+	std::map<string_local, std::vector<string_local>>tokens_map;//path - tokens 映射表
 };
 
 #endif // !__COMMANDARGS_H__

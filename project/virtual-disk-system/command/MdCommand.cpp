@@ -26,24 +26,23 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& tree_manager)
 	//命令语法不正确
 	if (0 != arg.options.size() || 0 == arg.paths.size())
 	{
-		Console::Write::PrintLine(Tips::gsCommandIsIllegal);
+		Console::Write::PrintLine(ErrorTips::gsCommandIsIllegal);
 		return;
 	}
 	int path_cnt = arg.paths.size();
 	//遍历路径
 	for (auto path : arg.paths)
 	{
-		//获得tokens
-		std::vector<string_local> tokens = {};
+		assert(!path.empty()); //路径不可能为空
+		//获取tokens
+		auto map_item = arg.tokens_map.find(path);
+		if(arg.tokens_map.end() == map_item)
 		{
-			bool split_success = PathTools::SplitPathToTokens(path, tokens);
-			if (!split_success)//error : 目录名语法不正确
-			{
-				Console::Write::PrintLine(Tips::gsTokenNameIsIllegal);
-				if (path_cnt > 1) Console::Write::PrintLine(L"处理 : " + path + L" 时出错");
-				continue;
-			}
-		}		
+			Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//文件、目录或卷名称错误
+			if (path_cnt > 1) Console::Write::PrintLine(L"处理 : " + path + L" 时出错");
+			continue;
+		}
+		std::vector<string_local> tokens = map_item->second;	
 		//检查路径是否存在
 		{
 			bool exist_path = tree_manager.IsPathExist(tokens);
@@ -55,15 +54,15 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& tree_manager)
 			}
 		}	
 		assert(0 != tokens.size());//不能创建空路径
-		assert(tokens.back() != Constant::gs_cur_dir_token);//不能创建当前路径
-		assert(tokens.back() != Constant::gs_parent_dir_token);//不能创建上级路径
+		assert(tokens.back() != Constant::gs_cur_dir_token);//不能创建当前目录
+		assert(tokens.back() != Constant::gs_parent_dir_token);//不能创建上级目录
 		//创建目录
 		{
 			bool md_success = tree_manager.MkdirByTokens(tokens);
 			if (false == md_success)
 			{
-				Log::LogError(Tips::gsMemoryPathIsNotFound);//error : 系统找不到指定的虚拟磁盘路径
-				Console::Write::PrintLine(Tips::gsMemoryPathIsNotFound);
+				Log::LogError(ErrorTips::gsMemoryPathIsNotFound);//error : 系统找不到指定的虚拟磁盘路径
+				Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);
 			}
 			else
 			{

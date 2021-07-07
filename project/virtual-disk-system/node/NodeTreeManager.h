@@ -27,10 +27,12 @@ public:
 	 //查询输入路径是否存在
 	bool IsPathExist(const std::vector<string_local>& tokens);
 
-	/////dir [/s] [/ad] [path1] [path2] ...
-	//void DisplayNodeByPathsWithArgs(std::vector<string_local>& paths, std::vector<string_local>& args);	//列出目录中的文件和子目录列表
+	//列出目录中的文件和子目录列表
+	//dir [/s] [/ad] [path1] [path2] ...
+	bool DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch);	
 
-	//创建路径md path
+	//创建路径
+	//md path [path1] ...
 	bool MkdirByTokens(const std::vector<string_local>& tokens);
 
 	/////cd [path]
