@@ -37,7 +37,7 @@ bool StringTools::StringSplitBySpaceWithQuotes(const string_local& in, std::vect
 				buffer += item;
 				continue;
 			}
-			out.push_back(buffer);
+			if(!buffer.empty()) out.push_back(buffer);//忽略连续的空格
 			buffer = {};
 		}
 		else if (item == CharSet::char_doublequote)//遇到引号，改变引号状态

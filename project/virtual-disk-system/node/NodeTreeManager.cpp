@@ -181,6 +181,7 @@ bool NodeTreeManager::FindNodeByTokens(const std::vector<string_local>& tokens, 
 //先判断能否在cur_dir下获取到以token为名的节点
 //如果目标节点是文件节点，则mkdir失败，跳出循环
 //在cur_dir下创建以token为名的节点
+//不允许直接在根目录root下创建新节点（因为根目录下面是驱动目录，驱动应当是只读的）
 bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 {
 	DirNode* cur_dir = static_cast<DirNode*>((IsAbsolutePath(tokens)) ? m_tree->GetRoot() : m_working_dir);
@@ -189,8 +190,16 @@ bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 	{
 		string_local token = q.front();
 		q.pop();
-		//先判断待插入节点是否在cur_dir下
 		BaseNode* next_node = nullptr;
+		//特判.
+		if (Constant::gs_cur_dir_token == token) continue;
+		//特判..
+		if (Constant::gs_parent_dir_token == token)
+		{
+			next_node = cur_dir->GetParent();
+			if (nullptr == next_node) return false;
+		}
+		//先判断待插入节点是否在cur_dir下
 		for (auto child : cur_dir->Children())
 		{
 			if (child->GetName() == token)
@@ -214,11 +223,17 @@ bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 				return false;
 			}
 		}
-		//在cur_dir下创建以token为名的节点
+		//在cur_dir下创建以token为名的节点，并更新当前节点，继续向后创建
 		else
 		{
-			bool ok = m_tree->InsertNode(cur_dir, new DirNode(token));
+			if (cur_dir == m_tree->GetRoot()) //不允许在根目录下创建新的节点
+			{
+				return false;
+			}
+			next_node = new DirNode(token);
+			bool ok = m_tree->InsertNode(cur_dir, next_node);
 			if (!ok) return false;
+			cur_dir = static_cast<DirNode*>(next_node);
 		}
 	}
 	return true;
