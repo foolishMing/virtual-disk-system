@@ -87,7 +87,7 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* node)//打印目录信息
 void NodeTreeManager::InitDrivers()
 {
 	assert(nullptr != m_tree);
-	for (auto item : m_driver_name_vec)
+	for (auto item : m_driver_tokens)
 	{
 		auto node = new DirNode(item);
 		m_tree->InsertNode(m_tree->GetRoot(), node);
@@ -96,3 +96,37 @@ void NodeTreeManager::InitDrivers()
 	m_cur_driven = m_drivens[0];
 	m_working_dir = m_cur_driven;
 }
+
+
+//<update ...>
+//-constraints:
+//1、path可以是绝对路径或相对路径，如果是相对路径，需要先转化为绝对路径
+//2、path的最后一个token为.或..时返回true
+//3、不支持模糊匹配
+bool NodeTreeManager::IsPathExist(const std::vector<string_local>& tokens)
+{
+	return true;
+}
+
+
+//<update ...>
+bool NodeTreeManager::MkdirByPathByTokens(const std::vector<string_local>& tokens)
+{
+	return false;
+}
+
+//-constraints:
+//1、第一个token是盘符
+bool NodeTreeManager::IsAbsolutePath(const std::vector<string_local>& tokens)
+{
+	if (0 == tokens.size())
+	{
+		return false;
+	}
+	if (m_cur_driven->GetName() == tokens[0])	
+	{
+		return true;
+	}
+	return false;
+}
+

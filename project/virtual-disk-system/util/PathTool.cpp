@@ -18,7 +18,7 @@ std::set<char_local> initial_illegal_charset()
 	};
 	return ret;
 }
-std::set<char_local> PathTools::illegal_path_charset(initial_illegal_charset());
+std::set<char_local> PathTools::g_illegal_path_charset(initial_illegal_charset());
 
 bool PathTools::IsDiskPathExist(const string_local& path_str)
 {
@@ -29,37 +29,16 @@ bool PathTools::IsDiskPathExist(const string_local& path_str)
 	return false;
 }
 
-//-constrains:
-//1、必须以"@"开头
-//2、"@"后的子串必须为合法的路径格式
-bool PathTools::IsLegalDiskPathFormat(const string_local& path_str)
-{
-	if (path_str.length() <= 1)
-	{
-		return false;
-	}
-	//判断该路径是否为磁盘路径
-	if (L'@' != path_str[0])
-	{
-		return false;
-	}
-	//判断该路径是否合法
-	auto suffix_path_str = path_str.substr(1, path_str.size() - 1);
-	if (IsPathFormatLegal(suffix_path_str))
-	{
-		return true;
-	}
-	return false;
-}
 
-
-//-constrains:
-//1、路径中不能出现 /\ : * ? " < > | 字符
-//2、如果有引号，则判断是否首尾成对
-//3、路径中允许空格存在，但形如"    "的只由空格组成的token是不合法的
-bool PathTools::IsPathFormatLegal(const string_local& path_str)
+//-将路径切分为tokens
+//1、去除首尾连续的空格
+//2、去除首尾配对的引号
+//3、token中的空格当作普通字符扫描处理
+bool PathTools::SplitPathToTokens(const string_local& path_str, std::vector<string_local>& tokens)
 {
-	auto str_len = path_str.length();
+	auto path_str_trim = StringTools::StringTrimed(path_str);
+	StringTools::StringDerefDoubleQuote(path_str_trim);
+	auto str_len = path_str_trim.length();
 	//容错处理
 	if (0 == str_len)
 	{
@@ -67,34 +46,42 @@ bool PathTools::IsPathFormatLegal(const string_local& path_str)
 		return false;
 	}
 	//拆分成tokens
-	std::vector<string_local> tokens = {};
-	if (CharSet::char_doublequote == path_str[0])//首字符是引号
-	{		
+	if (CharSet::char_doublequote == path_str_trim[0])//首字符是引号
+	{
 		if (str_len < 2)
 		{
 			return false;
 		}
-		if (CharSet::char_doublequote != path_str[str_len - 1])//尾字符不是引号
+		if (CharSet::char_doublequote != path_str_trim[str_len - 1])//尾字符不是引号
 		{
 			return false;
 		}
-		SplitPathToTokens(path_str.substr(1, str_len - 2), tokens);
-	}	
+		auto deref_path_str = path_str_trim.substr(1, str_len - 2);//解引号
+		SplitPathToTokensInternal(deref_path_str, tokens);
+	}
 	else//首字符不是引号
 	{
-		SplitPathToTokens(path_str, tokens);
-	}	
-	//判断tokens是否合法
+		SplitPathToTokensInternal(path_str_trim, tokens);
+	}
+	return true;
+}
+
+
+//-constrains
+//1、token是非空字符串
+//2、token首尾不能有空格
+//3、token中不能出现 /\ : * ? " < > | 等字符
+bool PathTools::IsTokensFormatLegal(const std::vector<string_local>& tokens)
+{
 	for (auto item : tokens)
 	{
-		assert(0 != item.length());
-		if (0 == StringTools::StringTrimed(item).length())//只有空格字符的token是不合法的
-		{
-			return false;
-		}
+		int len = item.length();
+		assert(0 != len);//非空串
+		assert(CharSet::char_space != item[0]);//无首空格
+		assert(CharSet::char_space != item[len - 1]);//无尾空格
 		for (auto ch : item)
 		{
-			if (PathTools::illegal_path_charset.count(ch))//存在非法字符
+			if (PathTools::g_illegal_path_charset.count(ch))//存在非法字符
 			{
 				return false;
 			}
@@ -104,30 +91,35 @@ bool PathTools::IsPathFormatLegal(const string_local& path_str)
 }
 
 
-//-constrains:
+//-constrains
 //1、基于/和\\对路径进行分割
 //2、忽略连续的分割符，形如"////"的子串等价于"/"
-void PathTools::SplitPathToTokens(const string_local& in, std::vector<string_local> tokens)
+//3、允许token中存在空格，但必须通过trim操作去掉首尾空格，并且trim后要进行判空
+void PathTools::SplitPathToTokensInternal(const string_local& pure_path_str, std::vector<string_local>& tokens)
 {
 	string_local buffer = {};
-	//路径分割
-	for(auto item : in)
+	//扫描路径
+	for(auto ch : pure_path_str)
 	{
-		if (CharSet::char_slash == item || CharSet::char_backslash == item)
+		if (CharSet::char_slash == ch || CharSet::char_backslash == ch)//遇到分隔符
 		{
-			if (0 == buffer.length())//对形如"////"的连续分隔符进行处理
+			if (0 == buffer.length())//忽略连续的分隔符
 			{
 				continue;
 			}
-			else//获得了一个完整的token，并清空缓冲区 
+			else//读缓冲区，取出一个token 
 			{
-				tokens.push_back(buffer);
+				buffer = StringTools::StringTrimed(buffer);//移除首尾空格
+				if (0 != buffer.length())//对token进行判空
+				{
+					tokens.push_back(buffer);
+				}
 				buffer = {};
 			}
 		}
-		else
+		else//写缓冲区
 		{
-			buffer += item;
+			buffer += ch;
 		}
 	}
 	//清空缓冲区

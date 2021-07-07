@@ -177,3 +177,15 @@ bool StringTools::IsFuzzyMatch(const char_local* str, const char_local* pattern)
 	}
 	return false;
 }
+
+void StringTools::StringDerefDoubleQuote(string_local& s)
+{
+	if (s.length() < 2)
+	{
+		return;
+	}
+	if (s[0] == CharSet::char_doublequote && s.back() == CharSet::char_doublequote)
+	{
+		s = s.substr(1, s.length() - 2);
+	}
+}

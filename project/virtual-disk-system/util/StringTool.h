@@ -20,6 +20,8 @@ public:
 	static bool StringSplitBySpaceWithQuotes(const string_local& in, std::vector<string_local>& out);
 	//去除首尾空格
 	static string_local StringTrimed(const string_local& s);
+	//去除首尾引号
+	static void StringDerefDoubleQuote(string_local& s);
 	//判断字符串是否相等
 	static bool IsEqual(const string_local& lhs, const string_local& rhs);
 	//字符串转小写

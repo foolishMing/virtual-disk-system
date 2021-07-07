@@ -8,6 +8,12 @@
 #include "../util/Common.h"
 #include "NodeTree.h"
 
+/*
+1、如何基于tokens搜索路径
+如果是绝对路径，就将搜索起始节点设置为根目录节点(注意是root不是driven)
+如果是相对路径，就将搜索起始节点设置为工作目录节点
+*/
+
 class NodeTreeManager : Object {
 public:
 	explicit NodeTreeManager();
@@ -18,12 +24,15 @@ public:
 	string_local GetCurrentPath() const; //获取当前(目录)节点的路径
 	void PrintDirectoryInfo(BaseNode* node);	//打印当前目录的信息
 
+	 //查询输入路径是否存在
+	bool IsPathExist(const std::vector<string_local>& tokens);
+
 	/////dir [/s] [/ad] [path1] [path2] ...
 	//void DisplayNodeByPathsWithArgs(std::vector<string_local>& paths, std::vector<string_local>& args);	//列出目录中的文件和子目录列表
 
-	/////md path
-	//void MkdirByPathWithArgs(string_local& memory_path, std::vector<string_local>& args);	//创建一个路径
-	//
+	//创建路径md path
+	bool MkdirByPathByTokens(const std::vector<string_local>& tokens);
+
 	/////cd [path]
 	//void ChangeDirToPathWithArgs(string_local& memory_path, std::vector<string_local>& args);	//切换路径或显示当前路径
 
@@ -59,12 +68,16 @@ private:
 
 private:
 	NodeTree* m_tree = nullptr;
-	std::vector<BaseNode*> m_drivens;	//驱动列表(根目录)
-	BaseNode* m_cur_driven = nullptr;	//当前驱动(根目录)
-	BaseNode* m_working_dir = nullptr;		//工作目录
+	std::vector<DirNode*> m_drivens;	//驱动列表(根目录)
+	DirNode* m_cur_driven = nullptr;	//当前驱动(根目录)
+	DirNode* m_working_dir = nullptr;		//工作目录
 
-	std::vector<string_local> m_driver_name_vec = { L"C:", L"D:", L"E:", L"F:", L"G" };
+	std::vector<string_local> m_driver_tokens = { L"C:", L"D:", L"E:", L"F:", L"G" };
 	void InitDrivers();
+
+	//是否为绝对路径
+	bool IsAbsolutePath(const std::vector<string_local>& tokens);
+
 };
 
 #endif // !__NODETREEMANAGER_H__

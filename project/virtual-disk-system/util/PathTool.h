@@ -9,12 +9,18 @@ class PathTools
 {
 public:
 	static bool IsDiskPathExist(const string_local& path_str); //判断磁盘路径是否存在
-	static bool IsLegalDiskPathFormat(const string_local& path_str); //判断一个字符串是否为合法
-	static bool IsPathFormatLegal(const string_local& path_str); //判断一个字符串是否为合法路径
-	static void SplitPathToTokens(const string_local& in, std::vector<string_local> tokens);
-	static bool IsRelativePath(const string_local& path_str);//判断一个路径是否为相对路径	
+
+	//判断tokens是否语法正确
+	static bool IsTokensFormatLegal(const std::vector<string_local>& tokens);
+
+	//将路径字符串拆分为tokens
+	static bool SplitPathToTokens(const string_local& path_str, std::vector<string_local>& tokens);//path_str -> tokens
+
 private:
-    static std::set<char_local> illegal_path_charset;
+	//(token的)非法字符集
+    static std::set<char_local> g_illegal_path_charset;
+
+	static void SplitPathToTokensInternal(const string_local& pure_path_str, std::vector<string_local>& tokens); //pure_path_str -> tokens
 };
 
 
