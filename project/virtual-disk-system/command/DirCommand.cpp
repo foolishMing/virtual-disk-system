@@ -43,8 +43,8 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 			return;
 		}
 	}
-	//dir当前工作目录
-	if (0 == arg.paths.size())
+	//dir工作目录
+	if (arg.paths.empty())
 	{
 		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions({Constant::gs_cur_dir_token}, option_switch);
 		if (!ok)

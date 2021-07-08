@@ -26,7 +26,7 @@ void CdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 		return;
 	}
 	//显示工作目录
-	if (0 == arg.paths.size())
+	if (arg.paths.empty())
 	{
 		node_tree_manager.ChangeDirByTokens({});
 		return;

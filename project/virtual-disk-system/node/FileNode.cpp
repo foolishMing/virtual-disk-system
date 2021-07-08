@@ -10,7 +10,7 @@ FileNode::FileNode(string_local name, BaseNode* parent)
 
 FileNode::~FileNode()
 {
-
+	//删除二进制数据
 }
 
 string_local FileNode::GetDataByCopy()

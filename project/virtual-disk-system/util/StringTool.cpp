@@ -10,7 +10,8 @@ void StringTools::StringSplitBySpace(const string_local& in, std::vector<string_
 	}
 	string_stream_local str(in);
 	string_local buf;
-	while (str >> buf) {
+	while (str >> buf) 
+	{
 		out.push_back(buf);
 	}
 }
@@ -31,7 +32,8 @@ bool StringTools::StringSplitBySpaceWithQuotes(const string_local& in, std::vect
 	string_local buffer = {};
 	for (auto item : in)
 	{
-		if (item == CharSet::char_space) {//遇到空格
+		if (item == CharSet::char_space) //遇到空格
+		{
 			if (is_quote) //在引号中，空格当作普通字符处理
 			{	
 				buffer += item;
@@ -56,7 +58,8 @@ bool StringTools::StringSplitBySpaceWithQuotes(const string_local& in, std::vect
 		out.push_back(buffer);
 	}
 	//存在未匹配的单引号，不合法的输入
-	if (is_quote == true) { 
+	if (is_quote == true) 
+	{ 
 		return false;
 	}
 	return true;

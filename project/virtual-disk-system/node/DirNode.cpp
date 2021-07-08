@@ -65,3 +65,10 @@ bool DirNode::ContainsChild(const string_local& node_name)
 	}
 	return false;
 }
+
+
+void DirNode::RemoveChildByIndex(int index)
+{
+	assert(index >= 0 && index < m_children.size());
+	m_children.erase(m_children.begin() + index);
+}

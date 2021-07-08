@@ -19,10 +19,11 @@ RenCommand::~RenCommand()
 //1、判断src是否存在
 //2、判断新名字是否合法(不能是非法字符、.、..)
 //3、dst只支持token，不支持路径
+//4、不接受option参数
 void RenCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager)
 {
 	//检查命令语法格式
-	if (arg.options.size() != 0 || arg.paths.size() != 2)
+	if (!arg.options.empty() || arg.paths.size() != 2)
 	{
 		Console::Write::PrintLine(ErrorTips::gsCommandIsIllegal);//error : 命令语法不正确
 		return;

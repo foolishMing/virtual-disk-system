@@ -28,7 +28,7 @@ void NodeTreeManager::Destroy()
 		m_tree->Destroy();
 		m_tree = nullptr;
 	}
-	if (m_drivens.size() != 0) //删除驱动列表里的指针
+	if (!m_drivens.empty()) //删除驱动列表里的指针
 	{
 		m_drivens.clear();	
 	}
@@ -124,7 +124,7 @@ void NodeTreeManager::InitDrivens()
 //1、绝对路径的第一个token一定是盘符（C:）
 bool NodeTreeManager::IsAbsolutePath(const std::vector<string_local>& tokens)
 {
-	if (0 == tokens.size())
+	if (tokens.empty())
 	{
 		return false;
 	}
@@ -299,7 +299,7 @@ bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 bool NodeTreeManager::ChangeDirByTokens(const std::vector<string_local>& tokens)
 {
 	//显示工作目录
-	if (tokens.size() == 0)
+	if (tokens.empty())
 	{
 		Console::Write::PrintLine(GetCurrentPath());
 		return true;

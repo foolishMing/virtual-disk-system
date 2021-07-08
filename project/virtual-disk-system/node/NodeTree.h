@@ -6,7 +6,9 @@
 #include "DirNode.h"
 #include "SymlinkNode.h"
 #include "../util/Common.h"
+#include <deque>
 
+//多叉树
 class NodeTree : Object {
 public:
 	explicit NodeTree();
@@ -14,12 +16,17 @@ public:
 	virtual void Create();
 	virtual void Destroy();
 	BaseNode* GetRoot() { return m_root; }
-	bool InsertNode(BaseNode* node, BaseNode* new_child); //为节点添加新的子节点
-	//void DeleteNode(BaseNode* node);	//删除节点
-	//void MoveNode(BaseNode* node, BaseNode* new_parent);	//为节点指定新的父节点
-	//BaseNode* FindNodeByAbsolutePath(std::vector<string_local>& absolute_path_list);
+
+	//为节点添加新的子节点
+	bool InsertNode(BaseNode* node, BaseNode* new_child); 
 	
+	//删除节点
+	bool DeleteNode(BaseNode* node); 
+
+	
+	//解除父子关系，但不删除节点
+	bool RemoveButNotDeleteNode(BaseNode* node);
 private:
-	BaseNode* m_root = nullptr;			//哨兵节点
+	BaseNode* m_root = nullptr;	//根节点
 };
 #endif // !__NODETREE_H__

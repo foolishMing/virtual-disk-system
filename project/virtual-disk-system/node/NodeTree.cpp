@@ -1,4 +1,5 @@
 #include "NodeTree.h"
+#include <stack>
 
 NodeTree::NodeTree()
 {
@@ -12,16 +13,17 @@ NodeTree::~NodeTree()
 
 void NodeTree::Create()
 {
-	string_local nil_str = L"";
+	string_local nil_str = L"root";
 	m_root = new DirNode(nil_str);
 	Log::LogInfo(L"node tree is created.");
 }
 
 void NodeTree::Destroy()
 {
+	Log::LogInfo(L"--destroy node tree--");
 	if (nullptr != m_root)
 	{
-		//udpate... 递归删除整棵树
+		bool ok = DeleteNode(m_root);
 	}
 }
 
@@ -50,4 +52,64 @@ bool NodeTree::InsertNode(BaseNode* node, BaseNode* new_child)
 	dir->AppendChild(new_child);
 	new_child->SetParent(node);
 	return true;
+}
+
+
+//1、使用双端队列维护
+//2、使用深搜遍历所有节点
+//3、从前向后依次取出节点（队首一定始终是叶子节点）
+//	 3-1、解除和父节点之间的关系
+//   3-2、删除该节点
+bool NodeTree::DeleteNode(BaseNode* node)
+{
+	assert(nullptr != node);
+	Log::LogInfo(L"delete node " + node->GetName());
+	//如果非目录节点则删除
+	if (node->GetType() != NodeType::Directory)
+	{
+		//解除和父节点的关系
+		RemoveButNotDeleteNode(node);
+		delete node;
+		return true;
+	}
+	DirNode* cur_dir = static_cast<DirNode*>(node);
+	std::vector<BaseNode*> vec = cur_dir->Children();
+	//删除儿子列表
+	if (!vec.empty())
+	{
+		auto iter = vec.begin();
+		while (vec.end() != iter)
+		{
+			DeleteNode(*iter);
+			*iter = nullptr;
+			iter++;
+		}
+		vec.clear();
+	}
+	//解除和父节点的关系
+	RemoveButNotDeleteNode(node);
+	//删除当前节点
+	delete node;
+	return true;
+}
+
+
+bool NodeTree::RemoveButNotDeleteNode(BaseNode* node)
+{
+	if (node == m_root)
+	{
+		return true;
+	}
+	auto parent = static_cast<DirNode*>(node->GetParent());
+	node->SetParent(nullptr);
+	auto children = parent->Children();
+	for (int i = 0; i < children.size(); i++)
+	{
+		if (children[i]->GetName() == node->GetName())
+		{
+			parent->RemoveChildByIndex(i);
+			return true;
+		}
+	}
+	return false;
 }
