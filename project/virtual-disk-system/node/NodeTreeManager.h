@@ -46,6 +46,9 @@ public:
 	//ren src dst
 	bool RenameNodeByTokens(const std::vector<string_local>& tokens, string_local dst_name);
 
+	//移除目录
+	//rd [/s] path [path1] ...
+	ReturnType RemoveDirByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch);
 
 	/////copy path1 path2 [/y]
 	//void CopyFileFromSrcToDstWithArgs(string_local& src_path, string_local& dst_path, std::vector<string_local>& args); //复制文件，需要支持磁盘路径与通配符
@@ -53,10 +56,6 @@ public:
 
 	//void DeleteFileByPaths(std::vector<string_local>& paths); //删除路径集合所指向的每一个文件（/s递归删除目录及子目录下所有同名文件）
 
-	/////rd [/s] path [path1] ...
-	//void RemoveDirByPaths(std::vector<string_local>& paths, std::vector<string_local>& args);	//删除路径集合所指向的每一个空目录（/s递归删除非空目录）
-
-	
 
 	/////mklink [/d] 
 	//void MklinkFromSrcToSymbolWithArgs(string_local& src_path, string_local& symbol_path, std::vector<string_local>& args);//创建由src_path指向symbol_path的符号链接文件

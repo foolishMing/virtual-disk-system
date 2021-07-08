@@ -47,7 +47,7 @@ string_local NodeTreeManager::GetCurrentPath() const
 
 void NodeTreeManager::PrintDirectoryNodeInfo(BaseNode* node)
 {
-	assert(node != nullptr);
+	assert(nullptr != node);
 	assert(node->GetType() == NodeType::Directory);
 	Console::Write::PrintLine(
 		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
@@ -58,7 +58,7 @@ void NodeTreeManager::PrintDirectoryNodeInfo(BaseNode* node)
 
 void NodeTreeManager::PrintFileNodeInfo(BaseNode* node)
 {
-	assert(node != nullptr);
+	assert(nullptr != node);
 	assert(node->GetType() != NodeType::Directory);
 	Console::Write::PrintLine(
 		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
@@ -392,4 +392,42 @@ bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_
 		}
 	}
 	return true;
+}
+
+
+//<update>
+///s:递归移除目录下的所有子目录与文件
+//工作目录上的节点不能被删除
+//若path指向非目录节点，则无法删除
+ReturnType NodeTreeManager::RemoveDirByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch)
+{
+	BaseNode* target_node = FindNodeByTokensInternal(tokens);
+	assert(target_node != nullptr);
+	//非目录节点无法删除
+	if (NodeType::Directory != target_node->GetType())
+	{
+		return ReturnType::DirNameIsInvalid;
+	}
+	//工作目录上的节点无法删除
+	if (true == isAncestor(target_node, m_working_dir))
+	{
+		return ReturnType::AccessDenied;
+	}
+	auto cur_dir = static_cast<DirNode*>(target_node);
+	//空目录直接删除
+	if (cur_dir->Children().empty())
+	{
+		bool ok = m_tree->DeleteNode(cur_dir);
+		return ok ? ReturnType::Success : ReturnType::UnExpectedException;
+	}
+	//非空目录需要判断是否有/s参数
+	if (true != option_switch._s)
+	{
+		return ReturnType::MemoryDirIsNotEmpty;
+	}
+	else
+	{
+		bool ok = m_tree->DeleteNode(cur_dir);
+		return ok ? ReturnType::Success : ReturnType::UnExpectedException;
+	}
 }

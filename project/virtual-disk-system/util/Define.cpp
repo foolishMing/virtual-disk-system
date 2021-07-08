@@ -25,6 +25,10 @@ namespace ErrorTips
 	const string_local gsMemoryPathIsExist = L"虚拟磁盘路径已存在";
 
 	const string_local gsMemoryPathAccessDenied = L"虚拟磁盘路径拒绝访问";
+
+	const string_local gsDirNameInvalid = L"虚拟磁盘目录名称无效"; 
+
+	const string_local gsMemoryDirIsNotEmpty = L"虚拟磁盘目录不是空的";
 };
 
 namespace CharSet 

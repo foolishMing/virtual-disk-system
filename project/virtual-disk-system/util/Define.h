@@ -48,9 +48,13 @@ struct OptionSwitch
 };
 
 //返回类型
-enum ReturnType
+enum class ReturnType
 {
-
+	Success = 1000, 
+	UnExpectedException,//未预期的错误
+	DirNameIsInvalid,//虚拟磁盘目录名称无效
+	AccessDenied,//虚拟磁盘路径拒绝访问
+	MemoryDirIsNotEmpty,//虚拟磁盘目录不是空的
 };
 
 //目录相关信息
@@ -104,6 +108,12 @@ namespace ErrorTips {
 
 	//虚拟磁盘路径拒绝访问
 	extern const string_local gsMemoryPathAccessDenied;
+
+	//虚拟磁盘目录名称无效
+	extern const string_local gsDirNameInvalid;
+
+	//虚拟磁盘目录不是空的
+	extern const string_local gsMemoryDirIsNotEmpty;
 }
 
 //字符集
