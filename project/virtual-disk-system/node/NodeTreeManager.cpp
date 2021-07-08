@@ -101,13 +101,14 @@ bool NodeTreeManager::IsAbsolutePath(const std::vector<string_local>& tokens)
 	return false;
 }
 
+
 string_local NodeTreeManager::GetPathByNode(BaseNode* node)const
 {
 	string_local ret = {};
 	auto cur_node = node;
 	while (cur_node != nullptr && cur_node != m_cur_driven)
 	{
-		ret = CharSet::char_backslash + node->GetName() + ret;
+		ret = CharSet::char_backslash + cur_node->GetName() + ret;
 		cur_node = cur_node->GetParent();
 	}
 	ret = m_cur_driven->GetName() + ret;
@@ -115,13 +116,23 @@ string_local NodeTreeManager::GetPathByNode(BaseNode* node)const
 }
 
 
-
 bool NodeTreeManager::IsPathExist(const std::vector<string_local>& tokens)
 {
-	bool ret = FindNodeByTokens(tokens);
-	return ret;
+	BaseNode* target_node = FindNodeByTokensInternal(tokens);
+	return (target_node != nullptr) ? true : false;
 }
 
+
+bool NodeTreeManager::isAncestor(BaseNode* pre_node, BaseNode* next_node)
+{
+	auto cur_node = next_node;
+	while (cur_node != nullptr && cur_node != m_tree->GetRoot())
+	{
+		if (cur_node == pre_node) return true;
+		cur_node = cur_node->GetParent();
+	}
+	return false;
+}
 
 //<update ...>
 //-constraints
@@ -130,10 +141,11 @@ bool NodeTreeManager::IsPathExist(const std::vector<string_local>& tokens)
 //3、token为..时，需要判断空指针
 //4、如果待查找的尾节点是.或..应当进行特殊处理
 //5、若回溯，不允许从驱动节点回溯至根节点
-bool NodeTreeManager::FindNodeByTokens(const std::vector<string_local>& tokens, BaseNode** target_node)
+BaseNode* NodeTreeManager::FindNodeByTokensInternal(const std::vector<string_local>& tokens)
 {
+	BaseNode* target_node = nullptr;
 	auto cur_dir = static_cast<DirNode*>((IsAbsolutePath(tokens)) ? m_tree->GetRoot() : m_working_dir);
-	int tail = tokens.size();
+	const int tail = static_cast<int>(tokens.size());
 	//搜索目录节点
 	for (int index = 0; index < tail - 1; index++)
 	{
@@ -143,50 +155,49 @@ bool NodeTreeManager::FindNodeByTokens(const std::vector<string_local>& tokens, 
 		if (Constant::gs_parent_dir_token == cur_name)//..
 		{
 			BaseNode* parent = cur_dir->GetParent();
-			if (nullptr == parent || m_tree->GetRoot() == parent) return false;//父节点不存在
+			if (nullptr == parent || m_tree->GetRoot() == parent) return nullptr;//父节点不存在
 			next_dir = static_cast<DirNode*>(parent);
 		}
 		//查找后继节点
 		for (BaseNode* child : cur_dir->Children())
 		{
 			if (child->GetName() != cur_name) continue;
-			if (NodeType::Directory != child->GetType()) return false;//查找到了同名文件，无法继续完成搜索
+			if (NodeType::Directory != child->GetType()) return nullptr;//查找到了同名文件，无法继续完成搜索
 			next_dir = static_cast<DirNode*>(child);
 			break;
 		}
-		if (nullptr == next_dir) return false; //目标节点不存在
+		if (nullptr == next_dir) return nullptr; //目标节点不存在
 		//更新当前所在目录
 		cur_dir = next_dir;
 	}
-	auto cur_name = tokens.back();	
-	//目标节点为当前节点，更新之
-	if (Constant::gs_cur_dir_token == cur_name)//.
+	auto cur_name = tokens.back();
+	//目标节点为当前节点.，更新之
+	if (Constant::gs_cur_dir_token == cur_name)
 	{
-		*target_node = cur_dir; 
-		return true;
+		return cur_dir;
 	}
-	//目标节点为父节点，更新之
-	if (Constant::gs_parent_dir_token == cur_name)//..
+	//目标节点为父节点..，更新之
+	if (Constant::gs_parent_dir_token == cur_name)
 	{
 		auto parent = cur_dir->GetParent();
 		if (nullptr == parent || m_tree->GetRoot() == parent)
 		{
-			return false;
+			return nullptr;
 		}
-		*target_node = parent;
-		return true;
+		return parent;
 	}
 	//目标节点为子节点，更新之
 	for (auto child : cur_dir->Children())
 	{
 		if (child->GetName() == cur_name)
 		{
-			*target_node = child;
-			return true;
+			return child;
 		}
 	}
-	return false;
+	return nullptr;
 }
+
+
 
 
 //先判断能否在cur_dir下获取到以token为名的节点
@@ -261,13 +272,7 @@ bool NodeTreeManager::ChangeDirByTokens(const std::vector<string_local>& tokens)
 		return true;
 	}
 	//寻找目标节点
-	BaseNode* target_node = nullptr;
-	bool ok = FindNodeByTokens(tokens, &target_node);
-	//目标节点不存在
-	if (!ok)
-	{
-		return false;
-	}
+	BaseNode* target_node = FindNodeByTokensInternal(tokens);
 	assert(nullptr != target_node);
 	//目标节点非目录节点
 	if (NodeType::Directory != target_node->GetType())
@@ -278,6 +283,39 @@ bool NodeTreeManager::ChangeDirByTokens(const std::vector<string_local>& tokens)
 	m_working_dir = static_cast<DirNode*>(target_node);
 	return true;
 }
+
+//不允许对工作目录上的节点（包括根节点和驱动节点）重命名
+//判断dst_name是否重名
+bool NodeTreeManager::RenameNodeByTokens(const std::vector<string_local>& tokens, string_local dst_name)
+{
+	assert(PathTools::IsTokensFormatLegal({ dst_name }) == true);//dst_name保证语法正确
+	//查找目标节点
+	BaseNode* target_node = FindNodeByTokensInternal(tokens);
+	assert(nullptr != target_node);//target_node保证不为空
+	//判断节点是否在当前工作路径上
+	if (isAncestor(target_node, m_working_dir))
+	{
+		Console::Write::PrintLine(ErrorTips::gsMemoryPathAccessDenied);//error : 非法访问
+		return false;
+	}
+	//查找目标节点所属目录下的重名节点
+	DirNode* parent_dir = static_cast<DirNode*>(target_node->GetParent());
+	for (const auto item : parent_dir->Children())
+	{
+		//跳过目标节点
+		if (item == target_node) continue;
+		//判断是否存在同名节点
+		if (item->GetName() == dst_name)
+		{
+			Console::Write::PrintLine(ErrorTips::gsMemoryFileIsExist);//error : 存在重名文件
+			return false;
+		}
+	}
+	target_node->SetName(dst_name);
+	return true;
+}
+
+
 
 
 //如果tokens为空，则等价于dir .

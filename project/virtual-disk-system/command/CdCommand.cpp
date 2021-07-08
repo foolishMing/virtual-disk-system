@@ -40,7 +40,14 @@ void CdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 		Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//error : 文件、目录或卷名称错误
 		return;
 	}
-	std::vector<string_local> tokens = map_item->second;
+	//检查路径是否存在
+	std::vector<string_local> tokens = map_item->second;	
+	bool exist_path = node_tree_manager.IsPathExist(tokens);
+	if (!exist_path)
+	{
+		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);
+		return;
+	}
 	bool ret = node_tree_manager.ChangeDirByTokens(tokens);
 	if (!ret)
 	{

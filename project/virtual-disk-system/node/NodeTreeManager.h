@@ -39,6 +39,11 @@ public:
 	//cd [path]
 	bool ChangeDirByTokens(const std::vector<string_local>& tokens);	
 
+	//重命名
+	//ren src dst
+	bool RenameNodeByTokens(const std::vector<string_local>& tokens, string_local dst_name);
+
+
 	/////copy path1 path2 [/y]
 	//void CopyFileFromSrcToDstWithArgs(string_local& src_path, string_local& dst_path, std::vector<string_local>& args); //复制文件，需要支持磁盘路径与通配符
 	//
@@ -48,8 +53,7 @@ public:
 	/////rd [/s] path [path1] ...
 	//void RemoveDirByPaths(std::vector<string_local>& paths, std::vector<string_local>& args);	//删除路径集合所指向的每一个空目录（/s递归删除非空目录）
 
-	/////ren src dst
-	//void RenameNodeByPathWithArgs(string_local& stc_path, string_local& dst_path, std::vector<string_local>& args);	//对节点进行改名
+	
 
 	/////mklink [/d] 
 	//void MklinkFromSrcToSymbolWithArgs(string_local& src_path, string_local& symbol_path, std::vector<string_local>& args);//创建由src_path指向symbol_path的符号链接文件
@@ -61,21 +65,12 @@ public:
 	//void LoadTreeFromDiskPath(string_local& disk_path);	//从磁盘反序列化
 
 private:
-	//以下方法放在外层的管理类上
-	//void RenameNode(BaseNode* node, string_local& new_name); //修改节点名字
-	//string_local GetAbsolutePathOfCurrentNode(); //获取当前节点的绝对路径
-	//string_local GetAbsolutePathOfNode(BaseNode* node);	//获取目标节点的绝对路径
-	//void CreateNodeByRelativePath(NodeType& type, string_local& relative_path);	//根据相对路径创建节点
-	//BaseNode* FindNodeByRelativePath(string_local& relative_path, BaseNode* target_node = nullptr); //根据相对路径查找节点
-	//BaseNode* FindNodeByAbsolutePath(string_local& absolute_path, BaseNode* target_node = nullptr); //根据绝对路径查找节点
-
-private:
 	NodeTree* m_tree = nullptr;
 	std::vector<DirNode*> m_drivens;	//驱动列表(根目录)
 	DirNode* m_cur_driven = nullptr;	//当前驱动(根目录)
 	DirNode* m_working_dir = nullptr;		//工作目录
 
-	std::vector<string_local> m_driver_tokens = { L"C:", L"D:", L"E:", L"F:", L"G" };
+	const std::vector<string_local> m_driver_tokens = { L"C:", L"D:", L"E:", L"F:", L"G" };
 	
 	//初始化驱动（盘符）
 	void InitDrivens();
@@ -83,11 +78,14 @@ private:
 	//是否为绝对路径
 	bool IsAbsolutePath(const std::vector<string_local>& tokens);
 	
-	//查找节点
-	bool FindNodeByTokens(const std::vector<string_local>& tokens, BaseNode** target_node = nullptr);
+	//查找目标节点
+	BaseNode* FindNodeByTokensInternal(const std::vector<string_local>& tokens);
 
-	//获得节点路径信息
+	//获得节点路径
 	string_local GetPathByNode(BaseNode* node) const;
+
+	//判断pre_node是不是next_node的祖先
+	bool isAncestor(BaseNode* pre_node, BaseNode* next_node);
 };
 
 #endif // !__NODETREEMANAGER_H__

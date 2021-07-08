@@ -21,7 +21,7 @@ MdCommand::~MdCommand()
 //2、path列表不能为空，否则需要打印提示信息
 //3、path可以是绝对路径或相对路径，如果是相对路径，则需要先转换成绝对路径
 //4、如果path已存在，则需要打印提示信息"子目录或文件{path}已存在".arg(path)
-void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& tree_manager)
+void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager)
 {
 	//命令语法不正确
 	if (0 != arg.options.size() || 0 == arg.paths.size())
@@ -29,7 +29,7 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& tree_manager)
 		Console::Write::PrintLine(ErrorTips::gsCommandIsIllegal);
 		return;
 	}
-	int path_cnt = arg.paths.size();
+	const size_t path_cnt = arg.paths.size();
 	//遍历路径
 	for (auto path : arg.paths)
 	{
@@ -45,7 +45,7 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& tree_manager)
 		std::vector<string_local> tokens = map_item->second;	
 		//检查路径是否存在
 		{
-			bool exist_path = tree_manager.IsPathExist(tokens);
+			bool exist_path = node_tree_manager.IsPathExist(tokens);
 			if (exist_path)//error : 路径已存在
 			{
 				Console::Write::PrintLine(L"子目录或文件 " + path + L" 已存在");
@@ -58,7 +58,7 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& tree_manager)
 		assert(tokens.back() != Constant::gs_parent_dir_token);//不能创建上级目录
 		//创建目录
 		{
-			bool md_success = tree_manager.MkdirByTokens(tokens);
+			bool md_success = node_tree_manager.MkdirByTokens(tokens);
 			if (false == md_success)
 			{
 				Log::LogError(ErrorTips::gsMemoryPathIsNotFound);//error : 系统找不到指定的虚拟磁盘路径

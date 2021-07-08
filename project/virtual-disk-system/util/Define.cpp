@@ -18,7 +18,13 @@ namespace ErrorTips
 
 	const string_local gsMemoryPathIsIllegal = L"不合法的虚拟磁盘路径名称";
 	const string_local gsMemoryPathIsNotFound = L"系统找不到指定的虚拟磁盘路径";
+
+	const string_local gsMemoryFileIsNotFound = L"系统找不到指定的虚拟磁盘文件";
+	const string_local gsMemoryFileIsExist = L"虚拟磁盘中存在一个重名文件，或找不到文件";
+
 	const string_local gsMemoryPathIsExist = L"虚拟磁盘路径已存在";
+
+	const string_local gsMemoryPathAccessDenied = L"虚拟磁盘路径拒绝访问";
 };
 
 namespace CharSet 

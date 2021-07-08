@@ -54,7 +54,7 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 		return;
 	}
 	//dir列表中的目录
-	int path_cnt = arg.paths.size();
+	const size_t path_cnt = arg.paths.size();
 	for (auto path : arg.paths)
 	{
 		std::vector<string_local> tokens = {};

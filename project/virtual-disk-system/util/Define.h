@@ -38,7 +38,7 @@ typedef wchar_t char_local;
 typedef std::wistringstream string_stream_local;
 
 
-//选项开关
+//命令选项开关
 struct OptionSwitch
 {
 	bool _s = false;
@@ -79,8 +79,17 @@ namespace ErrorTips {
 	//系统找不到指定的虚拟磁盘路径
 	extern const string_local gsMemoryPathIsNotFound; 
 
+	//系统找不到指定的虚拟磁盘文件
+	extern const string_local gsMemoryFileIsNotFound;
+
+	//虚拟磁盘中存在一个重名文件，或找不到文件
+	extern const string_local gsMemoryFileIsExist;
+
 	//虚拟磁盘路径已存在
 	extern const string_local gsMemoryPathIsExist;
+
+	//虚拟磁盘路径拒绝访问
+	extern const string_local gsMemoryPathAccessDenied;
 }
 
 //字符集

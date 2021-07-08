@@ -1,4 +1,5 @@
 #include "./application.h"
+#include "Windows.h"
 //#include "spdlog/spdlog.h"
 //#include "spdlog/common.h"
 //
@@ -6,6 +7,7 @@
 
 int main(int argc, char* argv[])
 {	
+	_wsystem(L"title –Èƒ‚¥≈≈ÃœµÕ≥");
 	std::shared_ptr<Application> app = std::make_shared<Application>();
 	app.get()->Create();
 	app.get()->Run();

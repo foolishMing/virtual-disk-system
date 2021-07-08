@@ -75,8 +75,7 @@ bool PathTools::IsTokensFormatLegal(const std::vector<string_local>& tokens)
 {
 	for (auto item : tokens)
 	{
-		int len = item.length();
-		assert(0 != len);//非空串
+		assert(!item.empty());//非空串
 		assert(CharSet::char_space != item[0]);//无首空格
 		assert(CharSet::char_space != item.back());//无尾空格
 		for (auto ch : item)
