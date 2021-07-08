@@ -15,7 +15,7 @@ DirCommand::~DirCommand()
 //列出目录中的文件和子目录列表
 //-format
 //dir [/s] [/ad] [path1] [path2] ...
-//-constraints:
+//-constraints
 //1、/ad：只输出子目录
 //2、/s:递归遍历打印子目录和文件
 //3、如果paths列表不存在则默认遍历工作路径
@@ -46,24 +46,41 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 	//dir当前工作目录
 	if (0 == arg.paths.size())
 	{
-		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions({}, option_switch);
+		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions({Constant::gs_cur_dir_token}, option_switch);
 		if (!ok)
 		{
-			Log::LogError(L"未知错误：dir当前工作目录失败");
+			Log::LogError(L"未知错误：dir工作目录 " + node_tree_manager.GetCurrentPath() + L" 失败");
 		}
 		return;
 	}
-	//dir列表中的目录
+	//遍历路径列表
 	const size_t path_cnt = arg.paths.size();
 	for (auto path : arg.paths)
 	{
-		std::vector<string_local> tokens = {};
-		bool split_success = PathTools::SplitPathToTokens(path, tokens);
-		if (!split_success)//error : 目录名语法不正确
+		//获得源路径tokens
+		auto map_item = arg.tokens_map.find(path);
+		if (map_item == arg.tokens_map.end())
 		{
-			Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);
-			if (path_cnt > 1) Console::Write::PrintLine(L"处理 : " + path + L" 时出错");
+			//路径语法不正确，打印工作目录
+			Console::Write::PrintLine(node_tree_manager.GetCurrentPath());
+			Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//error : 文件、目录或卷名语法不正确
 			continue;
+		}
+		std::vector<string_local> tokens = map_item->second;
+		//检查源路径是否存在
+		bool is_find_path = node_tree_manager.IsPathExist(tokens);
+		if (!is_find_path)
+		{
+			//路径不存在，打印工作目录
+			Console::Write::PrintLine(node_tree_manager.GetCurrentPath());
+			Console::Write::PrintLine(ErrorTips::gsMemoryFileIsNotFound); //error : 找不到文件
+			continue;
+		}
+		//打印当前路径下的子目录与文件信息
+		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions(tokens, option_switch);
+		if (!ok)
+		{
+			Log::LogError(L"未知错误：dir目录 " + path + L" 失败");
 		}
 	}
 }

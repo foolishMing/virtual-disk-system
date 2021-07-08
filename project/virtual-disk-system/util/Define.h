@@ -47,6 +47,20 @@ struct OptionSwitch
 	bool _d = false;
 };
 
+//返回类型
+enum ReturnType
+{
+
+};
+
+//目录相关信息
+struct DirInfo
+{
+	int32_t file_cnt; //文件数
+	int32_t dir_cnt;  //目录数
+	size_t  tot_size; //总大小
+};
+
 //错误提示
 namespace ErrorTips {
 	//不是内部或外部命令,也不是可运行的程序

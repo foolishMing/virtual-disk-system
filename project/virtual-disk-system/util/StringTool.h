@@ -37,6 +37,9 @@ public:
 	static bool IsStringFuzzyEqualTo(const string_local& text, const string_local& pattern);
 	//CString模糊匹配，支持通配符"*"和"?"
 	static bool IsFuzzyMatch(const char_local* str, const char_local* pattern);
+
+	//秒时间戳转字符串
+	static string_local TimeStampToDateTimeString(time_t ts);
 };
 
 #endif // !__STRINGTOOL_H__

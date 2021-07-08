@@ -79,11 +79,11 @@ string_local StringTools::StringTrimed(const string_local& in)
 string_local StringTools::ToLowercase(const string_local& s)
 {
 	string_local ret = s;
-	for (auto item : s)
+	for (auto& ch : ret)
 	{
-		if (item >= 'A' && item <= 'Z')
+		if (ch >= L'A' && ch <= L'Z')
 		{
-			item = item - 'A' + 'a';
+			ch = ch - L'A' + L'a';
 		}
 	}
 	return ret;
@@ -91,9 +91,9 @@ string_local StringTools::ToLowercase(const string_local& s)
 
 bool StringTools::HasUppercase(const string_local& s)
 {
-	for (auto item : s)
+	for (const auto ch : s)
 	{
-		if (item >= 'A' && item <= 'Z')
+		if (ch >= L'A' && ch <= L'Z')
 		{
 			return true;
 		}
@@ -189,3 +189,9 @@ void StringTools::StringDerefDoubleQuote(string_local& s)
 		s = s.substr(1, s.length() - 2);
 	}
 }
+
+string_local StringTools::TimeStampToDateTimeString(time_t ts)
+{
+	return L"0000/00/00  00:00";
+}
+

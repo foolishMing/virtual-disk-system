@@ -20,6 +20,7 @@ void NodeTreeManager::Create()
 	Log::LogInfo(L"node tree manager is created.");
 }
 
+
 void NodeTreeManager::Destroy()
 {
 	if (nullptr != m_tree) //删除文件树
@@ -34,6 +35,7 @@ void NodeTreeManager::Destroy()
 	Log::LogInfo(L"node tree manager is destroyed.");
 }
 
+
 string_local NodeTreeManager::GetCurrentPath() const
 {
 	assert(nullptr != m_tree);
@@ -42,35 +44,67 @@ string_local NodeTreeManager::GetCurrentPath() const
 	return ret;
 }
 
-//<udpate ...>
-void NodeTreeManager::PrintDirectoryInfo(BaseNode* node)//打印目录信息
+
+void NodeTreeManager::PrintDirectoryNodeInfo(BaseNode* node)
 {
-	assert(nullptr != node);
-	assert(NodeType::Directory == node->GetType());
-	if (NodeType::Directory != node->GetType())
-	{
-		Log::LogWarn(L"非法操作：尝试打印非目录节点的目录信息");
-		return;
-	}
-	auto dir = static_cast<DirNode*>(node);
+	assert(node != nullptr);
+	assert(node->GetType() == NodeType::Directory);
+	Console::Write::PrintLine(
+		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
+		L"    <DIR>          " +
+		node->GetName());
+}
+
+
+void NodeTreeManager::PrintFileNodeInfo(BaseNode* node)
+{
+	assert(node != nullptr);
+	assert(node->GetType() != NodeType::Directory);
+	Console::Write::PrintLine(
+		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
+		L"                   " +
+		node->GetName());
+}
+
+
+//<udpate ...>
+//未完成：输出内容格式化
+//未完成：将返回值类型修改为DirInfo
+//is_ad == true,只打印子目录节点
+void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, bool is_ad)//打印目录信息
+{
+	assert(nullptr != dir);
+	assert(NodeType::Directory == dir->GetType());
+	DirNode* cur_dir = static_cast<DirNode*>(dir);
+	Console::Write::PrintLine(L"");
+	Console::Write::PrintLine(GetPathByNode(cur_dir) + L" 的目录");
+	Console::Write::PrintLine(L"");
 	int file_cnt = 0;//文件数量
 	int dir_cnt = 0;//目录数量
-	size_t tot_size;//总大小
+	size_t tot_size = 0;//总大小
 	//遍历子节点，统计并打印节点信息{修改时间、节点类型、节点大小、节点名称}
-	for (BaseNode* node : dir->Children())
+	for (BaseNode* cur_node : cur_dir->Children())
 	{
-		if (NodeType::Directory == node->GetType())
+		tot_size += cur_node->GetSize();
+		//打印子目录节点
+		if (NodeType::Directory == cur_node->GetType())
 		{
 			dir_cnt++;
-			Console::Write::PrintLine(L"<DIR>          " + node->GetName());
+			PrintDirectoryNodeInfo(cur_node);
 		}
-		else
+		//打印子文件节点
+		else if(!is_ad)
 		{
 			file_cnt++;
+			PrintFileNodeInfo(cur_node);
 		}
 	}
 	//打印统计信息{文件数量、目录数量、总大小}
+	Console::Write::Print(std::to_wstring(file_cnt) + L" 个文件 ");
+	Console::Write::PrintLine(std::to_wstring(tot_size) + L" 字节");
+	Console::Write::PrintLine(std::to_wstring(dir_cnt) + L" 个目录");
 }
+
 
 void NodeTreeManager::InitDrivens()
 {
@@ -87,7 +121,7 @@ void NodeTreeManager::InitDrivens()
 
 
 //-constraints:
-//1、绝对路径的第一个token一定是盘符
+//1、绝对路径的第一个token一定是盘符（C:）
 bool NodeTreeManager::IsAbsolutePath(const std::vector<string_local>& tokens)
 {
 	if (0 == tokens.size())
@@ -133,6 +167,7 @@ bool NodeTreeManager::isAncestor(BaseNode* pre_node, BaseNode* next_node)
 	}
 	return false;
 }
+
 
 //<update ...>
 //-constraints
@@ -196,8 +231,6 @@ BaseNode* NodeTreeManager::FindNodeByTokensInternal(const std::vector<string_loc
 	}
 	return nullptr;
 }
-
-
 
 
 //先判断能否在cur_dir下获取到以token为名的节点
@@ -284,6 +317,7 @@ bool NodeTreeManager::ChangeDirByTokens(const std::vector<string_local>& tokens)
 	return true;
 }
 
+
 //不允许对工作目录上的节点（包括根节点和驱动节点）重命名
 //判断dst_name是否重名
 bool NodeTreeManager::RenameNodeByTokens(const std::vector<string_local>& tokens, string_local dst_name)
@@ -316,14 +350,46 @@ bool NodeTreeManager::RenameNodeByTokens(const std::vector<string_local>& tokens
 }
 
 
-
-
+//<udpate>
+//未完成：统计递归打印的总目录数及总文件数
 //如果tokens为空，则等价于dir .
 //查找目标节点
-//如果目标节点是文件，则打印错误信息
+//如果目标节点是文件，则打印文件信息
 //选项/ad打印子目录信息
 //选项/s递归打印子目录及文件信息
 bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch)	//列出目录中的文件和子目录列表
 {
-	return false;
+	BaseNode* target_node = target_node = FindNodeByTokensInternal(tokens);
+	//target_node保证不为空
+	assert(nullptr != target_node);
+	//打印目标文件节点信息
+	if (NodeType::Directory != target_node->GetType())
+	{
+		PrintFileNodeInfo(target_node);
+		return true;
+	}
+	//打印目标目录节点子目录及文件信息
+	DirNode* cur_dir_node = static_cast<DirNode*>(target_node);
+	std::queue<DirNode*> q = {};
+	q.push(cur_dir_node);
+	while (!q.empty())
+	{
+		DirNode* node = q.front();
+		q.pop();
+		//打印当前目录下的子目录及文件信息
+		PrintDirectoryInfo(node, option_switch._ad);
+		//将子目录放在待打印目录节点队列中
+		if (true == option_switch._s)
+		{
+			for (auto child : node->Children())
+			{
+				if (NodeType::Directory == child->GetType())
+				{
+					DirNode* child_dir = static_cast<DirNode*>(child);
+					q.push(child_dir);
+				}
+			}
+		}
+	}
+	return true;
 }
