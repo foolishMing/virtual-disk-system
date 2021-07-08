@@ -260,7 +260,7 @@ bool NodeTreeManager::ChangeDirByTokens(const std::vector<string_local>& tokens)
 		Console::Write::PrintLine(GetCurrentPath());
 		return true;
 	}
-	//切换工作目录
+	//寻找目标节点
 	BaseNode* target_node = nullptr;
 	bool ok = FindNodeByTokens(tokens, &target_node);
 	//目标节点不存在
@@ -274,7 +274,6 @@ bool NodeTreeManager::ChangeDirByTokens(const std::vector<string_local>& tokens)
 	{
 		return false;
 	}
-
 	//切换路径
 	m_working_dir = static_cast<DirNode*>(target_node);
 	return true;

@@ -11,9 +11,9 @@ SymlinkNode::~SymlinkNode()
 
 }
 
-void SymlinkNode::SetSymlink(NodeType type, BaseNode* dst_node)
+void SymlinkNode::SetSymlinkNode(NodeType link_type, BaseNode* dst_node)
 {
-	m_type = type;
+	m_type = link_type;
 	m_dst_node = dst_node;
 }
 
