@@ -48,7 +48,7 @@ string_local NodeTreeManager::GetCurrentPath() const
 void NodeTreeManager::PrintDirectoryNodeInfo(BaseNode* node)
 {
 	assert(nullptr != node);
-	assert(node->GetType() == NodeType::Directory);
+	assert(node->IsDirectory());
 	Console::Write::PrintLine(
 		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
 		L"    <DIR>          " +
@@ -59,7 +59,7 @@ void NodeTreeManager::PrintDirectoryNodeInfo(BaseNode* node)
 void NodeTreeManager::PrintFileNodeInfo(BaseNode* node)
 {
 	assert(nullptr != node);
-	assert(node->GetType() != NodeType::Directory);
+	assert(!node->IsDirectory());
 	Console::Write::PrintLine(
 		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
 		L"                   " +
@@ -74,7 +74,7 @@ void NodeTreeManager::PrintFileNodeInfo(BaseNode* node)
 void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, bool is_ad)//´òÓ¡Ä¿Â¼ÐÅÏ¢
 {
 	assert(nullptr != dir);
-	assert(NodeType::Directory == dir->GetType());
+	assert(dir->IsDirectory());
 	DirNode* cur_dir = static_cast<DirNode*>(dir);
 	Console::Write::PrintLine(L"");
 	Console::Write::PrintLine(GetPathByNode(cur_dir) + L" µÄÄ¿Â¼");
@@ -87,7 +87,7 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, bool is_ad)//´òÓ¡Ä¿Â¼ÐÅÏ
 	{
 		tot_size += cur_node->GetSize();
 		//´òÓ¡×ÓÄ¿Â¼½Úµã
-		if (NodeType::Directory == cur_node->GetType())
+		if (cur_node->IsDirectory())
 		{
 			dir_cnt++;
 			PrintDirectoryNodeInfo(cur_node);
@@ -128,7 +128,7 @@ bool NodeTreeManager::IsAbsolutePath(const std::vector<string_local>& tokens)
 	{
 		return false;
 	}
-	if(StringTools::IsEqual(m_cur_driven->GetName(), tokens[0]))
+	if (m_cur_driven->IsNameEqualsTo(tokens[0]))
 	{
 		return true;
 	}
@@ -174,7 +174,7 @@ bool NodeTreeManager::IsParentDirToken(string_local& token)
 	return StringTools::IsEqual(token, Constant::gs_parent_dir_token);
 }
 
-bool NodeTreeManager::IsCurrentDirTken(string_local& token)
+bool NodeTreeManager::IsCurrentDirToken(string_local& token)
 {
 	assert(!token.empty());
 	return StringTools::IsEqual(token, Constant::gs_cur_dir_token);
@@ -199,7 +199,7 @@ BaseNode* NodeTreeManager::FindNodeByTokensInternal(const std::vector<string_loc
 		string_local token = tokens[index];
 		DirNode* next_dir = nullptr;
 		//.
-		if (IsCurrentDirTken(token))
+		if (IsCurrentDirToken(token))
 		{
 			continue;
 		}
@@ -214,7 +214,10 @@ BaseNode* NodeTreeManager::FindNodeByTokensInternal(const std::vector<string_loc
 		for (BaseNode* child : cur_dir->Children())
 		{
 			if (child->GetName() != token) continue;
-			if (NodeType::Directory != child->GetType()) return nullptr;//²éÕÒµ½ÁËÍ¬ÃûÎÄ¼þ£¬ÎÞ·¨¼ÌÐøÍê³ÉËÑË÷
+			if (!child->IsDirectory()) // Ä¿±ê½Úµã²»ÊÇÄ¿Â¼£¬ÎÞ·¨¼ÌÐøËÑË÷
+			{
+				return nullptr;
+			}
 			next_dir = static_cast<DirNode*>(child);
 			break;
 		}
@@ -224,7 +227,7 @@ BaseNode* NodeTreeManager::FindNodeByTokensInternal(const std::vector<string_loc
 	}
 	auto last_token = tokens.back();
 	//Ä¿±ê½ÚµãÎªµ±Ç°½Úµã.£¬¸üÐÂÖ®
-	if (IsCurrentDirTken(last_token))
+	if (IsCurrentDirToken(last_token))
 	{
 		return cur_dir;
 	}
@@ -241,7 +244,7 @@ BaseNode* NodeTreeManager::FindNodeByTokensInternal(const std::vector<string_loc
 	//Ä¿±ê½ÚµãÎª×Ó½Úµã£¬¸üÐÂÖ®
 	for (auto child : cur_dir->Children())
 	{
-		if(StringTools::IsEqual(child->GetName(), last_token))
+		if (child->IsNameEqualsTo(last_token))
 		{
 			return child;
 		}
@@ -265,7 +268,7 @@ bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 		q.pop();
 		BaseNode* next_node = nullptr;
 		//µ±Ç°Ä¿Â¼
-		if (IsCurrentDirTken(token))
+		if (IsCurrentDirToken(token))
 		{
 			continue;
 		}
@@ -278,7 +281,7 @@ bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 		//ÔÚcur_dirÏÂ²éÕÒÄ¿±ê½Úµã
 		for (auto child : cur_dir->Children())
 		{
-			if (StringTools::IsEqual(token, child->GetName()))
+			if(child->IsNameEqualsTo(token))
 			{
 				next_node = child;
 				break;
@@ -288,7 +291,7 @@ bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 		if (nullptr != next_node)
 		{
 			//Èç¹ûÄ¿±ê½ÚµãÊÇÄ¿Â¼½Úµã£¬Ôò¸üÐÂµ±Ç°½Úµã£¬²¢Ïòºó²éÑ¯
-			if (NodeType::Directory == next_node->GetType())
+			if (next_node->IsDirectory())
 			{
 				cur_dir = static_cast<DirNode*>(next_node);
 				continue;
@@ -328,7 +331,7 @@ bool NodeTreeManager::ChangeDirByTokens(const std::vector<string_local>& tokens)
 	BaseNode* target_node = FindNodeByTokensInternal(tokens);
 	assert(nullptr != target_node);
 	//Ä¿±ê½Úµã·ÇÄ¿Â¼½Úµã
-	if (NodeType::Directory != target_node->GetType())
+	if (!target_node->IsDirectory())
 	{
 		return false;
 	}
@@ -359,7 +362,7 @@ bool NodeTreeManager::RenameNodeByTokens(const std::vector<string_local>& tokens
 		//Ìø¹ýÄ¿±ê½Úµã
 		if (item == target_node) continue;
 		//ÅÐ¶ÏÊÇ·ñ´æÔÚÍ¬Ãû½Úµã
-		if(StringTools::IsEqual(dst_name, item->GetName()))
+		if(item->IsNameEqualsTo(dst_name))
 		{
 			Console::Write::PrintLine(ErrorTips::gsMemoryFileIsExist);//error : ´æÔÚÖØÃûÎÄ¼þ
 			return false;
@@ -382,8 +385,8 @@ bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_
 	BaseNode* target_node = target_node = FindNodeByTokensInternal(tokens);
 	//target_node±£Ö¤²»Îª¿Õ
 	assert(nullptr != target_node);
-	//´òÓ¡Ä¿±êÎÄ¼þ½ÚµãÐÅÏ¢
-	if (NodeType::Directory != target_node->GetType())
+	//Ä¿±ê½ÚµãÎªÎÄ¼þ½Úµã£¬´òÓ¡ÐÅÏ¢
+	if (!target_node->IsDirectory())
 	{
 		PrintFileNodeInfo(target_node);
 		return true;
@@ -403,7 +406,7 @@ bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_
 		{
 			for (auto child : node->Children())
 			{
-				if (NodeType::Directory == child->GetType())
+				if (child->IsDirectory())
 				{
 					DirNode* child_dir = static_cast<DirNode*>(child);
 					q.push(child_dir);
@@ -424,7 +427,7 @@ ReturnType NodeTreeManager::RemoveDirByTokensAndOptions(const std::vector<string
 	BaseNode* target_node = FindNodeByTokensInternal(tokens);
 	assert(target_node != nullptr);
 	//·ÇÄ¿Â¼½ÚµãÎÞ·¨É¾³ý
-	if (NodeType::Directory != target_node->GetType())
+	if (!target_node->IsDirectory())
 	{
 		return ReturnType::DirNameIsInvalid;
 	}

@@ -90,7 +90,7 @@ private:
 	bool IsAncestor(BaseNode* pre_node, BaseNode* next_node);
 
 	//判断token是不是.
-	bool IsCurrentDirTken(string_local& token);
+	bool IsCurrentDirToken(string_local& token);
 
 	//判断token是不是..
 	bool IsParentDirToken(string_local& token);

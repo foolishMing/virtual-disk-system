@@ -39,10 +39,6 @@ void BaseNode::SetParent(BaseNode* parent)
 	m_parent = parent;
 }
 
-bool BaseNode::IsNameEqualsTo(const string_local& name)
-{
-	return (name == m_name);
-}
 
 const time_t BaseNode::GetLatestModifiedTimeStamp() 
 {
