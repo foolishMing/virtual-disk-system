@@ -1,4 +1,17 @@
 #include "Define.h"
+#include <sys/stat.h>
+
+
+void MemcpyLocal(char_local* dst, const char_local* src, size_t size)
+{
+	wmemcpy(dst, src, size);
+}
+
+bool StatLocal(const string_local& path, stat_local* stat)
+{
+	return _wstat(path.c_str(), stat);
+}
+
 
 namespace ErrorTips 
 {
@@ -11,9 +24,9 @@ namespace ErrorTips
 
 	const string_local gsTokenNameIsIllegal = L"文件名、目录名或卷标语法不正确";
 
-	const string_local gsDiskPathIsIllegal = L"不合法的磁盘路径名称";
-	const string_local gsDiskPathIsNotFound = L"系统找不到指定的磁盘路径"; 
-	const string_local gsDiskPathIsExist = L"磁盘路径已存在"; 
+	const string_local gsDiskPathIsIllegal = L"不合法的真实磁盘路径名称";
+	const string_local gsDiskPathIsNotFound = L"系统找不到指定的真实磁盘路径"; 
+	const string_local gsDiskPathIsExist = L"真实磁盘路径已存在"; 
 
 
 	const string_local gsMemoryPathIsIllegal = L"不合法的虚拟磁盘路径名称";
@@ -29,6 +42,9 @@ namespace ErrorTips
 	const string_local gsDirNameInvalid = L"虚拟磁盘目录名称无效"; 
 
 	const string_local gsMemoryDirIsNotEmpty = L"虚拟磁盘目录不是空的";
+
+	
+	const string_local gsDiskPathIsNotDirectoyOrFile = L"真实磁盘路径既不是目录也不是文件";
 };
 
 namespace CharSet 
@@ -43,6 +59,7 @@ namespace CharSet
 	const char_local char_or = L'|';
 	const char_local char_lessthan = L'<';
 	const char_local char_morethan = L'>';
+	const char_local char_at = L'@';
 }
 
 namespace Constant

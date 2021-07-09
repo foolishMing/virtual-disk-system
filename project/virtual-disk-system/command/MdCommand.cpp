@@ -53,7 +53,7 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 				continue;
 			}
 		}	
-		assert(0 != tokens.size());//不能创建空路径
+		assert(!tokens.empty());//不能创建空路径
 		assert(tokens.back() != Constant::gs_cur_dir_token);//不能创建当前目录
 		assert(tokens.back() != Constant::gs_parent_dir_token);//不能创建上级目录
 		//创建目录
@@ -61,8 +61,9 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 			bool md_success = node_tree_manager.MkdirByTokens(tokens);
 			if (false == md_success)
 			{
-				Log::LogError(ErrorTips::gsMemoryPathIsNotFound);//error : 系统找不到指定的虚拟磁盘路径
-				Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);
+				Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);//error : 创建目录失败
+				if (path_cnt > 1) Console::Write::PrintLine(L"处理 : " + path + L" 时出错");
+				continue;
 			}
 			else
 			{

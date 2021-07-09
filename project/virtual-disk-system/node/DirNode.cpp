@@ -10,24 +10,25 @@ DirNode::DirNode(string_local name, BaseNode* parent)
 
 DirNode::~DirNode()
 {
-
+	if (!m_children.empty())
+	{
+		//update ...
+	}
 }
 
-BaseNode* DirNode::FindChildByName(const string_local& node_name)	//根据节点名称获取子节点
+BaseNode* DirNode::FindChildByName(const string_local& node_name)
 {
-	BaseNode* ret = nullptr;
-	for (auto item : m_children)
+	for (auto& item : m_children)
 	{
 		if (item->IsNameEqualsTo(node_name))
 		{
-			ret = item;
-			break;
+			return item;
 		}
 	}
-	return ret;
+	return nullptr;
 }
 
-void DirNode::AppendChild(BaseNode* node)	//向列表末尾追加(非空)子节点
+void DirNode::AppendChild(BaseNode* node)	
 {
 	assert(nullptr != node);
 	if (nullptr == node)
@@ -38,21 +39,16 @@ void DirNode::AppendChild(BaseNode* node)	//向列表末尾追加(非空)子节点
 	m_children.push_back(node);
 }
 
-uint64_t DirNode::GetSize()
+size_t DirNode::GetSize()
 {
-	//update : 需要重写
-	return 0;
+	size_t sz = 0;
+	for (const auto item : m_children)
+	{
+		sz += item->GetSize();
+	}
+	return sz;
 }
 
-void DirNode::DisposeChildByName(const string_local& node_name)
-{
-	//update
-}
-
-void DirNode::DeleteChildByName(const string_local& node_name)
-{
-	//update
-}
 
 bool DirNode::ContainsChild(const string_local& node_name)
 {
@@ -67,8 +63,19 @@ bool DirNode::ContainsChild(const string_local& node_name)
 }
 
 
-void DirNode::RemoveChildByIndex(int index)
+bool DirNode::RemoveChildByIndex(int index)
 {
 	assert(index >= 0 && index < m_children.size());
 	m_children.erase(m_children.begin() + index);
+	return true;
+}
+
+const time_t DirNode::GetLatestModifiedTimeStamp()
+{
+	return m_latest_modify_time_stamp;
+}
+
+void DirNode::SetLatestModifiedTimeStamp(time_t ts)
+{
+	m_latest_modify_time_stamp = ts;
 }

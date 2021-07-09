@@ -10,7 +10,7 @@ std::set<char_local> initial_illegal_charset()
 		CharSet::char_slash,//'/'
 		CharSet::char_backslash,//'\\'
 		CharSet::char_asterisk,//*
-		CharSet::char_colon, //:
+		//CharSet::char_colon, //:
 		CharSet::char_question, //?
 		CharSet::char_lessthan,//<
 		CharSet::char_morethan,//>
@@ -34,6 +34,7 @@ bool PathTools::IsDiskPathExist(const string_local& path_str)
 //1、去除首尾连续的空格
 //2、去除首尾配对的引号
 //3、token中的空格当作普通字符扫描处理
+//4、token中可以出现特殊字符
 bool PathTools::SplitPathToTokens(const string_local& path_str, std::vector<string_local>& tokens)
 {
 	auto path_str_trim = StringTools::StringTrimed(path_str);

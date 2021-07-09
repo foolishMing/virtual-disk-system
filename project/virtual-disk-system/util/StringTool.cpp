@@ -21,7 +21,7 @@ void StringTools::StringSplitBySpace(const string_local& in, std::vector<string_
 1、以空格为分隔符
 2、引号中的空格当作普通字符处理
 */
-bool StringTools::StringSplitBySpaceWithQuotes(const string_local& in, std::vector<string_local>& out)
+bool StringTools::StringSplitBySpaceAndQuotes(const string_local& in, std::vector<string_local>& out)
 {
 	if (in.empty())
 	{
@@ -198,6 +198,19 @@ void StringTools::StringDerefDoubleQuote(string_local& s)
 		s = s.substr(1, s.length() - 2);
 	}
 }
+
+bool StringTools::HasWildcard(const std::vector<string_local>& tokens)
+{
+	for (const auto& item : tokens)
+	{
+		if (item.find(CharSet::char_asterisk) != item.npos || item.find(CharSet::char_question) != item.npos)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 
 string_local StringTools::TimeStampToDateTimeString(time_t ts)
 {

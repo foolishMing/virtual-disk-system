@@ -18,18 +18,20 @@ public:
 	explicit BaseNode(string_local name, BaseNode* parent = nullptr);
 	virtual ~BaseNode();
 	
+	virtual size_t GetSize() = 0; //获取大小
+	virtual const time_t GetLatestModifiedTimeStamp() = 0; //获取修改时间
+	virtual void SetLatestModifiedTimeStamp(time_t ts) = 0; //设置修改时间	
+
+
 	const NodeType GetType();
 
 	const string_local GetName();
 	void SetName(const string_local& name);
 
-	virtual size_t GetSize() = 0;
 	
 	BaseNode* GetParent();	//获取父节点指针
 	void SetParent(BaseNode* parent);	//设置父节点指针
-
-	const time_t GetLatestModifiedTimeStamp(); //获取修改时间
-	void SetLatestModifiedTimeStamp(time_t ts); //设置修改时间	
+	
 
 	bool IsNameEqualsTo(const string_local& token) { return StringTools::IsEqual(m_name, token); }	
 	bool IsDirectory() { return (NodeType::Directory == m_type) ? true : false; }
@@ -38,7 +40,6 @@ public:
 	bool IsFileLink() { return (NodeType::SymlinkF == m_type) ? true : false; }
 
 protected:
-	size_t m_size = 0; //节点大小						
 	string_local m_name = L""; //节点名称
 	NodeType m_type; //节点类型
 	BaseNode* m_parent = nullptr; //父节点

@@ -17,7 +17,7 @@ void CommandArg::Analyse(const string_local& in)
 {
 	assert(0 != in.size());
 	std::vector<string_local> vec = {};
-	bool ok = StringTools::StringSplitBySpaceWithQuotes(in, vec);
+	bool ok = StringTools::StringSplitBySpaceAndQuotes(in, vec);
 	//ªÒ»°cmd_type
 	auto cmd_str = vec[0];
 	vec.erase(vec.begin());

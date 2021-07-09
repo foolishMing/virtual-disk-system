@@ -76,8 +76,8 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 		if (!is_find_path)
 		{
 			//路径不存在，打印工作目录
-			Console::Write::PrintLine(node_tree_manager.GetCurrentPath());
-			Console::Write::PrintLine(ErrorTips::gsMemoryFileIsNotFound); //error : 找不到文件
+			Console::Write::PrintLine(node_tree_manager.GetCurrentPath() + L" 的目录");
+			Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound); //error : 系统找不到指定的虚拟磁盘目录
 			continue;
 		}
 		//打印当前路径下的子目录与文件信息

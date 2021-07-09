@@ -10,21 +10,46 @@ FileNode::FileNode(string_local name, BaseNode* parent)
 
 FileNode::~FileNode()
 {
-	//删除二进制数据
+	//删除文件数据
+	if (nullptr != m_data)
+	{
+		delete[] m_data;
+	}
 }
 
-string_local FileNode::GetDataByCopy()
+char_local* FileNode::GetData()
 {
-	return m_file_data;
+	return m_data;
 }
 
-void FileNode::SetDataByCopy(const string_local str)
+bool FileNode::SetData(const char_local* data, const size_t size)
 {
-	m_file_data = str;
+	if (nullptr != m_data)
+	{
+		delete[] m_data;
+	}
+	SetSize(size);
+	m_data = new char_local[size];
+	MemcpyLocal(m_data, data, size);
+	return true;
 }
 
-uint64_t FileNode::GetSize()
+size_t FileNode::GetSize()
 {
-	//udpate:需要重写
-	return 0;
+	return m_size;
+}
+
+void FileNode::SetSize(const size_t size)
+{
+	m_size = size;
+}
+
+const time_t FileNode::GetLatestModifiedTimeStamp()
+{
+	return m_latest_modify_time_stamp;
+}
+
+void FileNode::SetLatestModifiedTimeStamp(time_t ts)
+{
+	m_latest_modify_time_stamp = ts;
 }

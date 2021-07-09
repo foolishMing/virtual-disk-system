@@ -1,6 +1,6 @@
 #include "NodeTreeManager.h"
-#include <queue>
 #include <deque>
+#include <queue>
 
 NodeTreeManager::NodeTreeManager()
 {
@@ -34,6 +34,8 @@ void NodeTreeManager::Destroy()
 	}
 	Log::LogInfo(L"node tree manager is destroyed.");
 }
+
+
 
 
 string_local NodeTreeManager::GetCurrentPath() const
@@ -253,15 +255,19 @@ BaseNode* NodeTreeManager::FindNodeByTokensInternal(const std::vector<string_loc
 }
 
 
+//<update>
+//待完成：若路径创建失败，则需要删除本次操作新建的所有节点
 //先判断能否在cur_dir下获取到以token为名的节点
 //如果目标节点是文件节点，则mkdir失败，跳出循环
 //在cur_dir下创建以token为名的节点
 //不允许直接在根目录root下创建新节点（因为根目录下面是驱动目录，驱动应当是只读的）
 //需要对.和..token进行特殊处理
+//创建节点时，需要判断token是否合法
 bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 {
 	DirNode* cur_dir = static_cast<DirNode*>((IsAbsolutePath(tokens)) ? m_tree->GetRoot() : m_working_dir);
 	std::queue<string_local, std::deque<string_local>> q(std::deque<string_local>(tokens.begin(),tokens.end()));
+	BaseNode* temp_node_root = nullptr;//本次操作创建的第一个(临时)节点
 	while (!q.empty())
 	{
 		string_local token = q.front();
@@ -309,9 +315,26 @@ bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 			{
 				return false;
 			}
+			if (!PathTools::IsTokensFormatLegal({ token }))
+			{
+				Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//文件、目录或卷名称语法错误
+				//创建失败，删除本次操作新建的所有节点
+				if (nullptr != temp_node_root)
+				{
+					m_tree->DeleteNode(temp_node_root);
+				}
+				return false;
+			}
 			next_node = new DirNode(token);
 			bool ok = m_tree->InsertNode(cur_dir, next_node);
-			if (!ok) return false;
+			if (!ok)
+			{
+				return false;
+			}
+			if (nullptr == temp_node_root)
+			{
+				temp_node_root = next_node;
+			}
 			cur_dir = static_cast<DirNode*>(next_node);
 		}
 	}
@@ -380,7 +403,7 @@ bool NodeTreeManager::RenameNodeByTokens(const std::vector<string_local>& tokens
 //如果目标节点是文件，则打印文件信息
 //选项/ad打印子目录信息
 //选项/s递归打印子目录及文件信息
-bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch)	//列出目录中的文件和子目录列表
+bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch)	
 {
 	BaseNode* target_node = target_node = FindNodeByTokensInternal(tokens);
 	//target_node保证不为空
@@ -418,8 +441,7 @@ bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_
 }
 
 
-//<update>
-///s:递归移除目录下的所有子目录与文件
+//选项/s:递归移除目录下的所有子目录与文件
 //工作目录上的节点不能被删除
 //若path指向非目录节点，则无法删除
 ReturnType NodeTreeManager::RemoveDirByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch)
@@ -437,17 +459,18 @@ ReturnType NodeTreeManager::RemoveDirByTokensAndOptions(const std::vector<string
 		return ReturnType::AccessDenied;
 	}
 	DirNode* cur_dir = static_cast<DirNode*>(target_node);
-	//空目录直接删除
+	//空目录，直接删除
 	if (cur_dir->Children().empty())
 	{
 		bool ok = m_tree->DeleteNode(cur_dir);
 		return ok ? ReturnType::Success : ReturnType::UnExpectedException;
 	}
-	//非空目录需要判断是否有/s参数
+	//非空目录，判断是否有/s参数
 	if (true != option_switch._s)
 	{
 		return ReturnType::MemoryDirIsNotEmpty;
 	}
+	//递归删除
 	else
 	{
 		bool ok = m_tree->DeleteNode(cur_dir);
@@ -456,3 +479,62 @@ ReturnType NodeTreeManager::RemoveDirByTokensAndOptions(const std::vector<string
 }
 
 
+//<update>
+//-output
+//打印被复制的文件路径
+//统计复制的所有文件
+ReturnType NodeTreeManager::CopyFromDisk(const string_local& src_path, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch)
+{
+	stat_local stat;
+	if (0 != StatLocal(src_path, &stat))
+	{
+		return ReturnType::DiskPathIsNotFound;//真实磁盘路径不存在
+	}
+	BaseNode* target_node = FindNodeByTokensInternal(dst_path_tokens);
+	assert(nullptr != target_node);
+	bool is_cover_all = false;
+	//设置是否静默(全部)覆盖
+	if (option_switch._y == true)
+	{
+		is_cover_all = true;
+	}
+	//复制目录下的文件到虚拟磁盘
+	if (stat.st_mode & S_IFDIR)
+	{
+
+	}
+	//复制文件到虚拟磁盘
+	else if(stat.st_mode & S_IFREG)
+	{
+		
+	}
+	else
+	{
+		return ReturnType::DiskPathIsNotDirectoyOrFile;//真实磁盘路径既不是目录也不是文件
+	}
+	return ReturnType::Success;
+}
+
+
+//<update>
+//-output
+//打印被复制的文件路径
+//统计复制的所有文件
+ReturnType NodeTreeManager::CopyFromMemory(const std::vector<string_local>& src_path_tokens, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch)
+{
+	BaseNode* src_node = FindNodeByTokensInternal(src_path_tokens);
+	BaseNode* dst_node = FindNodeByTokensInternal(dst_path_tokens);
+	assert(nullptr != src_node && nullptr != dst_node);
+	int32_t copy_count = 0;
+	bool is_cover_all = false;
+	bool is_fuzzy_match = false;
+	//设置是否静默(全部)覆盖
+	if (option_switch._y == true)
+	{
+		is_cover_all = true;
+	}
+	//设置是否模糊匹配
+	if(StringTools::HasWildcard(src_path_tokens))
+
+	return ReturnType::Success;
+}

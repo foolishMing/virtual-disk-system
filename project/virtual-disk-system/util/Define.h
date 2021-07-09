@@ -36,6 +36,11 @@ interface Object
 typedef std::wstring string_local;
 typedef wchar_t char_local;
 typedef std::wistringstream string_stream_local;
+typedef struct _stat64i32 stat_local;
+void MemcpyLocal(char_local* dst, const char_local* src, size_t size);
+bool StatLocal(const string_local& path, stat_local* stat);
+
+//_wstat 需要替换
 
 
 //命令选项开关
@@ -55,6 +60,10 @@ enum class ReturnType
 	DirNameIsInvalid,//虚拟磁盘目录名称无效
 	AccessDenied,//虚拟磁盘路径拒绝访问
 	MemoryDirIsNotEmpty,//虚拟磁盘目录不是空的
+	DiskPathIsNotFound,//真实磁盘路径不存在
+	DiskPathIsNotDirectoyOrFile,//真实磁盘路径既不是目录也不是文件
+
+	MemoryPathIsNotFound,//虚拟磁盘路径不存在
 };
 
 //目录相关信息
@@ -114,40 +123,47 @@ namespace ErrorTips {
 
 	//虚拟磁盘目录不是空的
 	extern const string_local gsMemoryDirIsNotEmpty;
+
+	//真实磁盘路径既不是目录也不是文件
+	extern const string_local gsDiskPathIsNotDirectoyOrFile;
 }
 
 //字符集
 namespace CharSet
 {
-	//空格
+	// ' '
 	extern const char_local char_space;
 
-	//双引号
+	// "
 	extern const char_local char_doublequote;
 
-	//斜杠
+	// /
 	extern const char_local char_slash;
 
-	//反斜杠
+	// '\'
 	extern const char_local char_backslash;
 
-	//冒号
+	// :
 	extern const char_local char_colon;
 
-	//星号
+	// *
 	extern const char_local char_asterisk;
 
-	//问号
+	// ?
 	extern const char_local char_question;
 
-	//或
+	// |
 	extern const char_local char_or;
 
-	//小于号
+	// <
 	extern const char_local char_lessthan;
 
-	//大于号
+	// >
 	extern const char_local char_morethan;
+
+	// @
+	extern const char_local char_at;
+
 }
 
 //全局常量

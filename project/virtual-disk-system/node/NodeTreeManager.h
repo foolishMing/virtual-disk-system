@@ -50,21 +50,17 @@ public:
 	//rd [/s] path [path1] ...
 	ReturnType RemoveDirByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch);
 
-	/////copy path1 path2 [/y]
-	//void CopyFileFromSrcToDstWithArgs(string_local& src_path, string_local& dst_path, std::vector<string_local>& args); //复制文件，需要支持磁盘路径与通配符
-	//
+	//从真实磁盘路径复制目录或文件
+	//copy [/y] src_path dst_path
+	ReturnType CopyFromDisk(const string_local& src_path, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch);
 
-	//void DeleteFileByPaths(std::vector<string_local>& paths); //删除路径集合所指向的每一个文件（/s递归删除目录及子目录下所有同名文件）
+	//从虚拟磁盘路径复制目录或文件
+	//copy [/y] src_path dst_path
+	ReturnType CopyFromMemory(const std::vector<string_local>& src_path_tokens, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch);
 
 
 	/////mklink [/d] 
 	//void MklinkFromSrcToSymbolWithArgs(string_local& src_path, string_local& symbol_path, std::vector<string_local>& args);//创建由src_path指向symbol_path的符号链接文件
-
-	/////save
-	//void SaveTreeToDiskPath(string_local& disk_path);	//序列化到磁盘
-	//
-	/////load
-	//void LoadTreeFromDiskPath(string_local& disk_path);	//从磁盘反序列化
 
 private:
 	NodeTree* m_tree = nullptr;

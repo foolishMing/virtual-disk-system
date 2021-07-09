@@ -17,7 +17,7 @@ public:
 	//字符串分割（基于空格）
 	static void StringSplitBySpace(const string_local& in, std::vector<string_local>& out);
 	//字符串分割（基于空格），但不处理被引号包裹的空格
-	static bool StringSplitBySpaceWithQuotes(const string_local& in, std::vector<string_local>& out);
+	static bool StringSplitBySpaceAndQuotes(const string_local& in, std::vector<string_local>& out);
 	//去除首尾空格
 	static string_local StringTrimed(const string_local& s);
 	//去除首尾引号
@@ -36,6 +36,9 @@ public:
 	static bool IsStringFuzzyEqualTo(const string_local& text, const string_local& pattern);
 	//CString模糊匹配，支持通配符"*"和"?"
 	static bool IsFuzzyMatch(const char_local* str, const char_local* pattern);
+
+	//判断是否存在通配符
+	static bool HasWildcard(const std::vector<string_local>& tokens);
 
 	//秒时间戳转字符串
 	static string_local TimeStampToDateTimeString(time_t ts);

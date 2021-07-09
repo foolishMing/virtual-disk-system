@@ -4,13 +4,10 @@
 
 Application::Application()
 {
-	//spdlog::error("...");
-	//spdlog::critical("...");
 }
 
 Application::~Application()
 {
-
 }
 
 void Application::Create()
@@ -28,7 +25,7 @@ void Application::Create()
 
 void Application::Destroy()
 {
-	assert(m_isCreate == true);
+	assert(m_isCreate);
 	//销毁命令工厂
 	if (nullptr != m_cmd_factory)
 	{
@@ -41,19 +38,15 @@ void Application::Destroy()
 
 void Application::PrintCurrentPath()
 {
-	assert(m_isCreate == true);
+	assert(m_isCreate);
 	Console::Write::Print(m_node_tree_manager.GetCurrentPath());
 	Console::Write::Print(L">");
 }
 
-void Application::ReadLine(string_local& input)
-{
-	Console::Read::ReadLine(input);
-}
 
 void Application::Run()
 {
-	assert(m_isCreate == true);
+	assert(m_isCreate);
 	if (!m_isCreate)
 	{
 		Log::LogError(L"应用程序未初始化");
@@ -63,7 +56,7 @@ void Application::Run()
 	while (true)
 	{
 		PrintCurrentPath();
-		ReadLine(input);
+		Console::Read::ReadLine(input);
 		auto input_trim = StringTools::StringTrimed(input);
 		//忽略空串
 		if (input_trim.length() == 0)
@@ -79,15 +72,10 @@ void Application::Run()
 	}
 }
 
-/*
-* 1、in -> 
-* 2、args -> cmd_instance
-* 3、cmd_instance->exec()
-*/
 Application::RunStatus Application::ExecCommand(const string_local& in)
 {
-	assert(0 != in.length());
-	//解析输入字串得到指令参数args{cmd_type + options + paths}
+	assert(!in.empty());
+	//解析输入,得到指令参数args{cmd_type + options + paths}
 	CommandArg arg;
 	arg.Analyse(in);
 	//获取命令类型
@@ -102,9 +90,3 @@ Application::RunStatus Application::ExecCommand(const string_local& in)
 	cmd_instance->Handle(arg, m_node_tree_manager);
 	return RunStatus::normal;
 }
-
-
-
-
-
-

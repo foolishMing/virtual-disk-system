@@ -38,14 +38,3 @@ void BaseNode::SetParent(BaseNode* parent)
 {
 	m_parent = parent;
 }
-
-
-const time_t BaseNode::GetLatestModifiedTimeStamp() 
-{
-	return m_latest_modify_time_stamp;
-}
-
-void BaseNode::SetLatestModifiedTimeStamp(time_t ts) 
-{
-	m_latest_modify_time_stamp = ts;
-}

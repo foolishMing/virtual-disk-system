@@ -24,7 +24,6 @@ public:
 	virtual void Destroy();
 	void Run();
 	void PrintCurrentPath();
-	void ReadLine(string_local& input);	//读取用户输入
 	Application::RunStatus ExecCommand(const string_local& strCmd); //返回程序运行状态
 private:
 	bool m_isCreate = false;
