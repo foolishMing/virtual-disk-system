@@ -17,7 +17,6 @@ public :
 	//而args和paths可以以任意顺序排列
 	//paths可以接收任意合法字符
 	void Analyse(const string_local& in);
-	string_local GetLowercaseToken();
 	//测试用，格式化打印参数列表
 	void Print();
 

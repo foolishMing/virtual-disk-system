@@ -18,11 +18,6 @@ void CommandArg::Analyse(const string_local& in)
 	assert(0 != in.size());
 	std::vector<string_local> vec = {};
 	bool ok = StringTools::StringSplitBySpaceWithQuotes(in, vec);
-	//所有字符串转小写
-	for (auto item : vec)
-	{
-		item = StringTools::ToLowercase(item);
-	}
 	//获取cmd_type
 	auto cmd_str = vec[0];
 	vec.erase(vec.begin());
@@ -76,10 +71,7 @@ void CommandArg::Analyse(const string_local& in)
 	}
 }
 
-string_local CommandArg::GetLowercaseToken()
-{
-	return StringTools::ToLowercase(cmd_token);
-}
+
 
 void CommandArg::Print()
 {

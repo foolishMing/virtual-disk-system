@@ -24,8 +24,7 @@ public:
 	static void StringDerefDoubleQuote(string_local& s);
 	//判断字符串是否相等
 	static bool IsEqual(const string_local& lhs, const string_local& rhs);
-	//字符串转小写
-	static string_local ToLowercase(const string_local& s);
+
 	//判断字符串中是否有大写字母
 	static bool HasUppercase(const string_local& s);
 	//获取长度为size的后缀子串
@@ -40,6 +39,9 @@ public:
 
 	//秒时间戳转字符串
 	static string_local TimeStampToDateTimeString(time_t ts);
+private:
+	//字符串转小写
+	static string_local ToLowercase(const string_local& s);
 };
 
 #endif // !__STRINGTOOL_H__

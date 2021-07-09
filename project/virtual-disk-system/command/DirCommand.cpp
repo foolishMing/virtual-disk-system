@@ -24,22 +24,21 @@ DirCommand::~DirCommand()
 //6、注意大小写敏感问题
 void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager)
 {
-	//解析选项列表
 	OptionSwitch option_switch;
-	for (auto item : arg.options)
+	//解析选项列表
+	for (auto opt : arg.options)
 	{
-		const string_local lc_option = StringTools::ToLowercase(item);
-		if (lc_option == Constant::gs_option_ad)// /ad
+		if (StringTools::IsEqual(opt, Constant::gs_option_ad))// /ad
 		{
 			option_switch._ad = true;
 		}
-		else if (lc_option == Constant::gs_option_s)// /s
+		else if (StringTools::IsEqual(opt,Constant::gs_option_s))// /s
 		{
 			option_switch._s = true;
 		}
 		else
 		{
-			Console::Write::PrintLine(ErrorTips::gsOptionsIsInvalid + L" " + item);//Error : 无效的开关
+			Console::Write::PrintLine(ErrorTips::gsOptionsIsInvalid + L" " + opt);//Error : 无效的开关
 			return;
 		}
 	}

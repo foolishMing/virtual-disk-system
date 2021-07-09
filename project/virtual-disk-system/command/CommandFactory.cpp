@@ -104,13 +104,16 @@ BaseCommand* CommandFactory::GetCommandInstance(CommandType type)
 }
 
 //-constraints
-//token中不能出现大写字母
 CommandType CommandFactory::GetCommandTypeByToken(string_local& token)
 {
-	assert(false == StringTools::HasUppercase(token));
 	//查找指令
-	if (m_cmd_token_map.count(token)) {
-		return m_cmd_token_map[token];
+	for (const auto& item : m_cmd_token_map)
+	{
+		auto cmd_str = item.first;
+		if (StringTools::IsEqual(token, cmd_str))
+		{
+			return item.second;
+		}
 	}
 	return CommandType::undefine;
 }

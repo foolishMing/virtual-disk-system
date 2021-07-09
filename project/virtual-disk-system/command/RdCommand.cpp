@@ -21,22 +21,21 @@ RdCommand::~RdCommand()
 //3、path列表不能为空
 void RdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager)
 {
-	//解析选项列表
+	//检查选项列表，支持/s选项
 	OptionSwitch option_switch;
-	for (auto item : arg.options)
+	for (auto opt : arg.options)
 	{
-		const string_local lc_option = StringTools::ToLowercase(item);
-		if (lc_option == Constant::gs_option_s)// /s
+		if (StringTools::IsEqual(opt, Constant::gs_option_s))// /s
 		{
 			option_switch._s = true;
 		}
 		else
 		{
-			Console::Write::PrintLine(ErrorTips::gsOptionsIsInvalid + L" " + item);//error : 无效的开关
+			Console::Write::PrintLine(ErrorTips::gsOptionsIsInvalid + L" " + opt);//error : 无效的开关
 			return;
 		}
 	}
-	//path列表不能为空
+	//检查路径列表，列表不能为空
 	if (arg.paths.empty())
 	{
 		Console::Write::PrintLine(ErrorTips::gsCommandIsIllegal);//error : 命令语法不正确
