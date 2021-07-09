@@ -104,7 +104,12 @@ bool StringTools::HasUppercase(const string_local& s)
 	return false;
 }
 
-
+//-constraints
+//windows下的命令行和文件名是不区分大小写的，
+//所以在进行字符串比较时，应当忽略大小写，
+//-to update
+//先将输入串转换成小写串，再进行比较，有两次多余的拷贝构造开销，
+//如果频繁调用，应当进行性能优化
 bool StringTools::IsEqual(const string_local& lhs, const string_local& rhs)
 {
 	auto lc_lhs = ToLowercase(lhs);
@@ -116,7 +121,8 @@ bool StringTools::IsEqual(const string_local& lhs, const string_local& rhs)
 	return false;
 }
 
-//约束：in的长度不能为0
+//-constraints
+//输入串的长度不能为0
 string_local StringTools::GetStringSuffix(const string_local& in, size_t cnt)
 {
 	assert(!in.empty());

@@ -87,7 +87,13 @@ private:
 	string_local GetPathByNode(BaseNode* node) const;
 
 	//判断pre_node是不是next_node的祖先
-	bool isAncestor(BaseNode* pre_node, BaseNode* next_node);
+	bool IsAncestor(BaseNode* pre_node, BaseNode* next_node);
+
+	//判断token是不是.
+	bool IsCurrentDirTken(string_local& token);
+
+	//判断token是不是..
+	bool IsParentDirToken(string_local& token);
 };
 
 #endif // !__NODETREEMANAGER_H__

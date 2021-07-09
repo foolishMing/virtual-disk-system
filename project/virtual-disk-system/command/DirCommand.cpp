@@ -22,6 +22,11 @@ DirCommand::~DirCommand()
 //4、如果某path不存在，则打印工作路径
 //5、暂不支持在path中使用通配符
 //6、注意大小写敏感问题
+//-to udpate
+//1、需要对打印信息格式化
+//2、需要对递归遍历的文件夹统计总信息
+//3、需要统计时间信息
+//4、需要统计文件大小
 void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager)
 {
 	OptionSwitch option_switch;
