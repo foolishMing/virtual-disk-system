@@ -42,17 +42,17 @@ void RdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 		return;
 	}
 	//遍历path列表
-	for (auto path : arg.paths)
+	for (const auto& path : arg.paths)
 	{
+		auto path_str = path.ToString();
 		//获得tokens
-		auto map_item = arg.tokens_map.find(path);
-		if (arg.tokens_map.end() == map_item)
+		if (!path.IsValid())
 		{
 			Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//error : 文件、目录或卷名称语法错误
 			continue;
 		}
+		auto tokens = path.Tokens();
 		//检查路径是否存在
-		std::vector<string_local> tokens = map_item->second;
 		bool exist_path = node_tree_manager.IsPathExist(tokens);
 		if (!exist_path)
 		{
@@ -64,11 +64,11 @@ void RdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 		switch (ret)
 		{
 		case ReturnType::Success:
-			Console::Write::PrintLine(L"删除路径 " + path + L" 成功");
+			Console::Write::PrintLine(L"删除路径 " + path_str + L" 成功");
 			break;
 		case ReturnType::UnExpectedException:
-			Console::Write::PrintLine(L"删除路径 " + path + L" 时发生了未预期的错误");
-			Log::LogError(L"删除路径 " + path + L" 时发生了未预期的错误");
+			Console::Write::PrintLine(L"删除路径 " + path_str + L" 时发生了未预期的错误");
+				Log::LogError(L"删除路径 " + path_str + L" 时发生了未预期的错误");
 			break;
 		case ReturnType::DirNameIsInvalid:
 			Console::Write::PrintLine(ErrorTips::gsDirNameInvalid);

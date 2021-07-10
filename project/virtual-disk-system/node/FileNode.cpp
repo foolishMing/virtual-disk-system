@@ -2,18 +2,18 @@
 
 FileNode::FileNode(string_local name, BaseNode* parent)
 {
-	m_type = NodeType::File;
-	m_parent = parent;
-	m_name = name;
+	this->m_type = NodeType::File;
+	this->m_parent = parent;
+	this->m_name = name;
 }
 
 
 FileNode::~FileNode()
 {
 	//删除文件数据
-	if (nullptr != m_data)
+	if (this->m_data)
 	{
-		delete[] m_data;
+		::operator delete(this->m_data);
 	}
 }
 

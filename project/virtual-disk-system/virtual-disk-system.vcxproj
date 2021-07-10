@@ -23,7 +23,7 @@
     <ProjectGuid>{0D828E25-6A1A-4BD4-BD21-2B3ED958EC3E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>virtualdisksystem</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -110,6 +110,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Users\Administrator\Documents\github\foolishMing\virtual-disk-system\project\virtual-disk-system\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,6 +186,7 @@
     <ClCompile Include="util\Common.cpp" />
     <ClCompile Include="util\Define.cpp" />
     <ClCompile Include="util\Log.cpp" />
+    <ClCompile Include="util\Path.cpp" />
     <ClCompile Include="util\PathTool.cpp" />
     <ClCompile Include="util\StringTool.cpp" />
   </ItemGroup>
@@ -217,6 +219,7 @@
     <ClInclude Include="util\Console.hpp" />
     <ClInclude Include="util\Define.h" />
     <ClInclude Include="util\Log.h" />
+    <ClInclude Include="util\Path.h" />
     <ClInclude Include="util\PathTool.h" />
     <ClInclude Include="util\StringTool.h" />
   </ItemGroup>

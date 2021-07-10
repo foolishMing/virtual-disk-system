@@ -37,7 +37,7 @@ bool PathTools::IsDiskPathExist(const string_local& path_str)
 //4、token中可以出现特殊字符
 bool PathTools::SplitPathToTokens(const string_local& path_str, std::vector<string_local>& tokens)
 {
-	auto path_str_trim = StringTools::StringTrimed(path_str);
+	auto path_str_trim = StringTools::Trimed(path_str);
 	StringTools::StringDerefDoubleQuote(path_str_trim);
 	auto str_len = path_str_trim.length();
 	//容错处理
@@ -109,7 +109,7 @@ void PathTools::SplitPathToTokensInternal(const string_local& pure_path_str, std
 			}
 			else//读缓冲区，取出一个token 
 			{
-				buffer = StringTools::StringTrimed(buffer);//移除首尾空格
+				buffer = StringTools::Trimed(buffer);//移除首尾空格
 				if (0 != buffer.length())//对token进行判空
 				{
 					tokens.push_back(buffer);

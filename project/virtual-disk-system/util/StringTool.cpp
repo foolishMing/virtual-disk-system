@@ -28,23 +28,32 @@ bool StringTools::StringSplitBySpaceAndQuotes(const string_local& in, std::vecto
 		Log::LogWarn(L"不合法的操作：试图对空串进行Split()操作");
 		return false;
 	}
-	bool is_quote = false;	
+	bool is_quote_open = false;	
 	string_local buffer = {};
 	for (auto item : in)
 	{
-		if (item == CharSet::char_space) //遇到空格
+		//遇到空格
+		if (item == CharSet::char_space) 
 		{
-			if (is_quote) //在引号中，空格当作普通字符处理
+			//在引号中，空格当作普通字符处理
+			if (is_quote_open)
 			{	
 				buffer += item;
 				continue;
 			}
-			if(!buffer.empty()) out.push_back(buffer);//忽略连续的空格
+			//忽略连续的空格
+			if (buffer.empty())
+			{
+				continue;
+			}
+			//从缓冲区读出一个token
+			out.push_back(buffer);
 			buffer = {};
 		}
+		//遇到引号
 		else if (item == CharSet::char_doublequote)//遇到引号，改变引号状态
 		{
-			is_quote = !is_quote;
+			is_quote_open = !is_quote_open;
 			buffer += item ;
 		}
 		else
@@ -58,7 +67,7 @@ bool StringTools::StringSplitBySpaceAndQuotes(const string_local& in, std::vecto
 		out.push_back(buffer);
 	}
 	//存在未匹配的单引号，不合法的输入
-	if (is_quote == true) 
+	if (is_quote_open) 
 	{ 
 		return false;
 	}
@@ -66,7 +75,7 @@ bool StringTools::StringSplitBySpaceAndQuotes(const string_local& in, std::vecto
 }
 
 
-string_local StringTools::StringTrimed(const string_local& in)
+string_local StringTools::Trimed(const string_local& in)
 {
 	string_local out = in;
 	if (out.empty())
@@ -197,6 +206,25 @@ void StringTools::StringDerefDoubleQuote(string_local& s)
 	{
 		s = s.substr(1, s.length() - 2);
 	}
+}
+
+//false:所有的双引号都是配对的
+bool StringTools::FilterMatchedDoubleQuotes(const string_local& src, string_local& dst)
+{
+	dst = {};
+	bool is_quote_open = false;
+	for (int i = 0; i < src.length(); i++)
+	{
+		if (src[i] == CharSet::char_doublequote)
+		{
+			is_quote_open = !is_quote_open;
+		}
+		else
+		{
+			dst += src[i];
+		}
+	}
+	return is_quote_open;
 }
 
 bool StringTools::HasWildcard(const std::vector<string_local>& tokens)

@@ -57,7 +57,7 @@ void Application::Run()
 	{
 		PrintCurrentPath();
 		Console::Read::ReadLine(input);
-		auto input_trim = StringTools::StringTrimed(input);
+		auto input_trim = StringTools::Trimed(input);
 		//ºöÂÔ¿Õ´®
 		if (input_trim.length() == 0)
 		{

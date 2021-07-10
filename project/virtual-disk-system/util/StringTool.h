@@ -19,9 +19,13 @@ public:
 	//字符串分割（基于空格），但不处理被引号包裹的空格
 	static bool StringSplitBySpaceAndQuotes(const string_local& in, std::vector<string_local>& out);
 	//去除首尾空格
-	static string_local StringTrimed(const string_local& s);
+	static string_local Trimed(const string_local& s);
 	//去除首尾引号
 	static void StringDerefDoubleQuote(string_local& s);
+
+	//去除匹配的双引号
+	static bool FilterMatchedDoubleQuotes(const string_local& src, string_local& dst);
+
 	//判断字符串是否相等
 	static bool IsEqual(const string_local& lhs, const string_local& rhs);
 

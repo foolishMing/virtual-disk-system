@@ -15,31 +15,37 @@ CommandArg::~CommandArg()
 //对每一个path，将其拆分成tokens
 void CommandArg::Analyse(const string_local& in)
 {
-	assert(0 != in.size());
-	std::vector<string_local> vec = {};
-	bool ok = StringTools::StringSplitBySpaceAndQuotes(in, vec);
+	assert(!in.empty());
+	std::vector<string_local> cmd_tokens = {};
+	//基于空格拆分为token
+	bool ok = StringTools::StringSplitBySpaceAndQuotes(in, cmd_tokens);
 	//获取cmd_type
-	auto cmd_str = vec[0];
-	vec.erase(vec.begin());
+	auto cmd_str = cmd_tokens[0];
+	cmd_tokens.erase(cmd_tokens.begin());
 	//分离cmd_type的路径后缀`..`
 	if (cmd_str.length() > 2 && StringTools::IsEqual(StringTools::GetStringSuffix(cmd_str,2), Constant::gs_parent_dir_token))
 	{
 		cmd_token = cmd_str.substr(0, cmd_str.length() - 2);
-		paths.push_back(Constant::gs_parent_dir_token);
+		Path path(Constant::gs_parent_dir_token);
+		path.Split();
+		paths.push_back(path);
 	}
 	//分离cmd_type的路径后缀`.`
 	else if(cmd_str.size() > 1 && StringTools::IsEqual(StringTools::GetStringSuffix(cmd_str,1), Constant::gs_cur_dir_token))
 	{
 		cmd_token = cmd_str.substr(0, cmd_str.length() - 1);
-		paths.push_back(Constant::gs_cur_dir_token);
+		Path path(Constant::gs_cur_dir_token);
+		path.Split();
+		paths.push_back(path);
 	}
 	else {
 		cmd_token = cmd_str;
 	}
 	//分离options和paths
-	for (auto item : vec)
+	for (const auto& item : cmd_tokens)
 	{
-		if (item[0] == CharSet::char_slash) //option
+		//option
+		if (item[0] == CharSet::char_slash) 
 		{
 			string_local buffer = L"/";
 			for (int i = 1; i < item.length(); i++)
@@ -57,16 +63,12 @@ void CommandArg::Analyse(const string_local& in)
 			}
 			options.push_back(buffer);
 		}
-		else //path
+		//path
+		else 
 		{
-			paths.push_back(item);
-			//将path拆分成tokens
-			std::vector<string_local> tokens = {};
-			bool split_success = PathTools::SplitPathToTokens(item, tokens);
-			if (split_success)
-			{
-				tokens_map.insert(std::pair<string_local, std::vector<string_local>>(item, tokens));
-			}			
+			Path path(item);
+			path.Split();
+			paths.push_back(path);	
 		}
 	}
 }
@@ -87,7 +89,7 @@ void CommandArg::Print()
 	Console::Write::PrintLine(L"-paths : ");
 	for (auto item : paths)
 	{
-		Console::Write::PrintLine(item);
+		Console::Write::PrintLine(item.ToString());
 	}
 }
 

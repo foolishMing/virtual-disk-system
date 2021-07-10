@@ -1,4 +1,5 @@
 #include "CdCommand.h"
+#include "../util/Path.h"
 
 CdCommand::CdCommand()
 {
@@ -31,17 +32,15 @@ void CdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 		node_tree_manager.ChangeDirByTokens({});
 		return;
 	}
-	auto path = arg.paths[0];
-	assert(!path.empty());
 	//获取tokens
-	auto map_item = arg.tokens_map.find(path);
-	if (arg.tokens_map.end() == map_item)
+	Path path = arg.paths[0];
+	if (!path.IsValid())
 	{
 		Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//error : 文件、目录或卷名称错误
 		return;
 	}
+	auto tokens = path.Tokens();
 	//检查路径是否存在
-	std::vector<string_local> tokens = map_item->second;	
 	bool exist_path = node_tree_manager.IsPathExist(tokens);
 	if (!exist_path)
 	{

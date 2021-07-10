@@ -59,18 +59,18 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 	}
 	//遍历路径列表
 	const size_t path_cnt = arg.paths.size();
-	for (auto path : arg.paths)
+	for (const Path& path : arg.paths)
 	{
+		const auto path_str = path.ToString();
 		//获得源路径tokens
-		auto map_item = arg.tokens_map.find(path);
-		if (map_item == arg.tokens_map.end())
+		if (!path.IsValid())
 		{
 			//路径语法不正确，打印工作目录
 			Console::Write::PrintLine(node_tree_manager.GetCurrentPath());
 			Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//error : 文件、目录或卷名语法不正确
 			continue;
 		}
-		std::vector<string_local> tokens = map_item->second;
+		const auto tokens = path.Tokens();
 		//检查源路径是否存在
 		bool is_find_path = node_tree_manager.IsPathExist(tokens);
 		if (!is_find_path)
@@ -84,7 +84,7 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions(tokens, option_switch);
 		if (!ok)
 		{
-			Log::LogError(L"未知错误：dir目录 " + path + L" 失败");
+			Log::LogError(L"未知错误：dir目录 " + path_str + L" 失败");
 		}
 	}
 }

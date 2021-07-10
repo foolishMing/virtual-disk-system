@@ -6,6 +6,7 @@
 #include "PathTool.h"
 #include "Log.h"
 #include "Console.hpp"
+#include "Path.h"
 //#define SPDLOG_WCHAR_TO_UTF8_SUPPORT
 //#include "../include/spdlog/spdlog.h"
 //#include "../include/spdlog/sinks/rotating_file_sink.h"
