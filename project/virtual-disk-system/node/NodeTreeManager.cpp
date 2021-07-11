@@ -690,3 +690,39 @@ void NodeTreeManager::OverwriteFileNode(BaseNode* node, const char_local* conten
 	FileNode* file_node = static_cast<FileNode*>(node);
 	file_node->SetData(content, size);
 }
+
+
+ReturnType NodeTreeManager::MklinkByTokensAndOptions(const std::vector<string_local>& symbol_tokens, const std::vector<string_local>& src_tokens, const OptionSwitch& option_switch)
+{
+	const auto& symbol_name = symbol_tokens.back();
+	if (!PathTools::IsTokensFormatLegal({ symbol_name }))
+	{
+		return ReturnType::MemoryPathNameIsIllegal; //不合法的路径名称
+	}
+	//获取快捷方式的所在目录
+	BaseNode* target_node = nullptr;
+	if (symbol_tokens.size() == 1)
+	{
+		target_node = m_working_dir;
+	}
+	else
+	{
+		std::vector<string_local> tar_dir_tokens = symbol_tokens;
+		tar_dir_tokens.pop_back();
+		target_node = FindNodeByTokensInternal(tar_dir_tokens);
+	}
+	if (!target_node || !target_node->IsDirectory())
+	{
+		return ReturnType::MemoryPathIsNotFound; //找不到快捷方式所在路径
+	}
+	DirNode* target_dir = static_cast<DirNode*>(target_node);
+	//找到源节点
+	auto src_node = FindNodeByTokensInternal(src_tokens);
+	assert(nullptr != src_node);
+	//创建快捷方式
+	auto symbo_node = new SymlinkNode(symbol_name);
+	NodeType link_type = (option_switch._d) ? NodeType::SymlinkD : NodeType::SymlinkF;
+	symbo_node->SetSymlinkNode(link_type, src_node);
+	target_dir->AppendChild(symbo_node);
+	return ReturnType::Success;
+}

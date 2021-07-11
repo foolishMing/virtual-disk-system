@@ -68,6 +68,8 @@ enum class ReturnType
 
 	MemoryPathIsNotFound,//虚拟磁盘路径不存在
 	MemoryPathIsNotDirectoryOrFile,//虚拟磁盘路径既不是目录也不是文件
+
+	MemoryPathNameIsIllegal,//不合法的路径名称
 };
 
 //目录相关信息

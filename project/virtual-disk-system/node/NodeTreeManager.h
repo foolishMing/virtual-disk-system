@@ -68,10 +68,10 @@ public:
 	//copy [/y] src_path dst_path
 	ReturnType CopyFromMemoryToMemory(const std::vector<string_local>& src_tokens, const std::vector<string_local>& dst_tokens, const OptionSwitch& option_switch);
 
+	//为src创建symbol链接
+	//mklink [/d] sybolPath srcPath
+	ReturnType MklinkByTokensAndOptions(const std::vector<string_local>& symbol_tokens, const std::vector<string_local>& src_tokens, const OptionSwitch& option_switch);
 
-
-
-	/////mklink [/d] 
 	//void MklinkFromSrcToSymbolWithArgs(string_local& src_path, string_local& symbol_path, std::vector<string_local>& args);//创建由src_path指向symbol_path的符号链接文件
 
 private:
