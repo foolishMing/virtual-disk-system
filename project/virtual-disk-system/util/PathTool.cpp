@@ -10,7 +10,7 @@ std::set<char_local> initial_illegal_charset()
 		CharSet::char_slash,//'/'
 		CharSet::char_backslash,//'\\'
 		CharSet::char_asterisk,//*
-		//CharSet::char_colon, //:
+		CharSet::char_colon, //:
 		CharSet::char_question, //?
 		CharSet::char_lessthan,//<
 		CharSet::char_morethan,//>
@@ -30,42 +30,6 @@ bool PathTools::IsDiskPathExist(const string_local& path_str)
 }
 
 
-//-将路径切分为tokens
-//1、去除首尾连续的空格
-//2、去除首尾配对的引号
-//3、token中的空格当作普通字符扫描处理
-//4、token中可以出现特殊字符
-bool PathTools::SplitPathToTokens(const string_local& path_str, std::vector<string_local>& tokens)
-{
-	auto path_str_trim = StringTools::Trimed(path_str);
-	StringTools::StringDerefDoubleQuote(path_str_trim);
-	auto str_len = path_str_trim.length();
-	//容错处理
-	if (0 == str_len)
-	{
-		Log::LogWarn(L"路径为空");
-		return false;
-	}
-	//拆分成tokens
-	if (CharSet::char_doublequote == path_str_trim[0])//首字符是引号
-	{
-		if (str_len < 2)
-		{
-			return false;
-		}
-		if (CharSet::char_doublequote != path_str_trim[str_len - 1])//尾字符不是引号
-		{
-			return false;
-		}
-		auto deref_path_str = path_str_trim.substr(1, str_len - 2);//解引号
-		SplitPathToTokensInternal(deref_path_str, tokens);
-	}
-	else//首字符不是引号
-	{
-		SplitPathToTokensInternal(path_str_trim, tokens);
-	}
-	return true;
-}
 
 
 //-constrains
@@ -91,40 +55,103 @@ bool PathTools::IsTokensFormatLegal(const std::vector<string_local>& tokens)
 }
 
 
-//-constrains
-//1、基于/和\\对路径进行分割
-//2、忽略连续的分割符，形如"////"的子串等价于"/"
-//3、允许token中存在空格，但必须通过trim操作去掉首尾空格，并且trim后要进行判空
-void PathTools::SplitPathToTokensInternal(const string_local& pure_path_str, std::vector<string_local>& tokens)
+//获取文件的完整路径
+bool PathTools::GetFullDiskPath(const wchar_t* wildcardPath, const LPCWSTR file_name, string_local& full_path)
 {
-	string_local buffer = {};
-	//扫描路径
-	for(auto ch : pure_path_str)
+	string_local path(wildcardPath);
+	int pos_slash = path.find_last_of(CharSet::char_slash);
+	int pos_back_slash = path.find_last_of(CharSet::char_backslash);
+	int pos_min = min(pos_slash, pos_back_slash);
+	int pos_max = max(pos_slash, pos_back_slash);
+	//基于pos_max获得前缀串
+	if (pos_max < path.npos)
 	{
-		if (CharSet::char_slash == ch || CharSet::char_backslash == ch)//遇到分隔符
+		string_local path_prefix = path.substr(0, static_cast<std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t>>::size_type>(pos_max) + 1);
+		full_path = path_prefix + file_name;
+	}
+	//基于pos_min获得前缀串
+	else if (pos_min < path.npos)
+	{
+		string_local path_prefix = path.substr(0, static_cast<std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t>>::size_type>(pos_min) + 1);
+		full_path = path_prefix + file_name;
+	}
+	//不分割
+	else
+	{
+		full_path = file_name;
+	}
+	return true;
+}
+
+//基于通配符查找文件
+bool PathTools::SearchDiskFilesByWildcard(const char_local* wildcardPath, std::vector<string_local>& result_path_vec)
+{
+	HANDLE hFile = INVALID_HANDLE_VALUE;
+	WIN32_FIND_DATA pNextInfo;
+	//查找第一个文件
+	hFile = FindFirstFile(wildcardPath, &pNextInfo);
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		return false;
+	}
+	if (pNextInfo.cFileName[0] != CharSet::char_dot)
+	{
+		string_local full_path = {};
+		auto ret = GetFullDiskPath(wildcardPath, pNextInfo.cFileName, full_path);
+		if (ret == true)
 		{
-			if (0 == buffer.length())//忽略连续的分隔符
+			if (pNextInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			{
-				continue;
+
 			}
-			else//读缓冲区，取出一个token 
+			else 
 			{
-				buffer = StringTools::Trimed(buffer);//移除首尾空格
-				if (0 != buffer.length())//对token进行判空
-				{
-					tokens.push_back(buffer);
-				}
-				buffer = {};
+				result_path_vec.emplace_back(full_path);
 			}
 		}
-		else//写缓冲区
+	}
+	//查找下一个文件
+	while (FindNextFile(hFile, &pNextInfo))
+	{
+		if (pNextInfo.cFileName[0] == CharSet::char_dot)
 		{
-			buffer += ch;
+			continue;
+		}
+		string_local full_path = {};
+		auto ret = GetFullDiskPath(wildcardPath, pNextInfo.cFileName, full_path);
+		if (ret == true)
+		{
+			if (pNextInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			{
+
+			}
+			else
+			{
+				result_path_vec.emplace_back(full_path);
+			}
 		}
 	}
-	//清空缓冲区
-	if (0 != buffer.length())
+	return true;
+}
+
+string_local PathTools::GetFileName(const string_local& path)
+{
+	string_local ret = {};
+	int pos_slash = path.find_last_of(CharSet::char_slash);
+	int pos_back_slash = path.find_last_of(CharSet::char_backslash);
+	int pos_min = min(pos_slash, pos_back_slash);
+	int pos_max = max(pos_slash, pos_back_slash);
+	int split_pos = 0;
+	//基于pos_max获得后缀串
+	if (pos_max < path.npos)
 	{
-		tokens.push_back(buffer);
+		split_pos = pos_max + 1;
 	}
+	//基于pos_min获得后缀串
+	else if (pos_min < path.npos)
+	{
+		split_pos = pos_min + 1;
+	}
+	ret = path.substr(split_pos, path.length() - split_pos);
+	return ret;
 }

@@ -10,17 +10,31 @@ public:
 	explicit FileNode(string_local name, BaseNode* parent = nullptr);
 	virtual ~FileNode();
 
-	virtual size_t GetSize(); //获取文件大小
-	virtual const time_t GetLatestModifiedTimeStamp(); //获取修改时间
+	//获取文件大小
+	virtual const size_t GetSize() const; 
 
+	//获取修改时间
+	virtual const time_t GetLatestModifiedTimeStamp(); 
+
+	//读取文件数据
 	char_local* GetData();
+	//（覆盖）写入文件数据
 	bool SetData(const char_local* data, const size_t size);
+	
+	//（追加）写入文件数据
+	bool AppendData(const char_local* new_data, const size_t size);
 
 private:
+	//文件数据
 	char_local* m_data = nullptr;
-	size_t m_size = 0; //文件大小						
+	
+	//文件大小	
+	size_t m_size = 0; 			
+	
+	//设置文件大小
 	void SetSize(const size_t size);
-	virtual void SetLatestModifiedTimeStamp(time_t ts); //设置修改时间
+	
+	//设置修改时间
+	virtual void SetLatestModifiedTimeStamp(time_t ts); 
 };
-
 #endif // !__FILENODE_H__

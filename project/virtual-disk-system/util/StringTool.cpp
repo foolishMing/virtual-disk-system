@@ -1,5 +1,7 @@
 #include "StringTool.h"
 #include "Log.h"
+#include <windows.h>
+
 
 void StringTools::StringSplitBySpace(const string_local& in, std::vector<string_local>& out)
 {
@@ -140,7 +142,7 @@ string_local StringTools::GetStringSuffix(const string_local& in, size_t cnt)
 		Log::LogWarn(L"不合法的操作：试图获取空串的后缀子串");
 		return L"";
 	}
-	int max_len = static_cast<int>(std::min(in.length(), cnt));
+	int max_len = static_cast<int>(min(in.length(), cnt));
 	return in.substr(in.size() - cnt, cnt);
 }
 
@@ -245,3 +247,7 @@ string_local StringTools::TimeStampToDateTimeString(time_t ts)
 	return L"0000/00/00  00:00";
 }
 
+string_local StringTools::FormatFromNumber(int num)
+{
+	return std::to_wstring(num);
+}

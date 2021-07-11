@@ -1,16 +1,56 @@
+#define _CRT_SECURE_NO_DEPRECATE
 #include "Define.h"
 #include <sys/stat.h>
-
+#include <fstream>
+#include "windows.h"
 
 void MemcpyLocal(char_local* dst, const char_local* src, size_t size)
 {
-	wmemcpy(dst, src, size);
+	//wmemcpy(dst, src, size);
+}
+
+void MemcatLocal(char_local* dst, const char_local* src, size_t size)
+{
+
 }
 
 bool StatLocal(const string_local& path, stat_local* stat)
 {
 	return _wstat(path.c_str(), stat);
 }
+
+char_local* ReadDiskFileDataLocal(const string_local& path, size_t& file_size)
+{
+	FILE* pFile;
+	/* 若要一个byte不漏地读入整个文件，只能采用二进制方式打开 */
+	pFile = _wfopen(path.c_str(), L"rb");
+	if (pFile == NULL)
+	{
+		return nullptr;
+	}
+	/* 获取文件大小 */
+	fseek(pFile, 0, SEEK_END);
+	file_size = ftell(pFile);
+	rewind(pFile);
+	/* 分配内存存储整个文件 */
+	auto buffer = (char_local*)malloc(sizeof(char_local) * file_size);
+	if (buffer == nullptr)
+	{
+		return nullptr;
+	}
+	return buffer;
+	/* 将文件拷贝到buffer中 */
+	auto result = fread(buffer, 1, file_size, pFile);
+	if (result != file_size)
+	{
+		return nullptr;
+	}
+	/* 结束演示，关闭文件并释放内存 */
+	fclose(pFile);
+	//free(buffer);
+	return buffer;
+}
+
 
 
 namespace ErrorTips 
@@ -60,6 +100,7 @@ namespace CharSet
 	const char_local char_lessthan = L'<';
 	const char_local char_morethan = L'>';
 	const char_local char_at = L'@';
+	const char_local char_dot = L'.';
 }
 
 namespace Constant

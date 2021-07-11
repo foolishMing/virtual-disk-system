@@ -10,7 +10,7 @@ public:
 	explicit SymlinkNode(string_local name, BaseNode* parent = nullptr);
 	virtual ~SymlinkNode();
 
-	virtual size_t GetSize(); 
+	virtual const size_t GetSize() const; 
 	virtual const time_t GetLatestModifiedTimeStamp(); //获取修改时间
 
 	void SetSymlinkNode(NodeType link_type, BaseNode* dst_node); //设置链接对象

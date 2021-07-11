@@ -7,7 +7,7 @@
 #include "../node/NodeTreeManager.h"
 
 
-interface IBaseCommand
+_interface_ IBaseCommand
 {
 	virtual void Handle() = 0;
 };

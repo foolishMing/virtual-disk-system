@@ -31,13 +31,13 @@ void NodeTree::Destroy()
 bool NodeTree::InsertNode(BaseNode* node, BaseNode* new_child) 
 {
 	assert(nullptr != node && nullptr != new_child);
-	assert(node->GetType() == NodeType::Directory);
+	assert(node->IsDirectory());
 	if (nullptr == node || nullptr == new_child)
 	{
 		Log::LogError(L"非法操作：尝试在树上访问空指针");
 		return false;
 	}
-	if (node->GetType() != NodeType::Directory)
+	if (!node->IsDirectory())
 	{
 		Log::LogError(L"非法操作：尝试在非目录节点下插入子节点");
 		return false;
@@ -65,7 +65,7 @@ bool NodeTree::DeleteNode(BaseNode* node)
 	assert(nullptr != node);
 	Log::LogInfo(L"delete node " + node->GetName());
 	//如果非目录节点则删除
-	if (node->GetType() != NodeType::Directory)
+	if (!node->IsDirectory())
 	{
 		//解除和父节点的关系
 		RemoveButNotDeleteNode(node);

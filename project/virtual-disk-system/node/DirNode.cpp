@@ -39,7 +39,7 @@ void DirNode::AppendChild(BaseNode* node)
 	m_children.push_back(node);
 }
 
-size_t DirNode::GetSize()
+const size_t DirNode::GetSize() const
 {
 	size_t sz = 0;
 	for (const auto item : m_children)

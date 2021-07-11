@@ -17,16 +17,18 @@ FileNode::~FileNode()
 	}
 }
 
+
 char_local* FileNode::GetData()
 {
 	return m_data;
 }
 
+
 bool FileNode::SetData(const char_local* data, const size_t size)
 {
-	if (nullptr != m_data)
+	if (this->m_data)
 	{
-		delete[] m_data;
+		::operator delete(this->m_data);
 	}
 	SetSize(size);
 	m_data = new char_local[size];
@@ -34,20 +36,36 @@ bool FileNode::SetData(const char_local* data, const size_t size)
 	return true;
 }
 
-size_t FileNode::GetSize()
+
+bool FileNode::AppendData(const char_local* new_data, const size_t size)
+{
+	//update ...
+	/*auto old_size = GetSize();
+	auto new_size = GetSize() + size;
+	SetSize(new_size);
+	auto old_data = m_data;
+	m_data = new char_local[new_size];*/
+	return true;
+}
+
+
+const size_t FileNode::GetSize()const
 {
 	return m_size;
 }
+
 
 void FileNode::SetSize(const size_t size)
 {
 	m_size = size;
 }
 
+
 const time_t FileNode::GetLatestModifiedTimeStamp()
 {
 	return m_latest_modify_time_stamp;
 }
+
 
 void FileNode::SetLatestModifiedTimeStamp(time_t ts)
 {

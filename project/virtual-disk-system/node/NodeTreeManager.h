@@ -7,12 +7,21 @@
 
 #include "../util/Common.h"
 #include "NodeTree.h"
+#include "FileNode.h"
+#include "SymlinkNode.h"
 
 /*
 1、如何基于tokens搜索路径
 如果是绝对路径，就将搜索起始节点设置为根目录节点(注意是root不是driven)
 如果是相对路径，就将搜索起始节点设置为工作目录节点
 */
+
+enum class SelectType
+{
+	yes,
+	no,
+	all
+};
 
 class NodeTreeManager : Object {
 public:
@@ -50,13 +59,16 @@ public:
 	//rd [/s] path [path1] ...
 	ReturnType RemoveDirByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch);
 
-	//从真实磁盘路径复制目录或文件
+	//从真实磁盘路径复制文件到虚拟磁盘
 	//copy [/y] src_path dst_path
-	ReturnType CopyFromDisk(const string_local& src_path, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch);
+	ReturnType CopyFromDiskToMemory(const std::vector<string_local>& file_path_vec, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch);
 
-	//从虚拟磁盘路径复制目录或文件
+
+	//从虚拟磁盘路径复制文件到虚拟磁盘
 	//copy [/y] src_path dst_path
-	ReturnType CopyFromMemory(const std::vector<string_local>& src_path_tokens, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch);
+	ReturnType CopyFromMemoryToMemory(const std::vector<string_local>& src_tokens, const std::vector<string_local>& dst_tokens, const OptionSwitch& option_switch);
+
+
 
 
 	/////mklink [/d] 
@@ -90,6 +102,22 @@ private:
 
 	//判断token是不是..
 	bool IsParentDirToken(string_local& token);
+
+	//接收用户输入的选择器
+	SelectType Selector(const string_local& str);
+
+	//重写文件节点的数据
+	void OverwriteFileNode(BaseNode* file, const char_local* content, const size_t& size);
+
+	//从磁盘拷贝到目录下
+	void CopyFromDiskToMemoryToDirectory(const std::vector<string_local>& file_path_vec, DirNode* target_dir, const OptionSwitch& option_switch);
+	//从磁盘拷贝到文件下
+	void CopyFromDiskToMemoryToFile(const std::vector<string_local>& file_path_vec, FileNode* target_node, const OptionSwitch& option_switch);
+
+	//从内存拷贝到目录下
+	void CopyFromMemoryToMemoryToDirectory(const std::vector<FileNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch);
+	//从内存拷贝到文件下
+
 };
 
 #endif // !__NODETREEMANAGER_H__

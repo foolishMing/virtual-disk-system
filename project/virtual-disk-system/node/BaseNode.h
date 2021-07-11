@@ -5,7 +5,7 @@
 #include "../util/Common.h"
 
 //节点类型
-enum NodeType {
+enum class NodeType {
 	Directory,		//目录
 	File,			//文件
 	SymlinkD,		//快捷方式(目录)
@@ -18,12 +18,9 @@ public:
 	explicit BaseNode(string_local name, BaseNode* parent = nullptr);
 	virtual ~BaseNode();
 	
-	virtual size_t GetSize() = 0; //获取大小
+	virtual const size_t GetSize() const = 0; //获取大小
 	virtual const time_t GetLatestModifiedTimeStamp() = 0; //获取修改时间
 	virtual void SetLatestModifiedTimeStamp(time_t ts) = 0; //设置修改时间	
-
-
-	const NodeType GetType();
 
 	const string_local GetName();
 	void SetName(const string_local& name);
@@ -44,6 +41,9 @@ protected:
 	NodeType m_type; //节点类型
 	BaseNode* m_parent = nullptr; //父节点
 	time_t m_latest_modify_time_stamp = 0;//最近一次修改的秒时间戳
+
+	const NodeType GetType();
+
 };
 
 #endif // !__BASENODE_H__

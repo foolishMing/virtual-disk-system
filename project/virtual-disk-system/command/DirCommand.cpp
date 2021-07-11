@@ -61,7 +61,6 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 	const size_t path_cnt = arg.paths.size();
 	for (const Path& path : arg.paths)
 	{
-		const auto path_str = path.ToString();
 		//获得源路径tokens
 		if (!path.IsValid())
 		{
@@ -70,6 +69,7 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 			Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//error : 文件、目录或卷名语法不正确
 			continue;
 		}
+		const auto path_str = path.ToString();
 		const auto tokens = path.Tokens();
 		//检查源路径是否存在
 		bool is_find_path = node_tree_manager.IsPathExist(tokens);

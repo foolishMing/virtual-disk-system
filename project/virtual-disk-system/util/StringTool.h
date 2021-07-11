@@ -46,6 +46,10 @@ public:
 
 	//秒时间戳转字符串
 	static string_local TimeStampToDateTimeString(time_t ts);
+
+	//数字转格式化的字符串
+	static string_local FormatFromNumber(int num);
+
 private:
 	//字符串转小写
 	static string_local ToLowercase(const string_local& s);

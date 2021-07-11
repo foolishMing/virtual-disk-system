@@ -14,9 +14,9 @@
 #include <string>
 #include <vector>
 
-#ifndef interface
+#ifndef _interface_
 #define __struct__ struct
-#define interface __struct__
+#define _interface_ __struct__
 #endif 
 
 //名词/缩写解释
@@ -25,7 +25,7 @@
 //token : 路径上语法正确的目录、文件、卷名称
 
 //元对象
-interface Object
+_interface_ Object
 {
 	virtual void Create() = 0;
 	virtual void Destroy() = 0;
@@ -38,10 +38,12 @@ typedef wchar_t char_local;
 typedef std::wistringstream string_stream_local;
 typedef struct _stat64i32 stat_local;
 void MemcpyLocal(char_local* dst, const char_local* src, size_t size);
+void MemcatLocal(char_local* dst, const char_local* src, size_t size);
 bool StatLocal(const string_local& path, stat_local* stat);
+char_local* ReadDiskFileDataLocal(const string_local& path, size_t& file_size);
 
-//_wstat 需要替换
-
+//wstringstream待处理
+//to_wstring待处理
 
 //命令选项开关
 struct OptionSwitch
@@ -51,6 +53,7 @@ struct OptionSwitch
 	bool _y = false;
 	bool _d = false;
 };
+
 
 //返回类型
 enum class ReturnType
@@ -64,6 +67,7 @@ enum class ReturnType
 	DiskPathIsNotDirectoyOrFile,//真实磁盘路径既不是目录也不是文件
 
 	MemoryPathIsNotFound,//虚拟磁盘路径不存在
+	MemoryPathIsNotDirectoryOrFile,//虚拟磁盘路径既不是目录也不是文件
 };
 
 //目录相关信息
@@ -165,6 +169,9 @@ namespace CharSet
 
 	// @
 	extern const char_local char_at;
+
+	// .
+	extern const char_local char_dot;
 
 }
 

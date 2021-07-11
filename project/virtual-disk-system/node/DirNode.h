@@ -9,7 +9,7 @@ public:
 	explicit DirNode(string_local name, BaseNode* parent = nullptr);
 	virtual ~DirNode();
 
-	virtual size_t GetSize();
+	virtual const size_t GetSize() const;
 	virtual const time_t GetLatestModifiedTimeStamp(); //获取修改时间
 
 	BaseNode* FindChildByName(const string_local& node_name); //根据节点名称获取子节点

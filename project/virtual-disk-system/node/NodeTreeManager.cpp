@@ -1,6 +1,7 @@
 #include "NodeTreeManager.h"
 #include <deque>
 #include <queue>
+#include <fstream>
 
 NodeTreeManager::NodeTreeManager()
 {
@@ -64,7 +65,9 @@ void NodeTreeManager::PrintFileNodeInfo(BaseNode* node)
 	assert(!node->IsDirectory());
 	Console::Write::PrintLine(
 		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
-		L"                   " +
+		L" " + 
+		StringTools::FormatFromNumber(node->GetSize()) +
+		L" " +
 		node->GetName());
 }
 
@@ -479,62 +482,211 @@ ReturnType NodeTreeManager::RemoveDirByTokensAndOptions(const std::vector<string
 }
 
 
-//<update>
-//-output
-//打印被复制的文件路径
-//统计复制的所有文件
-ReturnType NodeTreeManager::CopyFromDisk(const string_local& src_path, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch)
+//1、如果目标路径是目录，则复制到目录下
+//2、如果目标路径是文件，则对目标文件进行覆盖写入
+ReturnType NodeTreeManager::CopyFromDiskToMemory(const std::vector<string_local>& file_path_vec, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch)
 {
-	stat_local stat;
-	if (0 != StatLocal(src_path, &stat))
-	{
-		return ReturnType::DiskPathIsNotFound;//真实磁盘路径不存在
-	}
 	BaseNode* target_node = FindNodeByTokensInternal(dst_path_tokens);
-	assert(nullptr != target_node);
-	bool is_cover_all = false;
-	//设置是否静默(全部)覆盖
-	if (option_switch._y == true)
+	assert(target_node != nullptr);
+	//目标路径是目录
+	if (target_node->IsDirectory())
 	{
-		is_cover_all = true;
+		DirNode* target_dir = static_cast<DirNode*>(target_node);
+		CopyFromDiskToMemoryToDirectory(file_path_vec, target_dir, option_switch);
 	}
-	//复制目录下的文件到虚拟磁盘
-	if (stat.st_mode & S_IFDIR)
+	//目标路径是文件
+	else if (target_node->IsFile())
 	{
-
+		FileNode* target_file = static_cast<FileNode*>(target_node);
+		CopyFromDiskToMemoryToFile(file_path_vec, target_file, option_switch);
 	}
-	//复制文件到虚拟磁盘
-	else if(stat.st_mode & S_IFREG)
-	{
-		
-	}
+	//目标路径是链接
 	else
 	{
-		return ReturnType::DiskPathIsNotDirectoyOrFile;//真实磁盘路径既不是目录也不是文件
+		//update...
 	}
 	return ReturnType::Success;
 }
 
 
-//<update>
-//-output
-//打印被复制的文件路径
-//统计复制的所有文件
-ReturnType NodeTreeManager::CopyFromMemory(const std::vector<string_local>& src_path_tokens, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch)
+void NodeTreeManager::CopyFromDiskToMemoryToDirectory(const std::vector<string_local>& file_path_vec, DirNode* target_dir, const OptionSwitch& option_switch)
 {
-	BaseNode* src_node = FindNodeByTokensInternal(src_path_tokens);
-	BaseNode* dst_node = FindNodeByTokensInternal(dst_path_tokens);
-	assert(nullptr != src_node && nullptr != dst_node);
-	int32_t copy_count = 0;
-	bool is_cover_all = false;
-	bool is_fuzzy_match = false;
-	//设置是否静默(全部)覆盖
-	if (option_switch._y == true)
+	bool is_silent_overwrite_all = option_switch._y; //是否默认覆盖全部重名文件
+	int copy_count = 0;
+	for (const auto& file_path : file_path_vec)
 	{
-		is_cover_all = true;
+		assert(PathTools::IsDiskPathExist(file_path));
+		//读取磁盘文件内容
+		size_t file_size = 0;
+		char_local* buffer = ReadDiskFileDataLocal(file_path, file_size);
+		if (buffer == nullptr)
+		{
+			Console::Write::PrintLine(L"读取磁盘文件 " + file_path + L" 失败");
+			continue;
+		}
+		string_local file_name = PathTools::GetFileName(file_path);
+		//创建新的文件
+		if (!target_dir->ContainsChild(file_name))
+		{
+			target_dir->AppendChild(new FileNode(file_name));
+		}
+		//静默覆盖重名文件
+		else if (is_silent_overwrite_all)
+		{
+		}
+		//提示用户是否覆盖重名文件
+		else
+		{
+			string_local dir_path = GetPathByNode(target_dir);
+			SelectType select = Selector(L"覆盖 " + dir_path + L"/" + file_name + L" 吗? (Yes/No/All):");
+			if (select == SelectType::all)
+			{
+				is_silent_overwrite_all = true;
+			}
+			//跳过当前文件
+			else if (select == SelectType::no)
+			{
+				continue;
+			}
+		}
+		BaseNode* node = target_dir->FindChildByName(file_name);
+		OverwriteFileNode(node, buffer,file_size);
+		copy_count++;
+		Console::Write::PrintLine(L"复制文件 " + file_path + L" 成功");
 	}
-	//设置是否模糊匹配
-	if(StringTools::HasWildcard(src_path_tokens))
+	Console::Write::PrintLine(L"已复制 " + StringTools::FormatFromNumber(copy_count) + L" 个文件");
+}
 
+
+void NodeTreeManager::CopyFromDiskToMemoryToFile(const std::vector<string_local>& file_path_vec, FileNode* dst_node, const OptionSwitch& option_switch)
+{
+	//update ...
+}
+
+
+ReturnType NodeTreeManager::CopyFromMemoryToMemory(const std::vector<string_local>& src_tokens, const std::vector<string_local>& dst_tokens, const OptionSwitch& option_switch)
+{
+	//查找源节点所在目录
+	BaseNode* cur_node = nullptr;
+	{
+		auto src_dir_tokens = src_tokens;
+		src_dir_tokens.pop_back();
+		if (src_dir_tokens.empty())
+		{
+			cur_node = m_working_dir;
+		}
+		else
+		{
+			cur_node = FindNodeByTokensInternal(src_dir_tokens);
+		}
+		if (cur_node == nullptr || !cur_node->IsDirectory())
+		{
+			return ReturnType::MemoryPathIsNotFound; //error : 源路径不存在
+		}
+	}
+	//获取源节点
+	std::vector<FileNode*> src_nodes = {};
+	const auto& src_file_match_pattern = src_tokens.back();//待匹配文件名
+	DirNode* cur_dir = static_cast<DirNode*>(cur_node);
+	for (const auto& child : cur_dir->Children())
+	{
+		if (!child->IsFile())
+		{
+			continue;
+		}
+		if (StringTools::IsStringFuzzyEqualTo(child->GetName(), src_file_match_pattern))
+		{
+			auto item = static_cast<FileNode*>(child);
+			src_nodes.emplace_back(item);			
+		}
+	}
+	if (src_nodes.empty())
+	{
+		return ReturnType::MemoryPathIsNotFound;//error : 源路径不存在
+	}
+	//获取目标节点
+	BaseNode* dst_node = FindNodeByTokensInternal(dst_tokens);
+	assert(nullptr != dst_node);
+	//如果目标节点是目录
+	if (dst_node->IsDirectory())
+	{
+		CopyFromMemoryToMemoryToDirectory(src_nodes, static_cast<DirNode*>(dst_node), option_switch);
+	}
+	else
+	{
+		//update 
+	}
 	return ReturnType::Success;
+}
+
+void NodeTreeManager::CopyFromMemoryToMemoryToDirectory(const std::vector<FileNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch)
+{
+	assert(nullptr != target_dir);
+	bool is_silent_overwrite_all = option_switch._y; //是否默认覆盖全部重名文件
+	int copy_count = 0;
+	for (const auto& file_node : node_list)
+	{
+		auto file_name = file_node->GetName();
+		//创建新的文件
+		if (!target_dir->ContainsChild(file_name))
+		{
+			target_dir->AppendChild(new FileNode(file_name));
+		}
+		//静默覆盖
+		else if (is_silent_overwrite_all)
+		{
+
+		}
+		//提示用户是否覆盖目标文件
+		else
+		{
+			string_local dir_path = GetPathByNode(target_dir);
+			SelectType select = Selector(L"覆盖 " + dir_path + L"/" + file_name + L" 吗? (Yes/No/All):");
+			if (select == SelectType::all)
+			{
+				is_silent_overwrite_all = true;
+			}
+			//跳过当前文件
+			else if (select == SelectType::no)
+			{
+				continue;
+			}
+		}
+		BaseNode* node = target_dir->FindChildByName(file_name);
+		OverwriteFileNode(node, file_node->GetData(), file_node->GetSize());
+		copy_count++;
+		Console::Write::PrintLine(L"复制文件 " + GetPathByNode(file_node) + L" 成功");
+	}
+}
+
+
+
+SelectType NodeTreeManager::Selector(const string_local& str)
+{
+	string_local input;
+	while (true)
+	{
+		Console::Write::Print(str);
+		Console::Read::ReadLine(input);
+		if (StringTools::IsEqual(input, L"yes"))
+		{
+			return SelectType::yes;
+		}
+		if (StringTools::IsEqual(input, L"no"))
+		{
+			return SelectType::no;
+		}
+		if (StringTools::IsEqual(input, L"all"))
+		{
+			return SelectType::all;
+		}
+	}
+}
+
+void NodeTreeManager::OverwriteFileNode(BaseNode* node, const char_local* content,const size_t& size)
+{
+	assert(node != nullptr);
+	assert(node->IsFile());
+	FileNode* file_node = static_cast<FileNode*>(node);
+	file_node->SetData(content, size);
 }
