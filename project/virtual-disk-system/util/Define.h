@@ -42,8 +42,13 @@ void MemcatLocal(char_local* dst, const char_local* src, size_t size);
 bool StatLocal(const string_local& path, stat_local* stat);
 char* ReadDiskFileData(const std::string& path, size_t& file_size);
 
+
+//获取系统可用内存
+uint64_t getTotalSystemMemory();
+
 //wstringstream待处理
 //to_wstring待处理
+//std::wcout待处理
 
 //命令选项开关
 struct OptionSwitch

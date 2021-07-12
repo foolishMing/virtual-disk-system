@@ -33,6 +33,7 @@ public:
 	string_local GetCurrentPath() const; //获取当前(目录)节点的路径
 
 	void PrintDirectoryNodeInfo(BaseNode* node); //打印目录节点信息
+
 	void PrintFileNodeInfo(BaseNode* node); //打印文件节点信息
 	void PrintDirectoryInfo(BaseNode* node, bool is_ad = false);	//打印目录信息
 

@@ -53,6 +53,14 @@ char* ReadDiskFileData(const std::string& path, size_t& file_size)
 }
 
 
+uint64_t getTotalSystemMemory()
+{
+	MEMORYSTATUSEX status;
+	status.dwLength = sizeof(status);
+	GlobalMemoryStatusEx(&status);
+	return status.ullTotalPhys;
+}
+
 
 namespace ErrorTips 
 {

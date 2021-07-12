@@ -54,10 +54,6 @@ void NodeTreeManager::PrintDirectoryNodeInfo(BaseNode* node)
 {
 	assert(nullptr != node);
 	assert(node->IsDirectory());
-	Console::Write::PrintLine(
-		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
-		TEXT("    <DIR>          ") +
-		node->GetName());
 }
 
 
@@ -65,13 +61,8 @@ void NodeTreeManager::PrintFileNodeInfo(BaseNode* node)
 {
 	assert(nullptr != node);
 	assert(!node->IsDirectory());
-	Console::Write::PrintLine(
-		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
-		TEXT(" ") + 
-		StringTools::FormatFromNumber(node->GetSize()) +
-		TEXT(" ") +
-		node->GetName());
 }
+
 
 
 //<udpate ...>
@@ -80,36 +71,55 @@ void NodeTreeManager::PrintFileNodeInfo(BaseNode* node)
 //is_ad == true,只打印子目录节点
 void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, bool is_ad)//打印目录信息
 {
-	assert(nullptr != dir);
-	assert(dir->IsDirectory());
+	assert(dir && dir->IsDirectory());
 	DirNode* cur_dir = static_cast<DirNode*>(dir);
 	Console::Write::PrintLine(TEXT(""));
 	Console::Write::PrintLine(GetPathByNode(cur_dir) + TEXT(" 的目录"));
 	Console::Write::PrintLine(TEXT(""));
-	int file_cnt = 0;//文件数量
 	int dir_cnt = 0;//目录数量
 	size_t tot_size = 0;//总大小
+	auto children = cur_dir->Children();
 	//遍历子节点，统计并打印节点信息{修改时间、节点类型、节点大小、节点名称}
-	for (BaseNode* cur_node : cur_dir->Children())
+	for (BaseNode* cur_node : children)
 	{
 		tot_size += cur_node->GetSize();
-		//打印子目录节点
+		//打印目录节点信息
 		if (cur_node->IsDirectory())
 		{
 			dir_cnt++;
-			PrintDirectoryNodeInfo(cur_node);
+			auto dir = static_cast<DirNode*>(cur_node);
+			std::wcout << StringTools::TimeStampToDateTimeString(dir->GetLatestModifiedTimeStamp()) 
+				<< TEXT("    ") 
+				<< std::left << std::setw(15) << TEXT("<DIR>") 
+				<< dir->GetName() << std::endl;
+			continue;
 		}
-		//打印子文件节点
-		else if(!is_ad)
+		if (is_ad) continue;
+		//打印子文件节点信息
+		if (cur_node->IsFile())
 		{
-			file_cnt++;
-			PrintFileNodeInfo(cur_node);
+			auto file_node = static_cast<FileNode*>(cur_node);
+			std::wcout << StringTools::TimeStampToDateTimeString(file_node->GetLatestModifiedTimeStamp())
+				<< TEXT("    ") 
+				<< std::right << std::setw(14) << std::to_wstring(file_node->GetSize()) 
+				<< TEXT(" ") << file_node->GetName() << std::endl;
+		}
+		//打印链接节点信息
+		else
+		{
+			auto link_node = static_cast<SymlinkNode*>(cur_node);
+			std::wcout << StringTools::TimeStampToDateTimeString(link_node->GetLatestModifiedTimeStamp())
+				<< TEXT("    ")
+				<< std::left << std::setw(15) << TEXT("<SYMLINK>")
+				<< link_node->GetName() << std::endl;
 		}
 	}
-	//打印统计信息{文件数量、目录数量、总大小}
-	Console::Write::Print(std::to_wstring(file_cnt) + TEXT(" 个文件 "));
-	Console::Write::PrintLine(std::to_wstring(tot_size) + TEXT(" 字节"));
-	Console::Write::PrintLine(std::to_wstring(dir_cnt) + TEXT(" 个目录"));
+	//打印统计信息{文件数量、总字节}
+	std::wcout << std::right << std::setw(20) << std::to_wstring(children.size() - dir_cnt) << TEXT(" 个文件")
+		<< std::right << std::setw(20) << std::to_wstring(tot_size) << TEXT("  字节") << std::endl;
+	//打印统计信息{目录数量、可用字节}
+	std::wcout << std::right << std::setw(20) << std::to_wstring(dir_cnt) << TEXT(" 个目录")
+		<< std::right << std::setw(20) << std::to_wstring(getTotalSystemMemory()) << TEXT("  可用字节") << std::endl;
 }
 
 

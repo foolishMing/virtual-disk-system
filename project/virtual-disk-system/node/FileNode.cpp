@@ -71,3 +71,5 @@ void FileNode::SetLatestModifiedTimeStamp(time_t ts)
 {
 	m_latest_modify_time_stamp = ts;
 }
+
+
