@@ -44,7 +44,7 @@ void DelCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 	{
 		if (!path.IsValid())
 		{
-			Console::Write::PrintLine(path.ToString() + L" " + ErrorTips::gsTokenNameIsIllegal);//error : 目录名、文件名或卷名语法不正确
+			Console::Write::PrintLine(path.ToString() + TEXT(" ") + ErrorTips::gsTokenNameIsIllegal);//error : 目录名、文件名或卷名语法不正确
 			continue;
 		}
 		//删除文件

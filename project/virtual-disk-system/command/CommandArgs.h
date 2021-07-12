@@ -21,7 +21,7 @@ public :
 	void Print();
 
 public:
-	string_local cmd_token = L"";
+	string_local cmd_token = TEXT("");
 	std::vector<string_local> options = {};	//选项列表
 	std::vector<Path> paths = {};	//路径列表
 };

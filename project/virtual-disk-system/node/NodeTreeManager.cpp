@@ -3,6 +3,8 @@
 #include <queue>
 #include <fstream>
 
+#include "tinyxml2.h"
+
 NodeTreeManager::NodeTreeManager()
 {
 
@@ -18,7 +20,7 @@ void NodeTreeManager::Create()
 	m_tree = new NodeTree();
 	m_tree->Create();
 	InitDrivens();
-	Log::LogInfo(L"node tree manager is created.");
+	Log::LogInfo(TEXT("node tree manager is created."));
 }
 
 
@@ -33,7 +35,7 @@ void NodeTreeManager::Destroy()
 	{
 		m_drivens.clear();	
 	}
-	Log::LogInfo(L"node tree manager is destroyed.");
+	Log::LogInfo(TEXT("node tree manager is destroyed."));
 }
 
 
@@ -54,7 +56,7 @@ void NodeTreeManager::PrintDirectoryNodeInfo(BaseNode* node)
 	assert(node->IsDirectory());
 	Console::Write::PrintLine(
 		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
-		L"    <DIR>          " +
+		TEXT("    <DIR>          ") +
 		node->GetName());
 }
 
@@ -65,9 +67,9 @@ void NodeTreeManager::PrintFileNodeInfo(BaseNode* node)
 	assert(!node->IsDirectory());
 	Console::Write::PrintLine(
 		StringTools::TimeStampToDateTimeString(node->GetLatestModifiedTimeStamp()) +
-		L" " + 
+		TEXT(" ") + 
 		StringTools::FormatFromNumber(node->GetSize()) +
-		L" " +
+		TEXT(" ") +
 		node->GetName());
 }
 
@@ -81,9 +83,9 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, bool is_ad)//´òÓ¡Ä¿Â¼ÐÅÏ
 	assert(nullptr != dir);
 	assert(dir->IsDirectory());
 	DirNode* cur_dir = static_cast<DirNode*>(dir);
-	Console::Write::PrintLine(L"");
-	Console::Write::PrintLine(GetPathByNode(cur_dir) + L" µÄÄ¿Â¼");
-	Console::Write::PrintLine(L"");
+	Console::Write::PrintLine(TEXT(""));
+	Console::Write::PrintLine(GetPathByNode(cur_dir) + TEXT(" µÄÄ¿Â¼"));
+	Console::Write::PrintLine(TEXT(""));
 	int file_cnt = 0;//ÎÄ¼þÊýÁ¿
 	int dir_cnt = 0;//Ä¿Â¼ÊýÁ¿
 	size_t tot_size = 0;//×Ü´óÐ¡
@@ -105,9 +107,9 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, bool is_ad)//´òÓ¡Ä¿Â¼ÐÅÏ
 		}
 	}
 	//´òÓ¡Í³¼ÆÐÅÏ¢{ÎÄ¼þÊýÁ¿¡¢Ä¿Â¼ÊýÁ¿¡¢×Ü´óÐ¡}
-	Console::Write::Print(std::to_wstring(file_cnt) + L" ¸öÎÄ¼þ ");
-	Console::Write::PrintLine(std::to_wstring(tot_size) + L" ×Ö½Ú");
-	Console::Write::PrintLine(std::to_wstring(dir_cnt) + L" ¸öÄ¿Â¼");
+	Console::Write::Print(std::to_wstring(file_cnt) + TEXT(" ¸öÎÄ¼þ "));
+	Console::Write::PrintLine(std::to_wstring(tot_size) + TEXT(" ×Ö½Ú"));
+	Console::Write::PrintLine(std::to_wstring(dir_cnt) + TEXT(" ¸öÄ¿Â¼"));
 }
 
 
@@ -521,7 +523,7 @@ void NodeTreeManager::CopyFromDiskToMemoryToDirectory(const std::vector<string_l
 		char* buffer = ReadDiskFileData(StringTools::WStringToString(file_path).c_str(), file_size);
 		if (buffer == nullptr)
 		{
-			Console::Write::PrintLine(L"¶ÁÈ¡´ÅÅÌÎÄ¼þ " + file_path + L" Ê§°Ü");
+			Console::Write::PrintLine(TEXT("¶ÁÈ¡´ÅÅÌÎÄ¼þ ") + file_path + TEXT(" Ê§°Ü"));
 			continue;
 		}
 		string_local file_name = PathTools::GetFileName(file_path);
@@ -538,7 +540,7 @@ void NodeTreeManager::CopyFromDiskToMemoryToDirectory(const std::vector<string_l
 		else
 		{
 			string_local dir_path = GetPathByNode(target_dir);
-			SelectType select = Selector(L"¸²¸Ç " + dir_path + L"/" + file_name + L" Âð? (Yes/No/All):");
+			SelectType select = Selector(TEXT("¸²¸Ç ") + dir_path + TEXT("/") + file_name + TEXT(" Âð? (Yes/No/All):"));
 			if (select == SelectType::all)
 			{
 				is_silent_overwrite_all = true;
@@ -552,9 +554,9 @@ void NodeTreeManager::CopyFromDiskToMemoryToDirectory(const std::vector<string_l
 		BaseNode* node = target_dir->FindChildByName(file_name);
 		OverwriteFileNode(node, buffer,file_size);
 		copy_count++;
-		Console::Write::PrintLine(L"¸´ÖÆÎÄ¼þ " + file_path + L" ³É¹¦");
+		Console::Write::PrintLine(TEXT("¸´ÖÆÎÄ¼þ ") + file_path + TEXT(" ³É¹¦"));
 	}
-	Console::Write::PrintLine(L"ÒÑ¸´ÖÆ " + StringTools::FormatFromNumber(copy_count) + L" ¸öÎÄ¼þ");
+	Console::Write::PrintLine(TEXT("ÒÑ¸´ÖÆ ") + StringTools::FormatFromNumber(copy_count) + TEXT(" ¸öÎÄ¼þ"));
 }
 
 
@@ -641,7 +643,7 @@ void NodeTreeManager::CopyFromMemoryToMemoryDirectory(const std::vector<FileNode
 		else
 		{
 			string_local dir_path = GetPathByNode(target_dir);
-			SelectType select = Selector(L"¸²¸Ç " + dir_path + L"/" + file_name + L" Âð? (Yes/No/All):");
+			SelectType select = Selector(TEXT("¸²¸Ç ") + dir_path + TEXT("/") + file_name + TEXT(" Âð? (Yes/No/All):"));
 			if (select == SelectType::all)
 			{
 				is_silent_overwrite_all = true;
@@ -655,7 +657,7 @@ void NodeTreeManager::CopyFromMemoryToMemoryDirectory(const std::vector<FileNode
 		BaseNode* node = target_dir->FindChildByName(file_name);
 		OverwriteFileNode(node, file_node->GetData(), file_node->GetSize());
 		copy_count++;
-		Console::Write::PrintLine(L"¸´ÖÆÎÄ¼þ " + GetPathByNode(file_node) + L" ³É¹¦");
+		Console::Write::PrintLine(TEXT("¸´ÖÆÎÄ¼þ ") + GetPathByNode(file_node) + TEXT(" ³É¹¦"));
 	}
 }
 
@@ -668,15 +670,15 @@ SelectType NodeTreeManager::Selector(const string_local& str)
 	{
 		Console::Write::Print(str);
 		Console::Read::ReadLine(input);
-		if (StringTools::IsEqual(input, L"yes"))
+		if (StringTools::IsEqual(input, TEXT("yes")))
 		{
 			return SelectType::yes;
 		}
-		if (StringTools::IsEqual(input, L"no"))
+		if (StringTools::IsEqual(input, TEXT("no")))
 		{
 			return SelectType::no;
 		}
-		if (StringTools::IsEqual(input, L"all"))
+		if (StringTools::IsEqual(input, TEXT("all")))
 		{
 			return SelectType::all;
 		}
@@ -783,7 +785,7 @@ ReturnType NodeTreeManager::MoveByTokensAndOptions(const std::vector<string_loca
 			//ÖØÃûÎÄ¼þ
 			else if (!is_silent_overwrite)
 			{
-				auto ret = Selector(L"¸²¸Ç " + GetPathByNode(child) + L" Âð? (Yes/No/All):");
+				auto ret = Selector(TEXT("¸²¸Ç ") + GetPathByNode(child) + TEXT(" Âð? (Yes/No/All):"));
 				if (ret == SelectType::no)
 				{
 					return ReturnType::Success;
@@ -806,7 +808,7 @@ ReturnType NodeTreeManager::MoveByTokensAndOptions(const std::vector<string_loca
 		}
 		if (!is_silent_overwrite)
 		{
-			auto ret = Selector(L"¸²¸Ç " + GetPathByNode(dst_node) + L" Âð? (Yes/No/All):");
+			auto ret = Selector(TEXT("¸²¸Ç ") + GetPathByNode(dst_node) + TEXT(" Âð? (Yes/No/All):"));
 			if (ret == SelectType::no)
 			{
 				return ReturnType::Success;
@@ -825,11 +827,11 @@ ReturnType NodeTreeManager::MoveByTokensAndOptions(const std::vector<string_loca
 	//´òÓ¡ÌáÊ¾ÎÄ°¸
 	if (src_node->IsDirectory())
 	{
-		Console::Write::PrintLine(L"ÒÆ¶¯ÁË1¸öÄ¿Â¼ " + GetPathByNode(src_node));
+		Console::Write::PrintLine(TEXT("ÒÆ¶¯ÁË1¸öÄ¿Â¼ ") + GetPathByNode(src_node));
 	}
 	else
 	{
-		Console::Write::PrintLine(L"ÒÆ¶¯ÁË1¸öÎÄ¼þ " + GetPathByNode(src_node));
+		Console::Write::PrintLine(TEXT("ÒÆ¶¯ÁË1¸öÎÄ¼þ ") + GetPathByNode(src_node));
 	}
 	return ReturnType::Success;
 }
@@ -844,7 +846,7 @@ ReturnType NodeTreeManager::DelByTokensAndOption(const Path& path, const OptionS
 		//É¾³ýÄ¿Â¼ÏÂµÄËùÓÐÎÄ¼þ
 		if (target_node->IsDirectory())
 		{
-			bool ret = DeleteNodeByFileName(static_cast<DirNode*>(target_node), L"*", is_recursive);
+			bool ret = DeleteNodeByFileName(static_cast<DirNode*>(target_node), TEXT("*"), is_recursive);
 			return ReturnType::Success;
 		}
 		//É¾³ýÓëÎÄ¼þÃûÆ¥ÅäµÄÎÄ¼þ
@@ -888,7 +890,7 @@ bool NodeTreeManager::DeleteNodeByFileName(DirNode* cur_dir, const string_local&
 		auto children = dir->Children();
 		q.pop();
 		//ÌáÊ¾ÓÃ»§Ñ¡ÔñÊÇ·ñÉ¾³ý
-		SelectType ret = Selector(L"É¾³ý " + GetPathByNode(dir) + L"\\*,ÊÇ·ñÈ·ÈÏ(Yes/No/All)£¿");
+		SelectType ret = Selector(TEXT("É¾³ý ") + GetPathByNode(dir) + TEXT("\\*,ÊÇ·ñÈ·ÈÏ(Yes/No/All)£¿"));
 		if (ret == SelectType::no)
 		{
 			continue;
@@ -904,7 +906,7 @@ bool NodeTreeManager::DeleteNodeByFileName(DirNode* cur_dir, const string_local&
 		}
 		for (const auto& item : del_vec)
 		{
-			Console::Write::PrintLine(L"É¾³ýÎÄ¼þ - " + GetPathByNode(item));
+			Console::Write::PrintLine(TEXT("É¾³ýÎÄ¼þ - ") + GetPathByNode(item));
 			m_tree->DeleteNode(item);
 		}
 		del_vec.clear();
@@ -942,5 +944,29 @@ bool NodeTreeManager::IsSameNode(BaseNode* lhs, BaseNode* rhs)
 	return false;
 }
 
+
+ReturnType NodeTreeManager::SaveToPath(const Path& path)
+{
+	//´´½¨xmlÎÄµµ
+	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
+	DirNode* root = static_cast<DirNode*>(m_tree->GetRoot());
+	std::queue<DirNode*> q;
+	q.push(root);
+	//±éÀúÎÄ¼þÊ÷
+	while (!q.empty())
+	{
+		auto cur_dir = q.front();
+		q.pop();
+		tinyxml2::XMLElement* element = doc->NewElement("Directorey");
+
+	}
+
+}
+
+
+ReturnType NodeTreeManager::LoadFromPath(const Path& path)
+{
+
+}
 
 

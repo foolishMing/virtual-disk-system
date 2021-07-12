@@ -1,7 +1,7 @@
 #include "CommandFactory.h"
 #include <cassert>
 #include <sstream>
-
+#include <windows.h>
 CommandFactory::CommandFactory()
 {
 
@@ -15,19 +15,19 @@ CommandFactory::~CommandFactory()
 void CommandFactory::Create()
 {
 	//创建token映射表
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"quit", CommandType::quit));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"dir", CommandType::dir));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"md", CommandType::md));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"rd", CommandType::rd));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"cd", CommandType::cd));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"del", CommandType::del));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"copy", CommandType::copy));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"ren", CommandType::ren));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"move", CommandType::move));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"mklink", CommandType::mklink));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"save", CommandType::save));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"load", CommandType::load));
-	m_cmd_token_map.insert(std::pair<string_local, CommandType>(L"cls", CommandType::cls));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("quit"), CommandType::quit));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("dir"), CommandType::dir));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("md"), CommandType::md));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("rd"), CommandType::rd));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("cd"), CommandType::cd));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("del"), CommandType::del));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("copy"), CommandType::copy));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("ren"), CommandType::ren));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("move"), CommandType::move));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("mklink"), CommandType::mklink));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("save"), CommandType::save));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("load"), CommandType::load));
+	m_cmd_token_map.insert(std::pair<string_local, CommandType>(TEXT("cls"), CommandType::cls));
 	//创建单例映射表
 	for (auto type = CommandType::undefine; type < CommandType::tail; type = (CommandType)(type + 1)) {
 		m_cmd_instance_map.insert(std::pair<CommandType,BaseCommand*>(type, CreateCommandInstance(type)));

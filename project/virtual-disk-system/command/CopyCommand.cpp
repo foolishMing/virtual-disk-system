@@ -36,7 +36,7 @@ void CopyCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manag
 		}
 		else 
 		{
-			Console::Write::PrintLine(ErrorTips::gsOptionsIsInvalid + L" " + opt); //error : 无效的开关
+			Console::Write::PrintLine(ErrorTips::gsOptionsIsInvalid + TEXT(" ") + opt); //error : 无效的开关
 			return;
 		}
 	}
@@ -119,7 +119,7 @@ void CopyCommand::CopyFileFromDiskToMemory(const Path& src_path, const Path& dst
 	//检查源文件路径列表是否为空
 	if (file_path_list.empty())
 	{
-		Console::Write::PrintLine(ErrorTips::gsDiskPathIsNotFound + L" " + src_path_str);//error : 系统找不到指定的磁盘路径名称
+		Console::Write::PrintLine(ErrorTips::gsDiskPathIsNotFound + TEXT(" ") + src_path_str);//error : 系统找不到指定的磁盘路径名称
 		return;
 	}
 	//进行复制操作
@@ -137,7 +137,7 @@ void CopyCommand::CopyFileFromMemoryToMemory(const Path& src_path, const Path& d
 	ReturnType ret = manager.CopyFromMemoryToMemory(src_tokens, dst_tokens, option_switch);
 	if (ret == ReturnType::MemoryPathIsNotFound)
 	{
-		Console::Write::PrintLine(L"源路径 " + src_path.ToString() + L" 不存在");
+		Console::Write::PrintLine(TEXT("源路径 ") + src_path.ToString() + TEXT(" 不存在"));
 	}
 }
 

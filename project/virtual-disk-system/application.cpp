@@ -40,7 +40,7 @@ void Application::PrintCurrentPath()
 {
 	assert(m_isCreate);
 	Console::Write::Print(m_node_tree_manager.GetCurrentPath());
-	Console::Write::Print(L">");
+	Console::Write::Print(TEXT(">"));
 }
 
 
@@ -49,7 +49,7 @@ void Application::Run()
 	assert(m_isCreate);
 	if (!m_isCreate)
 	{
-		Log::LogError(L"应用程序未初始化");
+		Log::LogError(TEXT("应用程序未初始化"));
 		return;
 	}
 	string_local input;

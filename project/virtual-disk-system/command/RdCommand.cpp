@@ -31,7 +31,7 @@ void RdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 		}
 		else
 		{
-			Console::Write::PrintLine(ErrorTips::gsOptionsIsInvalid + L" " + opt);//error : 无效的开关
+			Console::Write::PrintLine(ErrorTips::gsOptionsIsInvalid + TEXT(" ") + opt);//error : 无效的开关
 			return;
 		}
 	}
@@ -64,11 +64,11 @@ void RdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 		switch (ret)
 		{
 		case ReturnType::Success:
-			Console::Write::PrintLine(L"删除路径 " + path_str + L" 成功");
+			Console::Write::PrintLine(TEXT("删除路径 ") + path_str + TEXT(" 成功"));
 			break;
 		case ReturnType::UnExpectedException:
-			Console::Write::PrintLine(L"删除路径 " + path_str + L" 时发生了未预期的错误");
-				Log::LogError(L"删除路径 " + path_str + L" 时发生了未预期的错误");
+			Console::Write::PrintLine(TEXT("删除路径 ") + path_str + TEXT(" 时发生了未预期的错误"));
+				Log::LogError(TEXT("删除路径 ") + path_str + TEXT(" 时发生了未预期的错误"));
 			break;
 		case ReturnType::DirNameIsInvalid:
 			Console::Write::PrintLine(ErrorTips::gsDirNameInvalid);

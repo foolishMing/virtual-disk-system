@@ -137,11 +137,11 @@ bool PathTools::SearchDiskFilesByWildcard(const char_local* wildcardPath, std::v
 string_local PathTools::GetFileName(const string_local& path)
 {
 	string_local ret = {};
-	int pos_slash = path.find_last_of(CharSet::char_slash);
-	int pos_back_slash = path.find_last_of(CharSet::char_backslash);
-	int pos_min = min(pos_slash, pos_back_slash);
-	int pos_max = max(pos_slash, pos_back_slash);
-	int split_pos = 0;
+	size_t pos_slash = path.find_last_of(CharSet::char_slash);
+	size_t pos_back_slash = path.find_last_of(CharSet::char_backslash);
+	size_t pos_min = min(pos_slash, pos_back_slash);
+	size_t pos_max = max(pos_slash, pos_back_slash);
+	size_t split_pos = 0;
 	//基于pos_max获得后缀串
 	if (pos_max < path.npos)
 	{

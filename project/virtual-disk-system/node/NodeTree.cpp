@@ -13,14 +13,14 @@ NodeTree::~NodeTree()
 
 void NodeTree::Create()
 {
-	string_local nil_str = L"root";
+	string_local nil_str = TEXT("root");
 	m_root = new DirNode(nil_str);
-	Log::LogInfo(L"node tree is created.");
+	Log::LogInfo(TEXT("node tree is created."));
 }
 
 void NodeTree::Destroy()
 {
-	Log::LogInfo(L"--destroy node tree--");
+	Log::LogInfo(TEXT("--destroy node tree--"));
 	if (nullptr != m_root)
 	{
 		bool ok = DeleteNode(m_root);
@@ -34,19 +34,19 @@ bool NodeTree::InsertNode(BaseNode* node, BaseNode* new_child)
 	assert(node->IsDirectory());
 	if (nullptr == node || nullptr == new_child)
 	{
-		Log::LogError(L"非法操作：尝试在树上访问空指针");
+		Log::LogError(TEXT("非法操作：尝试在树上访问空指针"));
 		return false;
 	}
 	if (!node->IsDirectory())
 	{
-		Log::LogError(L"非法操作：尝试在非目录节点下插入子节点");
+		Log::LogError(TEXT("非法操作：尝试在非目录节点下插入子节点"));
 		return false;
 	}
 	auto dir = (DirNode*)node;
 	auto child_find = dir->FindChildByName(new_child->GetName());
 	if (nullptr != child_find)
 	{
-		Log::LogWarn(L"非法操作：尝试插入已存在的子节点");
+		Log::LogWarn(TEXT("非法操作：尝试插入已存在的子节点"));
 		return false;
 	}
 	dir->AppendChild(new_child);
@@ -63,7 +63,7 @@ bool NodeTree::InsertNode(BaseNode* node, BaseNode* new_child)
 bool NodeTree::DeleteNode(BaseNode* node)
 {
 	assert(nullptr != node);
-	Log::LogInfo(L"delete node " + node->GetName());
+	Log::LogInfo(TEXT("delete node ") + node->GetName());
 	//如果非目录节点则删除
 	if (!node->IsDirectory())
 	{

@@ -7,7 +7,7 @@ void StringTools::StringSplitBySpace(const string_local& in, std::vector<string_
 {
 	if (in.empty())
 	{
-		Log::LogWarn(L"不合法的操作：试图对空串进行Split()操作");
+		Log::LogWarn(TEXT("不合法的操作：试图对空串进行Split()操作"));
 		return;
 	}
 	string_stream_local str(in);
@@ -27,7 +27,7 @@ bool StringTools::StringSplitBySpaceAndQuotes(const string_local& in, std::vecto
 {
 	if (in.empty())
 	{
-		Log::LogWarn(L"不合法的操作：试图对空串进行Split()操作");
+		Log::LogWarn(TEXT("不合法的操作：试图对空串进行Split()操作"));
 		return false;
 	}
 	bool is_quote_open = false;	
@@ -82,11 +82,11 @@ string_local StringTools::Trimed(const string_local& in)
 	string_local out = in;
 	if (out.empty())
 	{
-		Log::LogWarn(L"不合法的操作：试图对空串进行Trimed()操作");
+		Log::LogWarn(TEXT("不合法的操作：试图对空串进行Trimed()操作"));
 		return out;
 	}
-	out.erase(0, out.find_first_not_of(L" "));
-	out.erase(out.find_last_not_of(L" ") + 1);
+	out.erase(0, out.find_first_not_of(TEXT(" ")));
+	out.erase(out.find_last_not_of(TEXT(" ")) + 1);
 	return out;
 }
 
@@ -95,9 +95,9 @@ string_local StringTools::ToLowercase(const string_local& s)
 	string_local ret = s;
 	for (auto& ch : ret)
 	{
-		if (ch >= L'A' && ch <= L'Z')
+		if (ch >= TEXT('A') && ch <= TEXT('Z'))
 		{
-			ch = ch - L'A' + L'a';
+			ch = ch - TEXT('A') + TEXT('a');
 		}
 	}
 	return ret;
@@ -107,7 +107,7 @@ bool StringTools::HasUppercase(const string_local& s)
 {
 	for (const auto ch : s)
 	{
-		if (ch >= L'A' && ch <= L'Z')
+		if (ch >= TEXT('A') && ch <= TEXT('Z'))
 		{
 			return true;
 		}
@@ -139,8 +139,8 @@ string_local StringTools::GetStringSuffix(const string_local& in, size_t cnt)
 	assert(!in.empty());
 	if (in.empty())
 	{
-		Log::LogWarn(L"不合法的操作：试图获取空串的后缀子串");
-		return L"";
+		Log::LogWarn(TEXT("不合法的操作：试图获取空串的后缀子串"));
+		return TEXT("");
 	}
 	int max_len = static_cast<int>(min(in.length(), cnt));
 	return in.substr(in.size() - cnt, cnt);
@@ -169,13 +169,13 @@ bool StringTools::IsStringFuzzyEqualTo(const string_local& text, const string_lo
 //CString模糊匹配，支持通配符"*"和"?"
 bool StringTools::IsFuzzyMatch(const char_local* str, const char_local* pattern)
 {
-	if (*pattern == L'\0')
+	if (*pattern == TEXT('\0'))
 	{
 		return true;
 	}
-	if (*pattern == L'*')
+	if (*pattern == CharSet::char_asterisk)
 	{
-		while (*str != L'\0')
+		while (*str != TEXT('\0'))
 		{
 			if (IsFuzzyMatch((const char_local*)str++, (const char_local*)pattern + 1))
 			{
@@ -183,11 +183,11 @@ bool StringTools::IsFuzzyMatch(const char_local* str, const char_local* pattern)
 			}
 		}
 	}
-	if (*str == L'\0')
+	if (*str == TEXT('\0'))
 	{
 		return false;
 	}
-	if (*str == *pattern || *pattern == L'?')
+	if (*str == *pattern || *pattern == CharSet::char_question)
 	{
 		return IsFuzzyMatch(str + 1, pattern + 1);
 	}
@@ -244,10 +244,11 @@ bool StringTools::HasWildcard(const std::vector<string_local>& tokens)
 
 string_local StringTools::TimeStampToDateTimeString(time_t ts)
 {
-	return L"0000/00/00  00:00";
+	return TEXT("0000/00/00  00:00");
 }
 
-string_local StringTools::FormatFromNumber(int num)
+
+string_local StringTools::FormatFromNumber(uint64_t num)
 {
 	return std::to_wstring(num);
 }
@@ -262,7 +263,7 @@ std::string StringTools::WStringToString(std::wstring wstr)
 	char* buffer = new char[len + 1];
 	//宽字节编码转换成多字节编码  
 	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), buffer, len, NULL, NULL);
-	buffer[len] = '\0';
+	buffer[len] = TEXT('\0');
 	//删除缓冲区并返回值  
 	result.append(buffer);
 	delete[] buffer;

@@ -48,7 +48,7 @@ public:
 	static string_local TimeStampToDateTimeString(time_t ts);
 
 	//数字转格式化的字符串
-	static string_local FormatFromNumber(int num);
+	static string_local FormatFromNumber(uint64_t num);
 
 	static std::string WStringToString(std::wstring wstr);
 

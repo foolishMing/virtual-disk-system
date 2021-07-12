@@ -47,8 +47,8 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 			bool exist_path = node_tree_manager.IsPathExist(tokens);
 			if (exist_path)//error : 路径已存在
 			{
-				Console::Write::PrintLine(L"子目录或文件 " + path.ToString() + L" 已存在");
-				if (path_cnt > 1) Console::Write::PrintLine(L"处理: " + path.ToString() + L" 时出错");
+				Console::Write::PrintLine(TEXT("子目录或文件 ") + path.ToString() + TEXT(" 已存在"));
+				if (path_cnt > 1) Console::Write::PrintLine(TEXT("处理: ") + path.ToString() + TEXT(" 时出错"));
 				continue;
 			}
 		}	
@@ -61,13 +61,13 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 			if (false == md_success)
 			{
 				Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);//error : 创建目录失败
-				if (path_cnt > 1) Console::Write::PrintLine(L"处理 : " + path_str + L" 时出错");
+				if (path_cnt > 1) Console::Write::PrintLine(TEXT("处理 : ") + path_str + TEXT(" 时出错"));
 				continue;
 			}
 			else
 			{
-				Console::Write::PrintLine(L"目录 " + path_str + L" 创建成功");
-				Log::LogInfo(L"目录 " + path_str + L" 创建成功");
+				Console::Write::PrintLine(TEXT("目录 ") + path_str + TEXT(" 创建成功"));
+				Log::LogInfo(TEXT("目录 ") + path_str + TEXT(" 创建成功"));
 			}
 		}
 	}

@@ -43,7 +43,7 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 		}
 		else
 		{
-			Console::Write::PrintLine(ErrorTips::gsOptionsIsInvalid + L" " + opt);//Error : 无效的开关
+			Console::Write::PrintLine(ErrorTips::gsOptionsIsInvalid + TEXT(" ") + opt);//Error : 无效的开关
 			return;
 		}
 	}
@@ -53,7 +53,7 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions({Constant::gs_cur_dir_token}, option_switch);
 		if (!ok)
 		{
-			Log::LogError(L"未知错误：dir工作目录 " + node_tree_manager.GetCurrentPath() + L" 失败");
+			Log::LogError(TEXT("未知错误：dir工作目录 ") + node_tree_manager.GetCurrentPath() + TEXT(" 失败"));
 		}
 		return;
 	}
@@ -76,7 +76,7 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 		if (!is_find_path)
 		{
 			//路径不存在，打印工作目录
-			Console::Write::PrintLine(node_tree_manager.GetCurrentPath() + L" 的目录");
+			Console::Write::PrintLine(node_tree_manager.GetCurrentPath() + TEXT(" 的目录"));
 			Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound); //error : 系统找不到指定的虚拟磁盘目录
 			continue;
 		}
@@ -84,7 +84,7 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions(tokens, option_switch);
 		if (!ok)
 		{
-			Log::LogError(L"未知错误：dir目录 " + path_str + L" 失败");
+			Log::LogError(TEXT("未知错误：dir目录 ") + path_str + TEXT(" 失败"));
 		}
 	}
 }

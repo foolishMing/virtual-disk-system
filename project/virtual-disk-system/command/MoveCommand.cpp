@@ -49,7 +49,7 @@ void MoveCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 	//源目录不存在
 	if (!manager.IsPathExist(src_path_tokens))
 	{
-		Console::Write::PrintLine(L"目录或文件 " + src_path.ToString() + L" 不存在");
+		Console::Write::PrintLine(TEXT("目录或文件 ") + src_path.ToString() + TEXT(" 不存在"));
 		return;
 	}
 	//move from src_path to dst_path

@@ -1,5 +1,5 @@
 #include "includes.h"
-
+#include <windows.h>
 TEST_CASE("IsStringFuzzyEqualTo(const string_local& text, const string_local& pattern)")
 {
 	string_local text_str;

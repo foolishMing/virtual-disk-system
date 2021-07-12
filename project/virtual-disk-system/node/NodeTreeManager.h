@@ -81,13 +81,22 @@ public:
 	//del [/s] path [path1] ...
 	ReturnType DelByTokensAndOption(const Path& path, const OptionSwitch& option_switch);
 
+	//序列化
+	//save @path
+	ReturnType SaveToPath(const Path& path);
+
+	//反序列化
+	//load @path
+	ReturnType LoadFromPath(const Path& path);
+
+
 private:
 	NodeTree* m_tree = nullptr;
 	std::vector<DirNode*> m_drivens;	//驱动列表(根目录)
 	DirNode* m_cur_driven = nullptr;	//当前驱动(根目录)
 	DirNode* m_working_dir = nullptr;		//工作目录
 
-	const std::vector<string_local> m_driver_tokens = { L"C:", L"D:", L"E:", L"F:", L"G" };
+	const std::vector<string_local> m_driver_tokens = { TEXT("C:"), TEXT("D:"), TEXT("E:"), TEXT("F:"), TEXT("G") };
 	
 	//初始化驱动（盘符）
 	void InitDrivens();
@@ -129,6 +138,8 @@ private:
 
 	//以名称为索引，删除文件节点
 	bool DeleteNodeByFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive);
+
+
 };
 
 #endif // !__NODETREEMANAGER_H__

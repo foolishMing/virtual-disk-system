@@ -44,7 +44,7 @@ void MklinkCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 		bool exist_path = manager.IsPathExist(src_path_tokens);
 		if (!exist_path)//error : 链接路径不存在
 		{
-			Console::Write::PrintLine(L"链接目录或文件 " + linkedPath.ToString() + L" 不存在");
+			Console::Write::PrintLine(TEXT("链接目录或文件 ") + linkedPath.ToString() + TEXT(" 不存在"));
 			return;
 		}
 	}
@@ -55,7 +55,7 @@ void MklinkCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 		bool exist_path = manager.IsPathExist(symbol_path_tokens);
 		if (exist_path)//error : 快捷方式已存在
 		{
-			Console::Write::PrintLine(L"快捷方式 " + linkPath.ToString() + L" 已存在");
+			Console::Write::PrintLine(TEXT("快捷方式 ") + linkPath.ToString() + TEXT(" 已存在"));
 			return;
 		}
 	}

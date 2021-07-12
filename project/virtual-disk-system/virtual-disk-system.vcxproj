@@ -223,6 +223,9 @@
     <ClInclude Include="util\PathTool.h" />
     <ClInclude Include="util\StringTool.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

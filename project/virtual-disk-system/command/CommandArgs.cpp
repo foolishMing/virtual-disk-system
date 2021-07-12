@@ -47,14 +47,14 @@ void CommandArg::Analyse(const string_local& in)
 		//option
 		if (item[0] == CharSet::char_slash) 
 		{
-			string_local buffer = L"/";
+			string_local buffer = TEXT("/");
 			for (int i = 1; i < item.length(); i++)
 			{
 				auto ch = item[i];
 				if (ch == CharSet::char_slash)
 				{
 					options.push_back(buffer);
-					buffer = L"/";
+					buffer = TEXT("/");
 				}
 				else
 				{
@@ -78,15 +78,15 @@ void CommandArg::Analyse(const string_local& in)
 void CommandArg::Print()
 {
 	//token
-	Console::Write::PrintLine(L"-cmd : " + cmd_token);
+	Console::Write::PrintLine(TEXT("-cmd : ") + cmd_token);
 	//options
-	Console::Write::PrintLine(L"-args : ");
+	Console::Write::PrintLine(TEXT("-args : "));
 	for (auto item : options)
 	{
 		Console::Write::PrintLine(item);
 	}
 	//paths
-	Console::Write::PrintLine(L"-paths : ");
+	Console::Write::PrintLine(TEXT("-paths : "));
 	for (auto item : paths)
 	{
 		Console::Write::PrintLine(item.ToString());
