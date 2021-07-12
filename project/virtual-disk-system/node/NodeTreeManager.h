@@ -117,7 +117,7 @@ private:
 	SelectType Selector(const string_local& str);
 
 	//重写文件节点的数据
-	void OverwriteFileNode(BaseNode* file, const char_local* content, const size_t& size);
+	void OverwriteFileNode(BaseNode* file, const char* content, const size_t& size);
 
 	//从磁盘拷贝到目录下
 	void CopyFromDiskToMemoryToDirectory(const std::vector<string_local>& file_path_vec, DirNode* target_dir, const OptionSwitch& option_switch);

@@ -50,6 +50,8 @@ public:
 	//数字转格式化的字符串
 	static string_local FormatFromNumber(int num);
 
+	static std::string WStringToString(std::wstring wstr);
+
 private:
 	//字符串转小写
 	static string_local ToLowercase(const string_local& s);

@@ -518,7 +518,7 @@ void NodeTreeManager::CopyFromDiskToMemoryToDirectory(const std::vector<string_l
 		assert(PathTools::IsDiskPathExist(file_path));
 		//读取磁盘文件内容
 		size_t file_size = 0;
-		char_local* buffer = ReadDiskFileDataLocal(file_path, file_size);
+		char* buffer = ReadDiskFileData(StringTools::WStringToString(file_path).c_str(), file_size);
 		if (buffer == nullptr)
 		{
 			Console::Write::PrintLine(L"读取磁盘文件 " + file_path + L" 失败");
@@ -683,7 +683,7 @@ SelectType NodeTreeManager::Selector(const string_local& str)
 	}
 }
 
-void NodeTreeManager::OverwriteFileNode(BaseNode* node, const char_local* content,const size_t& size)
+void NodeTreeManager::OverwriteFileNode(BaseNode* node, const char* content,const size_t& size)
 {
 	assert(node != nullptr);
 	assert(node->IsFile());

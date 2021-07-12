@@ -4,9 +4,9 @@
 #include <fstream>
 #include "windows.h"
 
-void MemcpyLocal(char_local* dst, const char_local* src, size_t size)
+void MemcpyLocal(char* dst, const char* src, size_t size)
 {
-	//wmemcpy(dst, src, size);
+	memcpy(dst, src, size);
 }
 
 void MemcatLocal(char_local* dst, const char_local* src, size_t size)
@@ -19,12 +19,13 @@ bool StatLocal(const string_local& path, stat_local* stat)
 	return _wstat(path.c_str(), stat);
 }
 
-char_local* ReadDiskFileDataLocal(const string_local& path, size_t& file_size)
+char* ReadDiskFileData(const std::string& path, size_t& file_size)
 {
 	FILE* pFile;
 	/* 若要一个byte不漏地读入整个文件，只能采用二进制方式打开 */
-	pFile = _wfopen(path.c_str(), L"rb");
-	if (pFile == NULL)
+	//pFile = _wfopen(path.c_str(), L"rb");
+	pFile = fopen(path.c_str(), "rb");
+	if (pFile == nullptr)
 	{
 		return nullptr;
 	}
@@ -33,7 +34,7 @@ char_local* ReadDiskFileDataLocal(const string_local& path, size_t& file_size)
 	file_size = ftell(pFile);
 	rewind(pFile);
 	/* 分配内存存储整个文件 */
-	auto buffer = (char_local*)malloc(sizeof(char_local) * file_size);
+	auto buffer = (char*)malloc(sizeof(char) *file_size);
 	if (buffer == nullptr)
 	{
 		return nullptr;

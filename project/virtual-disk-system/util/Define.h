@@ -37,10 +37,10 @@ typedef std::wstring string_local;
 typedef wchar_t char_local;
 typedef std::wistringstream string_stream_local;
 typedef struct _stat64i32 stat_local;
-void MemcpyLocal(char_local* dst, const char_local* src, size_t size);
+void MemcpyLocal(char* dst, const char* src, size_t size);
 void MemcatLocal(char_local* dst, const char_local* src, size_t size);
 bool StatLocal(const string_local& path, stat_local* stat);
-char_local* ReadDiskFileDataLocal(const string_local& path, size_t& file_size);
+char* ReadDiskFileData(const std::string& path, size_t& file_size);
 
 //wstringstream待处理
 //to_wstring待处理

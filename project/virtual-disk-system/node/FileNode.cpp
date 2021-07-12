@@ -18,26 +18,26 @@ FileNode::~FileNode()
 }
 
 
-char_local* FileNode::GetData()
+char* FileNode::GetData()
 {
 	return m_data;
 }
 
 
-bool FileNode::SetData(const char_local* data, const size_t size)
+bool FileNode::SetData(const char* data, const size_t size)
 {
 	if (this->m_data)
 	{
 		::operator delete(this->m_data);
 	}
 	SetSize(size);
-	m_data = new char_local[size];
+	m_data = new char[size];
 	MemcpyLocal(m_data, data, size);
 	return true;
 }
 
 
-bool FileNode::AppendData(const char_local* new_data, const size_t size)
+bool FileNode::AppendData(const char* new_data, const size_t size)
 {
 	//update ...
 	/*auto old_size = GetSize();
