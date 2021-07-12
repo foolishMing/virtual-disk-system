@@ -49,44 +49,52 @@ string_local NodeTreeManager::GetCurrentPath() const
 	return ret;
 }
 
-
-void NodeTreeManager::PrintDirectoryNodeInfo(BaseNode* node)
+void NodeTreeManager::PrintFileNodeInfo(BaseNode* cur_node)
 {
-	assert(nullptr != node);
-	assert(node->IsDirectory());
+	assert(cur_node);
+	//´òÓ¡×ÓÎÄ¼þ½ÚµãÐÅÏ¢
+	if (cur_node->IsFile())
+	{
+		auto file_node = static_cast<FileNode*>(cur_node);
+		std::wcout << StringTools::TimeStampToDateTimeString(file_node->GetLatestModifiedTimeStamp())
+			<< TEXT("    ")
+			<< std::right << std::setw(14) << std::to_wstring(file_node->GetSize())
+			<< TEXT(" ") << file_node->GetName() << std::endl;
+	}
+	//´òÓ¡Á´½Ó½ÚµãÐÅÏ¢
+	else
+	{
+		auto link_node = static_cast<SymlinkNode*>(cur_node);
+		std::wcout << StringTools::TimeStampToDateTimeString(link_node->GetLatestModifiedTimeStamp())
+			<< TEXT("    ")
+			<< std::left << std::setw(15) << TEXT("<SYMLINK>")
+			<< link_node->GetName() << std::endl;
+	}
 }
-
-
-void NodeTreeManager::PrintFileNodeInfo(BaseNode* node)
-{
-	assert(nullptr != node);
-	assert(!node->IsDirectory());
-}
-
-
 
 //<udpate ...>
 //Î´Íê³É£ºÊä³öÄÚÈÝ¸ñÊ½»¯
 //Î´Íê³É£º½«·µ»ØÖµÀàÐÍÐÞ¸ÄÎªDirInfo
 //is_ad == true,Ö»´òÓ¡×ÓÄ¿Â¼½Úµã
-void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, bool is_ad)//´òÓ¡Ä¿Â¼ÐÅÏ¢
+void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, StatisticInfo& g_info, bool is_ad)//´òÓ¡Ä¿Â¼ÐÅÏ¢
 {
 	assert(dir && dir->IsDirectory());
+	StatisticInfo info;
 	DirNode* cur_dir = static_cast<DirNode*>(dir);
 	Console::Write::PrintLine(TEXT(""));
 	Console::Write::PrintLine(GetPathByNode(cur_dir) + TEXT(" µÄÄ¿Â¼"));
 	Console::Write::PrintLine(TEXT(""));
-	int dir_cnt = 0;//Ä¿Â¼ÊýÁ¿
-	size_t tot_size = 0;//×Ü´óÐ¡
+	
 	auto children = cur_dir->Children();
+	info.tot_cnt = children.size();
 	//±éÀú×Ó½Úµã£¬Í³¼Æ²¢´òÓ¡½ÚµãÐÅÏ¢{ÐÞ¸ÄÊ±¼ä¡¢½ÚµãÀàÐÍ¡¢½Úµã´óÐ¡¡¢½ÚµãÃû³Æ}
 	for (BaseNode* cur_node : children)
 	{
-		tot_size += cur_node->GetSize();
+		info.tot_size += cur_node->GetSize();
 		//´òÓ¡Ä¿Â¼½ÚµãÐÅÏ¢
 		if (cur_node->IsDirectory())
 		{
-			dir_cnt++;
+			info.dir_cnt++;
 			auto dir = static_cast<DirNode*>(cur_node);
 			std::wcout << StringTools::TimeStampToDateTimeString(dir->GetLatestModifiedTimeStamp()) 
 				<< TEXT("    ") 
@@ -95,30 +103,20 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, bool is_ad)//´òÓ¡Ä¿Â¼ÐÅÏ
 			continue;
 		}
 		if (is_ad) continue;
-		//´òÓ¡×ÓÎÄ¼þ½ÚµãÐÅÏ¢
-		if (cur_node->IsFile())
-		{
-			auto file_node = static_cast<FileNode*>(cur_node);
-			std::wcout << StringTools::TimeStampToDateTimeString(file_node->GetLatestModifiedTimeStamp())
-				<< TEXT("    ") 
-				<< std::right << std::setw(14) << std::to_wstring(file_node->GetSize()) 
-				<< TEXT(" ") << file_node->GetName() << std::endl;
-		}
-		//´òÓ¡Á´½Ó½ÚµãÐÅÏ¢
-		else
-		{
-			auto link_node = static_cast<SymlinkNode*>(cur_node);
-			std::wcout << StringTools::TimeStampToDateTimeString(link_node->GetLatestModifiedTimeStamp())
-				<< TEXT("    ")
-				<< std::left << std::setw(15) << TEXT("<SYMLINK>")
-				<< link_node->GetName() << std::endl;
-		}
+		//´òÓ¡ÎÄ¼þ½ÚµãÐÅÏ¢
+		PrintFileNodeInfo(cur_node);
 	}
-	//´òÓ¡Í³¼ÆÐÅÏ¢{ÎÄ¼þÊýÁ¿¡¢×Ü×Ö½Ú}
-	std::wcout << std::right << std::setw(20) << std::to_wstring(children.size() - dir_cnt) << TEXT(" ¸öÎÄ¼þ")
-		<< std::right << std::setw(20) << std::to_wstring(tot_size) << TEXT("  ×Ö½Ú") << std::endl;
-	//´òÓ¡Í³¼ÆÐÅÏ¢{Ä¿Â¼ÊýÁ¿¡¢¿ÉÓÃ×Ö½Ú}
-	std::wcout << std::right << std::setw(20) << std::to_wstring(dir_cnt) << TEXT(" ¸öÄ¿Â¼")
+	PrintStatisticInfo(info);
+	g_info += info;
+}
+
+void NodeTreeManager::PrintStatisticInfo(StatisticInfo& info)
+{
+	//{ÎÄ¼þÊýÁ¿¡¢×Ü×Ö½Ú}
+	std::wcout << std::right << std::setw(20) << std::to_wstring(info.tot_cnt - info.dir_cnt) << TEXT(" ¸öÎÄ¼þ")
+		<< std::right << std::setw(20) << std::to_wstring(info.tot_size) << TEXT("  ×Ö½Ú") << std::endl;
+	//{Ä¿Â¼ÊýÁ¿¡¢¿ÉÓÃ×Ö½Ú}
+	std::wcout << std::right << std::setw(20) << std::to_wstring(info.dir_cnt) << TEXT(" ¸öÄ¿Â¼")
 		<< std::right << std::setw(20) << std::to_wstring(getTotalSystemMemory()) << TEXT("  ¿ÉÓÃ×Ö½Ú") << std::endl;
 }
 
@@ -421,6 +419,7 @@ bool NodeTreeManager::RenameNodeByTokens(const std::vector<string_local>& tokens
 bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch)	
 {
 	BaseNode* target_node = target_node = FindNodeByTokensInternal(tokens);
+	bool is_recursive = option_switch._s;
 	//target_node±£Ö¤²»Îª¿Õ
 	assert(nullptr != target_node);
 	//Ä¿±ê½ÚµãÎªÎÄ¼þ½Úµã£¬´òÓ¡ÐÅÏ¢
@@ -433,14 +432,15 @@ bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_
 	DirNode* cur_dir_node = static_cast<DirNode*>(target_node);
 	std::queue<DirNode*> q = {};
 	q.push(cur_dir_node);
+	StatisticInfo g_info;
 	while (!q.empty())
 	{
 		DirNode* node = q.front();
 		q.pop();
 		//´òÓ¡µ±Ç°Ä¿Â¼ÏÂµÄ×ÓÄ¿Â¼¼°ÎÄ¼þÐÅÏ¢
-		PrintDirectoryInfo(node, option_switch._ad);
+		PrintDirectoryInfo(node, g_info, option_switch._ad);
 		//½«×ÓÄ¿Â¼·ÅÔÚ´ý´òÓ¡Ä¿Â¼½Úµã¶ÓÁÐÖÐ
-		if (option_switch._s)
+		if (is_recursive)
 		{
 			for (auto child : node->Children())
 			{
@@ -451,6 +451,12 @@ bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_
 				}
 			}
 		}
+	}
+	if (is_recursive)
+	{
+		Console::Write::PrintLine(TEXT("\n     ËùÁÐÎÄ¼þ×ÜÊý:"));
+		g_info.tot_size = cur_dir_node->GetSize();
+		PrintStatisticInfo(g_info);
 	}
 	return true;
 }

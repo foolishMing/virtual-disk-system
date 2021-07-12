@@ -23,6 +23,22 @@ enum class SelectType
 	all
 };
 
+struct StatisticInfo
+{
+public:
+	uint64_t tot_cnt = 0;//节点数量
+	uint64_t dir_cnt = 0;//目录数量
+	//文件数量 = tot_cnt - dir_cnt
+	size_t tot_size = 0;//总字节数
+	bool operator += (const StatisticInfo& rhs)
+	{
+		tot_cnt += rhs.tot_cnt;
+		tot_size += rhs.tot_size;
+		dir_cnt += rhs.dir_cnt;
+		return true;
+	}
+};
+
 class NodeTreeManager : Object {
 public:
 	explicit NodeTreeManager();
@@ -31,11 +47,6 @@ public:
 	virtual void Destroy();
 public:
 	string_local GetCurrentPath() const; //获取当前(目录)节点的路径
-
-	void PrintDirectoryNodeInfo(BaseNode* node); //打印目录节点信息
-
-	void PrintFileNodeInfo(BaseNode* node); //打印文件节点信息
-	void PrintDirectoryInfo(BaseNode* node, bool is_ad = false);	//打印目录信息
 
 	 //查询输入路径是否存在
 	bool IsPathExist(const std::vector<string_local>& tokens);
@@ -104,6 +115,16 @@ private:
 
 	//是否为绝对路径
 	bool IsAbsolutePath(const std::vector<string_local>& tokens);
+
+	//打印文件信息
+	void PrintFileNodeInfo(BaseNode* cur_node);
+
+	//打印目录信息
+	void PrintDirectoryInfo(BaseNode* node, StatisticInfo& g_info, bool is_ad = false);
+
+	//打印统计信息
+	void PrintStatisticInfo(StatisticInfo& info);
+
 	
 	//查找目标节点
 	BaseNode* FindNodeByTokensInternal(const std::vector<string_local>& tokens);
