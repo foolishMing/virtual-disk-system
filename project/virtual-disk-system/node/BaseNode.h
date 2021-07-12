@@ -25,6 +25,8 @@ public:
 	const string_local GetName();
 	void SetName(const string_local& name);
 
+	bool IsSame(BaseNode* node); //判断两个节点是否相同
+
 	
 	BaseNode* GetParent();	//获取父节点指针
 	void SetParent(BaseNode* parent);	//设置父节点指针

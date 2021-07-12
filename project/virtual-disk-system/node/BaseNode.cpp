@@ -38,3 +38,4 @@ void BaseNode::SetParent(BaseNode* parent)
 {
 	m_parent = parent;
 }
+

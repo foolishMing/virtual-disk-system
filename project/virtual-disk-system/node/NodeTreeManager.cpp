@@ -528,7 +528,7 @@ void NodeTreeManager::CopyFromDiskToMemoryToDirectory(const std::vector<string_l
 		//创建新的文件
 		if (!target_dir->ContainsChild(file_name))
 		{
-			target_dir->AppendChild(new FileNode(file_name));
+			m_tree->InsertNode(target_dir, new FileNode(file_name));
 		}
 		//静默覆盖重名文件
 		else if (is_silent_overwrite_all)
@@ -630,7 +630,7 @@ void NodeTreeManager::CopyFromMemoryToMemoryToDirectory(const std::vector<FileNo
 		//创建新的文件
 		if (!target_dir->ContainsChild(file_name))
 		{
-			target_dir->AppendChild(new FileNode(file_name));
+			m_tree->InsertNode(target_dir, new FileNode(file_name));
 		}
 		//静默覆盖
 		else if (is_silent_overwrite_all)
@@ -723,6 +723,139 @@ ReturnType NodeTreeManager::MklinkByTokensAndOptions(const std::vector<string_lo
 	auto symbo_node = new SymlinkNode(symbol_name);
 	NodeType link_type = (option_switch._d) ? NodeType::SymlinkD : NodeType::SymlinkF;
 	symbo_node->SetSymlinkNode(link_type, src_node);
-	target_dir->AppendChild(symbo_node);
+	m_tree->InsertNode(target_dir, symbo_node);
 	return ReturnType::Success;
 }
+
+
+//1、若dst目录下有重名文件/目录，文件可以被覆盖，目录不可以——error ： 拒绝访问
+//2、工作路径上的节点不允许move
+//3、源路径必须存在；目标路径可以不存在，但必须与源路径在同一目录下，此时相当于重命名
+ReturnType NodeTreeManager::MoveByTokensAndOptions(const std::vector<string_local>& src_tokens, const std::vector<string_local>& dst_tokens, const OptionSwitch& option_switch)
+{
+	bool is_silent_overwrite = option_switch._y;
+	BaseNode* src_node = FindNodeByTokensInternal(src_tokens);
+	assert(src_node != nullptr);
+	//不能移动工作路径上的目录
+	if (IsAncestor(src_node, m_working_dir))
+	{
+		return ReturnType::AccessDenied;//error : 拒绝访问
+	}
+	//定位源目录/文件所在目录
+	BaseNode* src_parent_node = src_node->GetParent();
+	DirNode* src_parent_dir = static_cast<DirNode*>(src_parent_node);
+	//目标路径不存在
+	auto dst_node = FindNodeByTokensInternal(dst_tokens);
+	if (dst_node == nullptr)
+	{
+		auto dst_parent_tokens = dst_tokens;
+		dst_parent_tokens.pop_back();
+		auto dst_parent_node = FindNodeByTokensInternal(dst_parent_tokens);
+		if (dst_parent_node == nullptr)
+		{
+			return ReturnType::MemoryPathIsNotFound;//error : 找不到虚拟磁盘路径
+		}
+		//若目标路径与源路径在同一目录下
+		if (dst_parent_node->IsDirectory() && IsSameNode(src_parent_node, dst_parent_node))
+		{
+			//将源路径重命名为目标路径
+			assert(!dst_tokens.empty());
+			src_node->SetName(dst_tokens.back());
+			return ReturnType::Success;
+		}
+		else
+		{
+			return ReturnType::MemoryPathIsNotFound;//error : 找不到虚拟磁盘路径
+		}
+	}
+	//目标路径是目录
+	else if (dst_node->IsDirectory())
+	{
+		DirNode* dst_dir = static_cast<DirNode*>(dst_node);
+		auto child = dst_dir->FindChildByName(src_node->GetName());
+		if (child)
+		{
+			//重名目录
+			if (child->IsDirectory())
+			{
+				return ReturnType::AccessDenied;//error : 拒绝访问
+			}
+			//重名文件
+			else if (!is_silent_overwrite)
+			{
+				auto ret = Selector(L"覆盖 " + GetPathByNode(child) + L" 吗? (Yes/No/All):");
+				if (ret == SelectType::no)
+				{
+					return ReturnType::Success;
+				}
+			}
+			m_tree->DeleteNode(child);
+		}
+		//move
+		m_tree->RemoveButNotDeleteNode(src_node);
+		m_tree->InsertNode(dst_dir, src_node);
+	}
+	//目标路径是文件
+	else
+	{
+		auto new_name = dst_node->GetName();
+		auto new_dir = dst_node->GetParent();
+		if (new_dir == m_tree->GetRoot())
+		{
+			return ReturnType::MemoryPathIsNotFound;//找不到虚拟磁盘路径
+		}
+		if (!is_silent_overwrite)
+		{
+			auto ret = Selector(L"覆盖 " + GetPathByNode(dst_node) + L" 吗? (Yes/No/All):");
+			if (ret == SelectType::no)
+			{
+				return ReturnType::Success;
+			}
+		}
+		//删除目标文件
+		if (dst_node)
+		{
+			m_tree->DeleteNode(dst_node);
+		}
+		m_tree->RemoveButNotDeleteNode(src_node);
+		m_tree->InsertNode(new_dir, src_node);
+		//将源文件重命名
+		src_node->SetName(new_name);
+	}
+	//打印提示文案
+	if (src_node->IsDirectory())
+	{
+		Console::Write::PrintLine(L"移动了1个目录 " + GetPathByNode(src_node));
+	}
+	else
+	{
+		Console::Write::PrintLine(L"移动了1个文件 " + GetPathByNode(src_node));
+	}
+	return ReturnType::Success;
+}
+
+
+bool NodeTreeManager::IsSameNode(BaseNode* lhs, BaseNode* rhs)
+{
+	assert(nullptr != lhs && nullptr != rhs);
+	auto lstr = GetPathByNode(lhs);
+	auto rstr = GetPathByNode(rhs);
+	if (StringTools::IsEqual(lstr, rstr))
+	{
+		return true;
+	}
+	return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

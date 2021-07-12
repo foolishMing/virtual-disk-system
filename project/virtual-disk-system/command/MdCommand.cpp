@@ -26,7 +26,7 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 	//命令语法不正确
 	if (0 != arg.options.size() || 0 == arg.paths.size())
 	{
-		Console::Write::PrintLine(ErrorTips::gsCommandIsIllegal);
+		Console::Write::PrintLine(ErrorTips::gsCommandIsIllegal);//error : 命令语法不正确
 		return;
 	}
 	const size_t path_cnt = arg.paths.size();
@@ -38,7 +38,7 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 		//获取tokens
 		if (!path.IsValid())
 		{
-			Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//文件、目录或卷名称错误
+			Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//error ： 文件、目录或卷名称错误
 			continue;
 		}
 		const auto tokens = path.Tokens();

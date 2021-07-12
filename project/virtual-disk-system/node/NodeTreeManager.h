@@ -72,7 +72,10 @@ public:
 	//mklink [/d] sybolPath srcPath
 	ReturnType MklinkByTokensAndOptions(const std::vector<string_local>& symbol_tokens, const std::vector<string_local>& src_tokens, const OptionSwitch& option_switch);
 
-	//void MklinkFromSrcToSymbolWithArgs(string_local& src_path, string_local& symbol_path, std::vector<string_local>& args);//创建由src_path指向symbol_path的符号链接文件
+
+	//移动目录或文件
+	//move [/y] srcPath dstPath
+	ReturnType MoveByTokensAndOptions(const std::vector<string_local>& src_tokens, const std::vector<string_local>& dst_tokens, const OptionSwitch& option_switch);
 
 private:
 	NodeTree* m_tree = nullptr;
@@ -103,6 +106,9 @@ private:
 	//判断token是不是..
 	bool IsParentDirToken(string_local& token);
 
+	//判断两个节点是否相同
+	bool IsSameNode(BaseNode* lhs, BaseNode* rhs);
+
 	//接收用户输入的选择器
 	SelectType Selector(const string_local& str);
 
@@ -116,7 +122,6 @@ private:
 
 	//从内存拷贝到目录下
 	void CopyFromMemoryToMemoryToDirectory(const std::vector<FileNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch);
-	//从内存拷贝到文件下
 
 };
 
