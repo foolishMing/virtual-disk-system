@@ -3,7 +3,7 @@
 #include <queue>
 #include <fstream>
 
-#include "tinyxml2.h"
+
 
 NodeTreeManager::NodeTreeManager()
 {
@@ -846,13 +846,13 @@ ReturnType NodeTreeManager::DelByTokensAndOption(const Path& path, const OptionS
 		//删除目录下的所有文件
 		if (target_node->IsDirectory())
 		{
-			bool ret = DeleteNodeByFileName(static_cast<DirNode*>(target_node), TEXT("*"), is_recursive);
+			bool ret = DeleteNodeByWildcardFileName(static_cast<DirNode*>(target_node), TEXT("*"), is_recursive);
 			return ReturnType::Success;
 		}
 		//删除与文件名匹配的文件
 		auto file_name = path.Tokens().back();
 		auto cur_dir = static_cast<DirNode*>(target_node->GetParent());
-		bool ret = DeleteNodeByFileName(cur_dir, file_name, is_recursive);
+		bool ret = DeleteNodeByWildcardFileName(cur_dir, file_name, is_recursive);
 		return ReturnType::Success;
 	}
 	//检查路径中是否含有通配符
@@ -871,14 +871,14 @@ ReturnType NodeTreeManager::DelByTokensAndOption(const Path& path, const OptionS
 			return ReturnType::MemoryPathIsNotFound;
 		}
 		//基于通配符路径匹配文件并删除
-		bool ret = DeleteNodeByFileName(static_cast<DirNode*>(dir_node), file_name, is_recursive);
+		bool ret = DeleteNodeByWildcardFileName(static_cast<DirNode*>(dir_node), file_name, is_recursive);
 		return ReturnType::Success;
 	}
 	return ReturnType::MemoryPathIsNotFound;//error : 虚拟磁盘路径不存在
 }
 
 
-bool NodeTreeManager::DeleteNodeByFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive)
+bool NodeTreeManager::DeleteNodeByWildcardFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive)
 {
 	assert(nullptr != cur_dir);
 	auto target_dir = static_cast<DirNode*>(cur_dir);
@@ -947,26 +947,14 @@ bool NodeTreeManager::IsSameNode(BaseNode* lhs, BaseNode* rhs)
 
 ReturnType NodeTreeManager::SaveToPath(const Path& path)
 {
-	//创建xml文档
-	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
-	DirNode* root = static_cast<DirNode*>(m_tree->GetRoot());
-	std::queue<DirNode*> q;
-	q.push(root);
-	//遍历文件树
-	while (!q.empty())
-	{
-		auto cur_dir = q.front();
-		q.pop();
-		tinyxml2::XMLElement* element = doc->NewElement("Directorey");
 
-	}
-
+	return ReturnType::Success;
 }
 
 
 ReturnType NodeTreeManager::LoadFromPath(const Path& path)
 {
-
+	return ReturnType::Success;
 }
 
 

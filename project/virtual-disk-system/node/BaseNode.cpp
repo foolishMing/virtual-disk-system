@@ -1,12 +1,19 @@
 #include "BaseNode.h"
+#include <sys/timeb.h>
 
 
-BaseNode::BaseNode() {}
+BaseNode::BaseNode() 
+{
+	struct timeb rawtime;
+	ftime(&rawtime);
+	m_latest_modify_time_stamp = rawtime.time;
+}
 
 BaseNode::BaseNode(string_local name, BaseNode* parent)
 {
 	m_name = name;
 	m_parent = parent;
+
 }
 
 BaseNode::~BaseNode()

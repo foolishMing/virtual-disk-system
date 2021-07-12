@@ -1,6 +1,9 @@
+#define _CRT_NON_CONFORMING_SWPRINTFS
+#define _CRT_SECURE_NO_WARNINGS
 #include "StringTool.h"
 #include "Log.h"
 #include <windows.h>
+#include <time.h>
 
 
 void StringTools::StringSplitBySpace(const string_local& in, std::vector<string_local>& out)
@@ -241,10 +244,13 @@ bool StringTools::HasWildcard(const std::vector<string_local>& tokens)
 	return false;
 }
 
-
 string_local StringTools::TimeStampToDateTimeString(time_t ts)
 {
-	return TEXT("0000/00/00  00:00");
+	struct tm tm;
+	tm = *localtime(&ts);
+	wchar_t wstr[100];
+	wcsftime(wstr, sizeof(wstr), L"%Y/%m/%d  %H:%M", &tm);
+	return wstr;
 }
 
 

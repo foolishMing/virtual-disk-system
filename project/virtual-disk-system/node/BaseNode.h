@@ -36,6 +36,7 @@ public:
 	bool IsFileLink() { return (NodeType::SymlinkF == m_type) ? true : false; }
 
 protected:
+
 	string_local m_name = TEXT(""); //节点名称
 	NodeType m_type; //节点类型
 	BaseNode* m_parent = nullptr; //父节点
@@ -43,9 +44,7 @@ protected:
 	//最近一次修改的秒时间戳
 	//修改文件夹中的文件、在文件夹里添加新文件和删除文件都会改变文件夹的修改时间。
 	time_t m_latest_modify_time_stamp = 0;
-
 	const NodeType GetType();
-
 };
 
 #endif // !__BASENODE_H__

@@ -137,7 +137,7 @@ private:
 	void CopyFromMemoryToMemoryDirectory(const std::vector<FileNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch);
 
 	//以名称为索引，删除文件节点
-	bool DeleteNodeByFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive);
+	bool DeleteNodeByWildcardFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive);
 
 
 };
