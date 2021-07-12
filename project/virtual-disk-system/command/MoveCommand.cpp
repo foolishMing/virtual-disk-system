@@ -52,7 +52,18 @@ void MoveCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 		Console::Write::PrintLine(L"目录或文件 " + src_path.ToString() + L" 不存在");
 		return;
 	}
-	manager.MoveByTokensAndOptions(src_path_tokens, dst_path_tokens, option_switch);
+	//move from src_path to dst_path
+	ReturnType ret = manager.MoveByTokensAndOptions(src_path_tokens, dst_path_tokens, option_switch);
+	if (ret == ReturnType::AccessDenied)
+	{
+		Console::Write::PrintLine(ErrorTips::gsMemoryPathAccessDenied);//error ：虚拟磁盘拒绝访问
+		return;
+	}
+	if (ret == ReturnType::MemoryPathIsNotFound)
+	{
+		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);//error : 找不到虚拟磁盘路径
+		return;
+	}
 }
 
 

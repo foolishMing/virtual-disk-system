@@ -77,6 +77,10 @@ public:
 	//move [/y] srcPath dstPath
 	ReturnType MoveByTokensAndOptions(const std::vector<string_local>& src_tokens, const std::vector<string_local>& dst_tokens, const OptionSwitch& option_switch);
 
+	//删除文件
+	//del [/s] path [path1] ...
+	ReturnType DelByTokensAndOption(const Path& path, const OptionSwitch& option_switch);
+
 private:
 	NodeTree* m_tree = nullptr;
 	std::vector<DirNode*> m_drivens;	//驱动列表(根目录)
@@ -118,11 +122,13 @@ private:
 	//从磁盘拷贝到目录下
 	void CopyFromDiskToMemoryToDirectory(const std::vector<string_local>& file_path_vec, DirNode* target_dir, const OptionSwitch& option_switch);
 	//从磁盘拷贝到文件下
-	void CopyFromDiskToMemoryToFile(const std::vector<string_local>& file_path_vec, FileNode* target_node, const OptionSwitch& option_switch);
+	void CopyFromDiskToMemoryFile(const std::vector<string_local>& file_path_vec, FileNode* target_node, const OptionSwitch& option_switch);
 
 	//从内存拷贝到目录下
-	void CopyFromMemoryToMemoryToDirectory(const std::vector<FileNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch);
+	void CopyFromMemoryToMemoryDirectory(const std::vector<FileNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch);
 
+	//以名称为索引，删除文件节点
+	bool DeleteNodeByFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive);
 };
 
 #endif // !__NODETREEMANAGER_H__

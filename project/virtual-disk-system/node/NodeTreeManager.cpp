@@ -158,7 +158,7 @@ string_local NodeTreeManager::GetPathByNode(BaseNode* node)const
 bool NodeTreeManager::IsPathExist(const std::vector<string_local>& tokens)
 {
 	BaseNode* target_node = FindNodeByTokensInternal(tokens);
-	return (target_node != nullptr) ? true : false;
+	return (target_node != nullptr && target_node != m_tree->GetRoot()) ? true : false;
 }
 
 
@@ -498,7 +498,7 @@ ReturnType NodeTreeManager::CopyFromDiskToMemory(const std::vector<string_local>
 	else if (target_node->IsFile())
 	{
 		FileNode* target_file = static_cast<FileNode*>(target_node);
-		CopyFromDiskToMemoryToFile(file_path_vec, target_file, option_switch);
+		CopyFromDiskToMemoryFile(file_path_vec, target_file, option_switch);
 	}
 	//目标路径是链接
 	else
@@ -558,7 +558,7 @@ void NodeTreeManager::CopyFromDiskToMemoryToDirectory(const std::vector<string_l
 }
 
 
-void NodeTreeManager::CopyFromDiskToMemoryToFile(const std::vector<string_local>& file_path_vec, FileNode* dst_node, const OptionSwitch& option_switch)
+void NodeTreeManager::CopyFromDiskToMemoryFile(const std::vector<string_local>& file_path_vec, FileNode* dst_node, const OptionSwitch& option_switch)
 {
 	//update ...
 }
@@ -610,7 +610,7 @@ ReturnType NodeTreeManager::CopyFromMemoryToMemory(const std::vector<string_loca
 	//如果目标节点是目录
 	if (dst_node->IsDirectory())
 	{
-		CopyFromMemoryToMemoryToDirectory(src_nodes, static_cast<DirNode*>(dst_node), option_switch);
+		CopyFromMemoryToMemoryDirectory(src_nodes, static_cast<DirNode*>(dst_node), option_switch);
 	}
 	else
 	{
@@ -619,7 +619,7 @@ ReturnType NodeTreeManager::CopyFromMemoryToMemory(const std::vector<string_loca
 	return ReturnType::Success;
 }
 
-void NodeTreeManager::CopyFromMemoryToMemoryToDirectory(const std::vector<FileNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch)
+void NodeTreeManager::CopyFromMemoryToMemoryDirectory(const std::vector<FileNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch)
 {
 	assert(nullptr != target_dir);
 	bool is_silent_overwrite_all = option_switch._y; //是否默认覆盖全部重名文件
@@ -835,6 +835,101 @@ ReturnType NodeTreeManager::MoveByTokensAndOptions(const std::vector<string_loca
 }
 
 
+ReturnType NodeTreeManager::DelByTokensAndOption(const Path& path, const OptionSwitch& option_switch)
+{
+	bool is_recursive = option_switch._s;
+	BaseNode* target_node = FindNodeByTokensInternal(path.Tokens());
+	if (nullptr != target_node)
+	{
+		//删除目录下的所有文件
+		if (target_node->IsDirectory())
+		{
+			bool ret = DeleteNodeByFileName(static_cast<DirNode*>(target_node), L"*", is_recursive);
+			return ReturnType::Success;
+		}
+		//删除与文件名匹配的文件
+		auto file_name = path.Tokens().back();
+		auto cur_dir = static_cast<DirNode*>(target_node->GetParent());
+		bool ret = DeleteNodeByFileName(cur_dir, file_name, is_recursive);
+		return ReturnType::Success;
+	}
+	//检查路径中是否含有通配符
+	if (path.IsWild())
+	{
+		auto dir_tokens = path.Tokens();
+		auto file_name = dir_tokens.back();
+		dir_tokens.pop_back();
+		if (dir_tokens.empty()) 
+		{
+			dir_tokens.emplace_back(Constant::gs_cur_dir_token);
+		}
+		auto dir_node = FindNodeByTokensInternal(dir_tokens);
+		if (dir_node == nullptr)
+		{
+			return ReturnType::MemoryPathIsNotFound;
+		}
+		//基于通配符路径匹配文件并删除
+		bool ret = DeleteNodeByFileName(static_cast<DirNode*>(dir_node), file_name, is_recursive);
+		return ReturnType::Success;
+	}
+	return ReturnType::MemoryPathIsNotFound;//error : 虚拟磁盘路径不存在
+}
+
+
+bool NodeTreeManager::DeleteNodeByFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive)
+{
+	assert(nullptr != cur_dir);
+	auto target_dir = static_cast<DirNode*>(cur_dir);
+	std::queue<DirNode*> q;
+	q.push(target_dir);
+	while (!q.empty())
+	{
+		DirNode* dir = q.front();
+		auto children = dir->Children();
+		q.pop();
+		//提示用户选择是否删除
+		SelectType ret = Selector(L"删除 " + GetPathByNode(dir) + L"\\*,是否确认(Yes/No/All)？");
+		if (ret == SelectType::no)
+		{
+			continue;
+		}
+		//删除当前目录下的所有匹配的文件
+		std::vector<BaseNode*> del_vec{};
+		for (const auto& item : children)
+		{
+			if (!item->IsDirectory() && StringTools::IsFuzzyMatch(item->GetName().c_str(), file_name.c_str()))
+			{
+				del_vec.emplace_back(item);
+			}
+		}
+		for (const auto& item : del_vec)
+		{
+			Console::Write::PrintLine(L"删除文件 - " + GetPathByNode(item));
+			m_tree->DeleteNode(item);
+		}
+		del_vec.clear();
+		//如果没有递归选项，跳出循环
+		if (!is_recursive)
+		{
+			break;
+		}
+		//将所有子目录节点推入队列
+		for (const auto& item : children)
+		{
+			if (item->IsDirectory())
+			{
+				q.push(static_cast<DirNode*>(item));
+			}
+		}
+	}
+	while (!q.empty())
+	{
+		q.pop();
+	}
+	return true;
+}
+
+
 bool NodeTreeManager::IsSameNode(BaseNode* lhs, BaseNode* rhs)
 {
 	assert(nullptr != lhs && nullptr != rhs);
@@ -846,16 +941,6 @@ bool NodeTreeManager::IsSameNode(BaseNode* lhs, BaseNode* rhs)
 	}
 	return false;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

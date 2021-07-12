@@ -60,7 +60,7 @@ bool Path::SplitToTokensInternal()
 			buffer = StringTools::Trimed(buffer);
 			if (buffer.empty())
 			{
-				return false;//error : 路径名语法不正确，token是空串
+				return false; //error : 路径名语法不正确，token是空串
 			}			
 			//读缓冲区，取出一个token 
 			m_tokens.push_back(buffer);
@@ -88,7 +88,7 @@ const bool Path::IsWild() const
 {
 	auto& str = m_tokens.back();
 	assert(!str.empty());
-	if (str.find(CharSet::char_question) != str.npos || str.find(CharSet::char_asterisk))
+	if (str.find(CharSet::char_question) != str.npos || str.find(CharSet::char_asterisk) != str.npos)
 	{
 		return true;
 	}
