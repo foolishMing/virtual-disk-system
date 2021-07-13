@@ -5,6 +5,7 @@ FileNode::FileNode(string_local name, BaseNode* parent)
 	this->m_type = NodeType::File;
 	this->m_parent = parent;
 	this->m_name = name;
+	Log::Info(TEXT("Create FileNode ") + name);
 }
 
 

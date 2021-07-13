@@ -67,7 +67,7 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 			else
 			{
 				Console::Write::PrintLine(TEXT("目录 ") + path_str + TEXT(" 创建成功"));
-				Log::LogInfo(TEXT("目录 ") + path_str + TEXT(" 创建成功"));
+				Log::Info(TEXT("目录 ") + path_str + TEXT(" 创建成功"));
 			}
 		}
 	}

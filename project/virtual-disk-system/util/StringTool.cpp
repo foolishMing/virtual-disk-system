@@ -10,7 +10,7 @@ void StringTools::StringSplitBySpace(const string_local& in, std::vector<string_
 {
 	if (in.empty())
 	{
-		Log::LogWarn(TEXT("不合法的操作：试图对空串进行Split()操作"));
+		Log::Warn(TEXT("不合法的操作：试图对空串进行Split()操作"));
 		return;
 	}
 	string_stream_local str(in);
@@ -30,7 +30,7 @@ bool StringTools::StringSplitBySpaceAndQuotes(const string_local& in, std::vecto
 {
 	if (in.empty())
 	{
-		Log::LogWarn(TEXT("不合法的操作：试图对空串进行Split()操作"));
+		Log::Warn(TEXT("不合法的操作：试图对空串进行Split()操作"));
 		return false;
 	}
 	bool is_quote_open = false;	
@@ -85,7 +85,7 @@ string_local StringTools::Trimed(const string_local& in)
 	string_local out = in;
 	if (out.empty())
 	{
-		Log::LogWarn(TEXT("不合法的操作：试图对空串进行Trimed()操作"));
+		Log::Warn(TEXT("不合法的操作：试图对空串进行Trimed()操作"));
 		return out;
 	}
 	out.erase(0, out.find_first_not_of(TEXT(" ")));
@@ -142,7 +142,7 @@ string_local StringTools::GetStringSuffix(const string_local& in, size_t cnt)
 	assert(!in.empty());
 	if (in.empty())
 	{
-		Log::LogWarn(TEXT("不合法的操作：试图获取空串的后缀子串"));
+		Log::Warn(TEXT("不合法的操作：试图获取空串的后缀子串"));
 		return TEXT("");
 	}
 	int max_len = static_cast<int>(min(in.length(), cnt));
@@ -277,36 +277,24 @@ std::string StringTools::WStringToString(std::wstring wstr)
 }
 
 
-char* StringTools::UnicodeToUtf8(const wchar_t* unicode)
+char* StringTools::UnicodeToUtf8(const wchar_t* wchar)
 {
-	int len;
-	len = WideCharToMultiByte(CP_UTF8, 0, unicode, -1, NULL, 0, NULL, NULL);
-	char *szUtf8 = (char*)malloc(len + 1);
-	memset(szUtf8, 0, len + 1);
-	WideCharToMultiByte(CP_UTF8, 0, unicode, -1, szUtf8, len, NULL, NULL);
-	return szUtf8;
+	char * m_char;
+	int len = WideCharToMultiByte(CP_ACP, 0, wchar, wcslen(wchar), NULL, 0, NULL, NULL);
+	m_char = new char[len + 1];
+	WideCharToMultiByte(CP_ACP, 0, wchar, wcslen(wchar), m_char, len, NULL, NULL);
+	m_char[len] = '\0';
+	return m_char;
 }
 
-wchar_t* StringTools::Utf8ToUnicode(const char* szU8)
+wchar_t* StringTools::Utf8ToUnicode(const char* cchar)
 {
-	//预转换，得到所需空间的大小;
-	int wcsLen = ::MultiByteToWideChar(CP_UTF8, NULL, szU8, strlen(szU8), NULL, 0);
-
-	//分配空间要给'\0'留个空间，MultiByteToWideChar不会给'\0'空间
-	wchar_t* wszString = new wchar_t[wcsLen + 1];
-
-	//转换
-	::MultiByteToWideChar(CP_UTF8, NULL, szU8, strlen(szU8), wszString, wcsLen);
-
-	//最后加上'\0'
-	wszString[wcsLen] = '\0';
-
-	wchar_t* unicodeString(wszString);
-
-	delete[] wszString;
-	wszString = NULL;
-
-	return unicodeString;
+	wchar_t *m_wchar;
+	int len = MultiByteToWideChar(CP_ACP, 0, cchar, strlen(cchar), NULL, 0);
+	m_wchar = new wchar_t[len + 1];
+	MultiByteToWideChar(CP_ACP, 0, cchar, strlen(cchar), m_wchar, len);
+	m_wchar[len] = '\0';
+	return m_wchar;
 }
 
 

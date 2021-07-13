@@ -14,9 +14,9 @@ class Log
 {
 public:
 	/*extern const std::shared_ptr<spdlog::logger> g_logger;*/
-	static void LogInfo(const string_local& str);
-	static void LogWarn(const string_local& str);
-	static void LogError(const string_local& str);
+	static void Info(const string_local& str);
+	static void Warn(const string_local& str);
+	static void Error(const string_local& str);
 };
 
 #endif // !__LOG_H__

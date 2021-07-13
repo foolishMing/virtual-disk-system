@@ -68,7 +68,7 @@ void RdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 			break;
 		case ReturnType::UnExpectedException:
 			Console::Write::PrintLine(TEXT("删除路径 ") + path_str + TEXT(" 时发生了未预期的错误"));
-				Log::LogError(TEXT("删除路径 ") + path_str + TEXT(" 时发生了未预期的错误"));
+				Log::Error(TEXT("删除路径 ") + path_str + TEXT(" 时发生了未预期的错误"));
 			break;
 		case ReturnType::DirNameIsInvalid:
 			Console::Write::PrintLine(ErrorTips::gsDirNameInvalid);

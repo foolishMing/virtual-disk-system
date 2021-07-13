@@ -6,6 +6,7 @@ DirNode::DirNode(string_local name, BaseNode* parent)
 	m_type = NodeType::Directory;
 	m_parent = parent;
 	m_name = name;
+	Log::Info(TEXT("Create DirNode ") + name);
 }
 
 DirNode::~DirNode()

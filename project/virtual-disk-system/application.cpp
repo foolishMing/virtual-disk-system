@@ -49,7 +49,7 @@ void Application::Run()
 	assert(m_isCreate);
 	if (!m_isCreate)
 	{
-		Log::LogError(TEXT("应用程序未初始化"));
+		Log::Error(TEXT("应用程序未初始化"));
 		return;
 	}
 	string_local input;

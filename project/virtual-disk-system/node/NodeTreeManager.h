@@ -40,11 +40,11 @@ public:
 	}
 };
 
-class NodeTreeManager : Object {
+class NodeTreeManager {
 public:
 	explicit NodeTreeManager();
 	~NodeTreeManager();
-	virtual void Create();
+	virtual void Create(BaseNode* root = nullptr);
 	virtual void Destroy();
 public:
 	string_local GetCurrentPath() const; //获取当前(目录)节点的路径
@@ -163,9 +163,9 @@ private:
 	bool DeleteNodeByWildcardFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive);
 
 	//写xml
-	tinyxml2::XMLElement* WriteXml(DirNode* dir, DirNode* parent, tinyxml2::XMLDocument* doc);
+	tinyxml2::XMLElement* WriteDirToXml(DirNode* dir, tinyxml2::XMLDocument& doc);
 	//读xml
-	DirNode* ReadXml(tinyxml2::XMLElement* xml_dir, DirNode* parent, tinyxml2::XMLDocument* doc, std::vector<tinyxml2::XMLElement*>& link_elems);
+	BaseNode* ReadXml(tinyxml2::XMLElement* xml_item, DirNode* parent);
 	//从xml对象中解析符号链接节点
 	bool InsertSymlinkNodeByXml(std::vector<tinyxml2::XMLElement*>& link_elems);
 };

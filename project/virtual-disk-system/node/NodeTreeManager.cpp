@@ -15,12 +15,12 @@ NodeTreeManager::~NodeTreeManager()
 
 }
 
-void NodeTreeManager::Create()
+void NodeTreeManager::Create(BaseNode* root)
 {
 	m_tree = new NodeTree();
-	m_tree->Create();
+	m_tree->Create(root);
 	InitDrivens();
-	Log::LogInfo(TEXT("node tree manager is created."));
+	Log::Info(TEXT("node tree manager is created."));
 }
 
 
@@ -35,7 +35,7 @@ void NodeTreeManager::Destroy()
 	{
 		m_drivens.clear();	
 	}
-	Log::LogInfo(TEXT("node tree manager is destroyed."));
+	Log::Info(TEXT("node tree manager is destroyed."));
 }
 
 
@@ -43,9 +43,8 @@ void NodeTreeManager::Destroy()
 
 string_local NodeTreeManager::GetCurrentPath() const
 {
-	assert(nullptr != m_tree);
-	BaseNode* node = m_working_dir;
-	auto ret = GetPathByNode(node);
+	assert(m_tree && m_working_dir);
+	auto ret = GetPathByNode(m_working_dir);
 	return ret;
 }
 
@@ -133,14 +132,24 @@ void NodeTreeManager::PrintStatisticInfo(StatisticInfo& info)
 
 void NodeTreeManager::InitDrivens()
 {
-	assert(nullptr != m_tree);
-	for (auto item : m_driver_tokens)
+	assert(m_tree);
+	if (m_drivens.empty())
 	{
-		auto node = new DirNode(item);
-		m_tree->InsertNode(m_tree->GetRoot(), node);
-		m_drivens.push_back(node);
+		for (auto item : m_driver_tokens)
+		{
+			auto node = new DirNode(item);
+			m_tree->InsertNode(m_tree->GetRoot(), node);
+			m_drivens.push_back(node);
+		}
 	}
-	m_cur_driven = m_drivens[0];
+	for (const auto& item : m_drivens)
+	{
+		if (item->GetName() == m_driver_tokens[0])
+		{
+			m_cur_driven = item;
+			break;
+		}
+	}
 	m_working_dir = m_cur_driven;
 }
 
@@ -428,7 +437,7 @@ bool NodeTreeManager::RenameNodeByTokens(const std::vector<string_local>& tokens
 //选项/s递归打印子目录及文件信息
 bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch)	
 {
-	BaseNode* target_node = target_node = FindNodeByTokensInternal(tokens);
+	BaseNode* target_node = FindNodeByTokensInternal(tokens);
 	bool is_recursive = option_switch._s;
 	//target_node保证不为空
 	assert(nullptr != target_node);
@@ -509,7 +518,8 @@ ReturnType NodeTreeManager::RemoveDirByTokensAndOptions(const std::vector<string
 	}
 }
 
-
+//<update>
+//待更新：对SymlinkNode的处理逻辑
 //1、如果目标路径是目录，则复制到目录下
 //2、如果目标路径是文件，则对目标文件进行覆盖写入
 ReturnType NodeTreeManager::CopyFromDiskToMemory(const std::vector<string_local>& file_path_vec, const std::vector<string_local>& dst_path_tokens, const OptionSwitch& option_switch)
@@ -528,7 +538,7 @@ ReturnType NodeTreeManager::CopyFromDiskToMemory(const std::vector<string_local>
 		FileNode* target_file = static_cast<FileNode*>(target_node);
 		CopyFromDiskToMemoryFile(file_path_vec, target_file, option_switch);
 	}
-	//目标路径是链接
+	//目标路径是目录链接
 	else
 	{
 		//update...
@@ -916,13 +926,16 @@ bool NodeTreeManager::DeleteNodeByWildcardFileName(DirNode* cur_dir, const strin
 		DirNode* dir = q.front();
 		auto children = dir->Children();
 		q.pop();
-		//提示用户选择是否删除
-		SelectType ret = Selector(TEXT("删除 ") + GetPathByNode(dir) + TEXT("\\*,是否确认(Yes/No/All)？"));
-		if (ret == SelectType::no)
+		//如果删除全部文件，则提示用户确认
+		if (StringTools::IsEqual(file_name, TEXT("*")))
 		{
-			continue;
+			SelectType ret = Selector(TEXT("删除 ") + GetPathByNode(dir) + TEXT("\\*,是否确认(Yes/No/All)？"));
+			if (ret == SelectType::no)
+			{
+				continue;
+			}
 		}
-		//删除当前目录下的所有匹配的文件
+		//删除当前目录下所有匹配file_name的文件
 		std::vector<BaseNode*> del_vec{};
 		for (const auto& item : children)
 		{
@@ -971,11 +984,16 @@ bool NodeTreeManager::IsSameNode(BaseNode* lhs, BaseNode* rhs)
 ReturnType NodeTreeManager::SaveToPath(const string_local& path_str)
 {
 	assert(!PathTools::IsDiskPathExist(path_str));
-	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();	
-	auto xml_root = WriteXml(static_cast<DirNode*>(m_tree->GetRoot()), nullptr, doc);
-	doc->LinkEndChild(xml_root);
-	doc->SaveFile(StringTools::UnicodeToUtf8(path_str.c_str()));
-	::operator delete(doc);
+	tinyxml2::XMLDocument doc;	
+	auto node_root = m_tree->GetRoot();
+	auto xml_root = WriteDirToXml(static_cast<DirNode*>(node_root), doc);
+	xml_root->SetAttribute(XMLIdentifier::name, StringTools::UnicodeToUtf8(node_root->GetName().c_str()));
+	xml_root->SetAttribute(XMLIdentifier::id, node_root->GetId());
+	xml_root->SetAttribute(XMLIdentifier::type, static_cast<int>(node_root->GetType()));
+	xml_root->SetAttribute(XMLIdentifier::timestamp, node_root->GetLatestModifiedTimeStamp());
+	xml_root->SetAttribute(XMLIdentifier::parentId, 0);
+	doc.LinkEndChild(xml_root);
+	doc.SaveFile(StringTools::UnicodeToUtf8(path_str.c_str()));
 	return ReturnType::Success;
 }
 
@@ -984,29 +1002,128 @@ ReturnType NodeTreeManager::SaveToPath(const string_local& path_str)
 ReturnType NodeTreeManager::LoadFromPath(const string_local& path_str)
 {
 	assert(PathTools::IsDiskPathExist(path_str));
-	tinyxml2::XMLDocument* xml_doc = new tinyxml2::XMLDocument();
-	if (!xml_doc->LoadFile(StringTools::UnicodeToUtf8(path_str.c_str())))
+	tinyxml2::XMLDocument xml_doc;
+	if (xml_doc.LoadFile(StringTools::UnicodeToUtf8(path_str.c_str())))
 	{
 		Console::Write::PrintLine(TEXT("无法解析指定的XML文件"));
-		ReturnType::LoadXmlFileFailed;
+		return ReturnType::LoadXmlFileFailed;
 	}
-	auto xml_root = xml_doc->RootElement();
-	std::vector<tinyxml2::XMLElement*> link_elems = {};
+	auto xml_root = xml_doc.RootElement();
 	//读取XML文件
-	DirNode* root = ReadXml(xml_root, nullptr, xml_doc, link_elems);
+	BaseNode* root = ReadXml(xml_root, nullptr);
 	if (root == nullptr)
 	{
 		Console::Write::PrintLine(TEXT("无法解析指定的XML文件"));
-		ReturnType::LoadXmlFileFailed;
+		return ReturnType::LoadXmlFileFailed;
 	}
 	//销毁原树
-	m_tree->Destroy();
+	this->Destroy();
 	//重建新树
-	m_tree = new NodeTree();
-	m_tree->Create(root);
-	bool ok = InsertSymlinkNodeByXml(link_elems);
-	::operator delete(xml_doc);
+	this->Create(root);
 	return ReturnType::Success;
+}
+
+
+tinyxml2::XMLElement* NodeTreeManager::WriteDirToXml(DirNode* dir,tinyxml2::XMLDocument& doc)
+{
+	assert(dir);
+	tinyxml2::XMLElement* xml_dir = doc.NewElement(XMLIdentifier::DirNode);
+	//tinyxml2::XMLElement* ele_children = doc->NewElement(XMLIdentifier::children);
+	std::vector<BaseNode*> children = dir->Children();
+	//ele_children->SetAttribute(XMLIdentifier::count, children.size());
+	for (const auto& node : children)
+	{
+		tinyxml2::XMLElement* ele_node = nullptr;
+		//创建目录对象
+		if (node->IsDirectory())
+		{
+			auto dir_node = static_cast<DirNode*>(node);
+			ele_node = WriteDirToXml(dir_node, doc);
+		}
+		//创建文件对象
+		else if (node->IsFile())
+		{
+			auto file_node = static_cast<FileNode*>(node);
+			ele_node = doc.NewElement(XMLIdentifier::FileNode);
+			ele_node->SetAttribute(XMLIdentifier::data, file_node->GetData());
+			ele_node->SetAttribute(XMLIdentifier::dataSize, file_node->GetSize());
+		}
+		//创建链接对象
+		else
+		{
+			auto link_node = static_cast<SymlinkNode*>(node);
+			ele_node = doc.NewElement(XMLIdentifier::SymlinkNode);
+			ele_node->SetAttribute(XMLIdentifier::symlinkPath, StringTools::UnicodeToUtf8(link_node->GetTargetPath().c_str()));
+		}
+		//设置子节点的基本属性
+		ele_node->SetAttribute(XMLIdentifier::name, StringTools::UnicodeToUtf8(node->GetName().c_str()));
+		ele_node->SetAttribute(XMLIdentifier::id, node->GetId());
+		ele_node->SetAttribute(XMLIdentifier::type, static_cast<int>(node->GetType()));
+		ele_node->SetAttribute(XMLIdentifier::timestamp, node->GetLatestModifiedTimeStamp());
+		ele_node->SetAttribute(XMLIdentifier::parentId, dir->GetId());
+		//追加子节点
+		//ele_children->LinkEndChild(ele_node);
+		xml_dir->LinkEndChild(ele_node);
+	}
+	//xml_dir->LinkEndChild(ele_children);
+	return xml_dir;
+}
+
+
+/// \brief 读XML，创建节点树
+/// \param xml_dir 待解析的xml目录节点
+/// \param parent 待插入的父节点
+/// \param doc 待解析的xml文档
+/// \param link_elems 该列表维护节点类型为SymlinkNode的xml对象
+BaseNode* NodeTreeManager::ReadXml(tinyxml2::XMLElement* xml_item, DirNode* parent)
+{
+	assert(xml_item);
+	auto node_name = StringTools::Utf8ToUnicode(xml_item->FindAttribute(XMLIdentifier::name)->Value());
+	auto node_id = xml_item->FindAttribute(XMLIdentifier::id)->Int64Value();
+	auto node_type = static_cast<NodeType>(xml_item->FindAttribute(XMLIdentifier::type)->IntValue());
+	auto node_timestamp = xml_item->FindAttribute(XMLIdentifier::timestamp)->Int64Value();
+	//auto node_parentId = xml_item->FindAttribute(XMLIdentifier::parentId)->Int64Value();
+	BaseNode* node = nullptr;
+	switch (node_type)
+	{
+	case NodeType::Directory:
+		node = new DirNode(node_name);
+		break;
+	case NodeType::File:
+		node = new FileNode(node_name);
+		static_cast<FileNode*>(node)->SetData(
+			xml_item->FindAttribute(XMLIdentifier::data)->Value(),
+			xml_item->FindAttribute(XMLIdentifier::dataSize)->Int64Value());
+		break;
+	case NodeType::SymlinkD:
+	case NodeType::SymlinkF:
+		node = new SymlinkNode(node_name);
+		static_cast<SymlinkNode*>(node)->SetTarget(
+			node_type, 
+			StringTools::Utf8ToUnicode(xml_item->FindAttribute(XMLIdentifier::symlinkPath)->Value()));
+		break;
+	default:
+		break;
+	}
+	assert(node);
+	node->SetId(node_id);
+	node->SetLatestModifiedTimeStamp(node_timestamp);
+	//插入当前节点
+	if (parent && node) 
+	{
+		m_tree->InsertNode(parent, node);
+	}
+	if (!node->IsDirectory())
+	{
+		return node;
+	}
+	//遍历儿子节点
+	for (auto iter = xml_item->FirstChild(); iter != 0; iter = iter->NextSibling())
+	{
+		auto ele = iter->ToElement();
+		auto child = ReadXml(ele, static_cast<DirNode*>(node));
+	}
+	return node;
 }
 
 
@@ -1039,69 +1156,3 @@ bool NodeTreeManager::InsertSymlinkNodeByXml(std::vector<tinyxml2::XMLElement*>&
 	}
 	return true;
 }
-
-
-
-tinyxml2::XMLElement* NodeTreeManager::WriteXml(DirNode* dir, DirNode* parent, tinyxml2::XMLDocument* doc)
-{
-	assert(dir && doc);
-	tinyxml2::XMLElement* xml_dir = doc->NewElement(XMLIdentifier::DirNode);
-	xml_dir->SetAttribute(XMLIdentifier::name, StringTools::UnicodeToUtf8(dir->GetName().c_str()));
-	xml_dir->SetAttribute(XMLIdentifier::id, dir->GetId());
-	xml_dir->SetAttribute(XMLIdentifier::type, static_cast<int>(dir->GetType()));
-	xml_dir->SetAttribute(XMLIdentifier::timestamp, dir->GetLatestModifiedTimeStamp());
-	if (parent)
-	{
-		xml_dir->SetAttribute(XMLIdentifier::parentId, std::to_string(parent->GetId()).c_str());
-	}
-	tinyxml2::XMLElement* ele_children = doc->NewElement(XMLIdentifier::children);
-	std::vector<BaseNode*> children = dir->Children();
-	ele_children->SetAttribute(XMLIdentifier::count, children.size());
-	for (const auto& node : children)
-	{
-		tinyxml2::XMLElement* ele_node = nullptr;
-		//创建目录对象
-		if (node->IsDirectory())
-		{
-			auto dir_node = static_cast<DirNode*>(node);
-			ele_node = WriteXml(dir_node, dir, doc);
-		}
-		//创建文件对象
-		else if (node->IsFile())
-		{
-			auto file_node = static_cast<FileNode*>(node);
-			ele_node = doc->NewElement(XMLIdentifier::FileNode);
-			ele_node->SetAttribute(XMLIdentifier::data, file_node->GetData());
-			ele_node->SetAttribute(XMLIdentifier::dataSize, file_node->GetSize());
-		}
-		//创建链接对象
-		else
-		{
-			auto link_node = static_cast<SymlinkNode*>(node);
-			ele_node = doc->NewElement(XMLIdentifier::SymlinkNode);
-			ele_node->SetAttribute(XMLIdentifier::symlinkPath, StringTools::UnicodeToUtf8(link_node->GetTargetPath().c_str()));
-		}
-		//设置子节点的基本属性
-		ele_node->SetAttribute(XMLIdentifier::name, StringTools::UnicodeToUtf8(node->GetName().c_str()));
-		ele_node->SetAttribute(XMLIdentifier::id, std::to_string(node->GetId()).c_str());
-		ele_node->SetAttribute(XMLIdentifier::type, static_cast<int>(node->GetType()));
-		ele_node->SetAttribute(XMLIdentifier::timestamp, std::to_string(node->GetLatestModifiedTimeStamp()).c_str());
-		ele_node->SetAttribute(XMLIdentifier::parentId, std::to_string(node->GetId()).c_str());
-		//追加子节点
-		ele_children->LinkEndChild(ele_node);
-	}
-	xml_dir->LinkEndChild(ele_children);
-	return xml_dir;
-}
-
-/// \brief 读XML，创建节点树
-/// \param xml_dir 待解析的xml目录节点
-/// \param parent 待插入的父节点
-/// \param doc 待解析的xml文档
-/// \param link_elems 该列表维护节点类型为SymlinkNode的xml对象
-DirNode* NodeTreeManager::ReadXml(tinyxml2::XMLElement* xml_dir, DirNode* parent, tinyxml2::XMLDocument* doc, std::vector<tinyxml2::XMLElement*>& link_elems)
-{
-	assert(xml_dir && doc);
-	return nullptr;
-}
-

@@ -39,7 +39,6 @@ char* ReadDiskFileData(const std::string& path, size_t& file_size)
 	{
 		return nullptr;
 	}
-	return buffer;
 	/* 将文件拷贝到buffer中 */
 	auto result = fread(buffer, 1, file_size, pFile);
 	if (result != file_size)

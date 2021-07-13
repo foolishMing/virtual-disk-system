@@ -53,7 +53,7 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions({Constant::gs_cur_dir_token}, option_switch);
 		if (!ok)
 		{
-			Log::LogError(TEXT("未知错误：dir工作目录 ") + node_tree_manager.GetCurrentPath() + TEXT(" 失败"));
+			Log::Error(TEXT("未知错误：dir工作目录 ") + node_tree_manager.GetCurrentPath() + TEXT(" 失败"));
 		}
 		return;
 	}
@@ -84,7 +84,7 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions(tokens, option_switch);
 		if (!ok)
 		{
-			Log::LogError(TEXT("未知错误：dir目录 ") + path_str + TEXT(" 失败"));
+			Log::Error(TEXT("未知错误：dir目录 ") + path_str + TEXT(" 失败"));
 		}
 	}
 }
