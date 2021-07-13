@@ -536,7 +536,7 @@ void NodeTreeManager::CopyFromDiskToMemoryToDirectory(const std::vector<string_l
 		assert(PathTools::IsDiskPathExist(file_path));
 		//读取磁盘文件内容
 		size_t file_size = 0;
-		char* buffer = ReadDiskFileData(StringTools::WStringToString(file_path).c_str(), file_size);
+		char* buffer = ReadDiskFileData(StringTools::WStringToString(file_path).c_str(), file_size);//申请内存
 		if (buffer == nullptr)
 		{
 			Console::Write::PrintLine(TEXT("读取磁盘文件 ") + file_path + TEXT(" 失败"));
@@ -569,6 +569,7 @@ void NodeTreeManager::CopyFromDiskToMemoryToDirectory(const std::vector<string_l
 		}
 		BaseNode* node = target_dir->FindChildByName(file_name);
 		OverwriteFileNode(node, buffer,file_size);
+		free(buffer); //释放内存
 		copy_count++;
 		Console::Write::PrintLine(TEXT("复制文件 ") + file_path + TEXT(" 成功"));
 	}
