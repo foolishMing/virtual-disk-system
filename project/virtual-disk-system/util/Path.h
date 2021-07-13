@@ -13,6 +13,7 @@ public:
 	//ÊÇ·ñº¬ÓÐÍ¨Åä·û
 	const bool IsWild() const;
 
+
 	const bool IsValid() const { return m_is_valid; };
 	const string_local ToString() const { return m_path; }
 	const std::vector<string_local> Tokens() const { return m_tokens; }

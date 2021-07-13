@@ -583,6 +583,8 @@ void NodeTreeManager::CopyFromDiskToMemoryFile(const std::vector<string_local>& 
 }
 
 
+//<update> ...
+//待更新：暂未处理目标节点是文件，对文件进行追加写入的相关逻辑
 ReturnType NodeTreeManager::CopyFromMemoryToMemory(const std::vector<string_local>& src_tokens, const std::vector<string_local>& dst_tokens, const OptionSwitch& option_switch)
 {
 	//查找源节点所在目录
@@ -631,6 +633,7 @@ ReturnType NodeTreeManager::CopyFromMemoryToMemory(const std::vector<string_loca
 	{
 		CopyFromMemoryToMemoryDirectory(src_nodes, static_cast<DirNode*>(dst_node), option_switch);
 	}
+	//如果目标节点是文件
 	else
 	{
 		//update 
@@ -651,13 +654,8 @@ void NodeTreeManager::CopyFromMemoryToMemoryDirectory(const std::vector<FileNode
 		{
 			m_tree->InsertNode(target_dir, new FileNode(file_name));
 		}
-		//静默覆盖
-		else if (is_silent_overwrite_all)
-		{
-
-		}
 		//提示用户是否覆盖目标文件
-		else
+		else if (!is_silent_overwrite_all)
 		{
 			string_local dir_path = GetPathByNode(target_dir);
 			SelectType select = Selector(TEXT("覆盖 ") + dir_path + TEXT("/") + file_name + TEXT(" 吗? (Yes/No/All):"));
@@ -954,11 +952,7 @@ bool NodeTreeManager::IsSameNode(BaseNode* lhs, BaseNode* rhs)
 	assert(nullptr != lhs && nullptr != rhs);
 	auto lstr = GetPathByNode(lhs);
 	auto rstr = GetPathByNode(rhs);
-	if (StringTools::IsEqual(lstr, rstr))
-	{
-		return true;
-	}
-	return false;
+	return StringTools::IsEqual(lstr, rstr);
 }
 
 
