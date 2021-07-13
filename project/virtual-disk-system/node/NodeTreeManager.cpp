@@ -61,14 +61,24 @@ void NodeTreeManager::PrintFileNodeInfo(BaseNode* cur_node)
 			<< std::right << std::setw(14) << std::to_wstring(file_node->GetSize())
 			<< TEXT(" ") << file_node->GetName() << std::endl;
 	}
-	//打印链接节点信息
-	else
+	//打印文件链接信息
+	else if(cur_node->IsFileLink())
 	{
 		auto link_node = static_cast<SymlinkNode*>(cur_node);
 		std::wcout << StringTools::TimeStampToDateTimeString(link_node->GetLatestModifiedTimeStamp())
 			<< TEXT("    ")
 			<< std::left << std::setw(15) << TEXT("<SYMLINK>")
 			<< link_node->GetName() << std::endl;
+	}
+	//打印目录链接信息
+	else
+	{
+		auto link_node = static_cast<SymlinkNode*>(cur_node);
+		std::wcout << StringTools::TimeStampToDateTimeString(link_node->GetLatestModifiedTimeStamp())
+			<< TEXT("    ")
+			<< std::left << std::setw(15) << TEXT("<SYMLINKD>")
+			<< link_node->GetName() 
+			<< TEXT(" [") << link_node->GetTargetPath() << TEXT("]") << std::endl;
 	}
 }
 
