@@ -75,6 +75,8 @@ enum class ReturnType
 	MemoryPathIsNotDirectoryOrFile,//虚拟磁盘路径既不是目录也不是文件
 
 	MemoryPathNameIsIllegal,//不合法的路径名称
+
+	LoadXmlFileFailed,//无法解析指定的XML文件
 };
 
 //目录相关信息
@@ -202,6 +204,48 @@ namespace Constant
 	
 	// /y
 	extern const string_local gs_option_y;
+}
+
+namespace XMLIdentifier
+{
+	//属性类型 XMLElement(DirNode)
+	extern const char* DirNode;
+	
+	//属性类型 XMLElement(FileNode)
+	extern const char* FileNode;
+	
+	//属性类型 XMLElement(SymlinkNode)
+	extern const char* SymlinkNode;
+
+	//属性类型 char*(wchar_t*)
+	extern const char* name;
+	
+	//属性类型 int64(uint64_t)
+	extern const char* id;
+	
+	//属性类型 int(NodeType)
+	extern const char* type;
+	
+	//属性类型 int64(uint64_t)
+	extern const char* timestamp;
+
+	//属性类型 int64(uint64_t)
+	extern const char* parentId;
+
+	//属性类型 XMLElement(BaseNode*)
+	extern const char* children;
+
+	//属性类型 int(int)
+	extern const char* count;
+
+	//属性类型 char*(wchar_t*)
+	extern const char* data;
+	
+	//属性类型 int(uint64_t)
+	extern const char* dataSize;
+	
+	//属性类型 char*(wchar_t*)
+	extern const char* symlinkPath;
 }
 
 #endif // !__DEFINE_H__

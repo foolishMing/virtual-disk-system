@@ -12,6 +12,7 @@ public:
 
 	virtual const size_t GetSize() const;
 	virtual const time_t GetLatestModifiedTimeStamp(); //获取修改时间
+	virtual void SetLatestModifiedTimeStamp(time_t ts); //设置修改时间	
 
 	BaseNode* FindChildByName(const string_local& node_name); //根据节点名称获取子节点
 	bool ContainsChild(const string_local& node_name); //根据节点名称判断子节点是否存在
@@ -21,7 +22,6 @@ public:
 
 private:
 	std::vector<BaseNode*> m_children = {};
-	virtual void SetLatestModifiedTimeStamp(time_t ts); //设置修改时间	
 };
 
 #endif // ! __DIRNODE_H__

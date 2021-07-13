@@ -54,6 +54,9 @@ public:
 
 	static char* UnicodeToUtf8(const wchar_t* unicode);
 
+	static wchar_t* Utf8ToUnicode(const char* szU8);
+
+
 private:
 	//×Ö·û´®×ªÐ¡Ð´
 	static string_local ToLowercase(const string_local& s);

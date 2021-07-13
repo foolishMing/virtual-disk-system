@@ -38,13 +38,13 @@ void MklinkCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 		return;
 	}
 	//检查待链接路径是否存在
-	auto linkedPath = arg.paths[1];
-	const auto src_path_tokens = linkedPath.Tokens();
+	auto srcPath = arg.paths[1];
+	const auto src_path_tokens = srcPath.Tokens();
 	{
 		bool exist_path = manager.IsPathExist(src_path_tokens);
-		if (!exist_path)//error : 链接路径不存在
+		if (!exist_path)//error : 待链接路径不存在
 		{
-			Console::Write::PrintLine(TEXT("链接目录或文件 ") + linkedPath.ToString() + TEXT(" 不存在"));
+			Console::Write::PrintLine(TEXT("链接目录或文件 ") + srcPath.ToString() + TEXT(" 不存在"));
 			return;
 		}
 	}
@@ -60,7 +60,7 @@ void MklinkCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 		}
 	}
 	//为待链接路径创建快捷方式
-	ReturnType ret = manager.MklinkByTokensAndOptions(symbol_path_tokens, src_path_tokens, option_switch);
+	ReturnType ret = manager.MklinkByTokensAndOptions(symbol_path_tokens, srcPath, option_switch);
 	if (ret == ReturnType::MemoryPathIsNotFound)
 	{
 		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);

@@ -12,12 +12,7 @@ SymlinkNode::~SymlinkNode()
 
 }
 
-void SymlinkNode::SetSymlinkNode(NodeType link_type, BaseNode* dst_node)
-{
-	m_type = link_type;
-	m_target_node = dst_node;
-	m_target_name = dst_node->GetName();
-}
+
 
 const size_t SymlinkNode::GetSize() const
 {
@@ -32,4 +27,10 @@ const time_t SymlinkNode::GetLatestModifiedTimeStamp()
 void SymlinkNode::SetLatestModifiedTimeStamp(time_t ts)
 {
 	m_latest_modify_time_stamp = ts;
+}
+
+void SymlinkNode::SetTarget(NodeType type, string_local path)
+{
+	m_type = type;
+	m_target_path_str = path;
 }

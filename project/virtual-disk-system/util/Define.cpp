@@ -120,4 +120,26 @@ namespace Constant
 	const string_local gs_option_d = TEXT("/d");
 	const string_local gs_option_s = TEXT("/s");
 	const string_local gs_option_y = TEXT("/y");
+
+}
+
+namespace XMLIdentifier
+{
+	const char* DirNode = "DirNode";
+	const char* FileNode = "FileNode";
+	const char* SymlinkNode = "SymlinkNode";
+
+	const char* name = "name";
+	const char* id = "id";
+	const char* type = "type";
+	const char* timestamp = "timestamp";
+
+	const char* parentId = "parentId";
+	const char* children = "children";
+	const char* count = "count";
+
+	const char* data = "data";
+	const char* dataSize = "dataSize";
+
+	const char* symlinkPath = "symlinkPath";
 }

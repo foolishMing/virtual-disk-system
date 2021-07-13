@@ -13,11 +13,11 @@
 #include <deque>
 
 //多叉树
-class NodeTree : Object {
+class NodeTree {
 public:
 	explicit NodeTree();
 	virtual	~NodeTree();
-	virtual void Create();
+	virtual void Create(BaseNode* root = nullptr);
 	virtual void Destroy();
 	BaseNode* GetRoot() { return m_root; }
 
@@ -29,6 +29,9 @@ public:
 
 	//解除父子关系，但不删除节点
 	bool RemoveButNotDeleteNode(BaseNode* node);
+
+	//根据ID查找节点
+	BaseNode* FindNodeById(uint64_t id);
 private:
 	BaseNode* m_root = nullptr;	//根节点
 };

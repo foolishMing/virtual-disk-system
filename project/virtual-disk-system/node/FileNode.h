@@ -17,6 +17,8 @@ public:
 
 	//获取修改时间
 	virtual const time_t GetLatestModifiedTimeStamp(); 
+	//设置修改时间
+	virtual void SetLatestModifiedTimeStamp(time_t ts);
 
 	//读取文件数据
 	char* GetData();
@@ -36,7 +38,6 @@ private:
 	//设置文件大小
 	void SetSize(const size_t size);
 	
-	//设置修改时间
-	virtual void SetLatestModifiedTimeStamp(time_t ts); 
+
 };
 #endif // !__FILENODE_H__

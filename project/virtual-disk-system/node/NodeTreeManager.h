@@ -83,7 +83,7 @@ public:
 
 	//为src创建symbol链接
 	//mklink [/d] sybolPath srcPath
-	ReturnType MklinkByTokensAndOptions(const std::vector<string_local>& symbol_tokens, const std::vector<string_local>& src_tokens, const OptionSwitch& option_switch);
+	ReturnType MklinkByTokensAndOptions(const std::vector<string_local>& symbol_tokens, const Path& src_path, const OptionSwitch& option_switch);
 
 
 	//移动目录或文件
@@ -164,8 +164,10 @@ private:
 
 	//写xml
 	tinyxml2::XMLElement* WriteXml(DirNode* dir, DirNode* parent, tinyxml2::XMLDocument* doc);
-
-	
+	//读xml
+	DirNode* ReadXml(tinyxml2::XMLElement* xml_dir, DirNode* parent, tinyxml2::XMLDocument* doc, std::vector<tinyxml2::XMLElement*>& link_elems);
+	//从xml对象中解析符号链接节点
+	bool InsertSymlinkNodeByXml(std::vector<tinyxml2::XMLElement*>& link_elems);
 };
 
 #endif // !__NODETREEMANAGER_H__

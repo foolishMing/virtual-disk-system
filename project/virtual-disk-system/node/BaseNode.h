@@ -8,7 +8,7 @@
 
 //节点类型
 enum class NodeType {
-	Directory,		//目录
+	Directory = 1,		//目录
 	File,			//文件
 	SymlinkD,		//快捷方式(目录)
 	SymlinkF		//快捷方式(文件)	
@@ -31,6 +31,7 @@ public:
 	void SetParent(BaseNode* parent);	//设置父节点指针
 
 	const uint64_t GetId() const { return m_id; }
+	void SetId(uint64_t id) { m_id = id; }
 
 	const NodeType GetType();
 

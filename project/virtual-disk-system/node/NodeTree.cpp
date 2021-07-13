@@ -1,6 +1,6 @@
 #include "NodeTree.h"
 #include <stack>
-
+#include <queue>
 NodeTree::NodeTree()
 {
 
@@ -11,11 +11,18 @@ NodeTree::~NodeTree()
 	Destroy();
 }
 
-void NodeTree::Create()
+void NodeTree::Create(BaseNode* root)
 {
-	string_local nil_str = TEXT("root");
-	m_root = new DirNode(nil_str);
-	Log::LogInfo(TEXT("node tree is created."));
+	if (root)
+	{
+		m_root = root;
+	}
+	else
+	{
+		string_local nil_str = TEXT("root");
+		m_root = new DirNode(nil_str);
+		Log::LogInfo(TEXT("node tree is created."));
+	}
 }
 
 void NodeTree::Destroy()
@@ -112,4 +119,29 @@ bool NodeTree::RemoveButNotDeleteNode(BaseNode* node)
 		}
 	}
 	return false;
+}
+
+BaseNode* NodeTree::FindNodeById(uint64_t id)
+{
+	std::queue<BaseNode*> q = {};
+	q.push(m_root);
+	while (!q.empty())
+	{
+		auto node = q.front();
+		q.pop();
+		if (id == node->GetId())
+		{
+			return node;
+		}
+		if (node->IsDirectory())
+		{
+			auto dir = static_cast<DirNode*>(node);
+			auto children = dir->Children();
+			for (const auto& item : children)
+			{
+				q.push(item);
+			}
+		}
+	}
+	return nullptr;
 }
