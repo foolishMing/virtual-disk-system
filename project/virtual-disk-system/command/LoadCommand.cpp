@@ -48,4 +48,9 @@ void LoadCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 	}
 	//读取XML，销毁原NodeTree,创建新NodeTree
 	ReturnType ret = manager.LoadFromPath(load_path_str);
+	if (ReturnType::LoadXmlFileFailed == ret)
+	{
+		Console::Write::PrintLine(TEXT("无法解析指定的XML文件"));
+		return;
+	}
 }

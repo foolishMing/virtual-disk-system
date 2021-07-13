@@ -17,7 +17,7 @@ class NodeTree {
 public:
 	explicit NodeTree();
 	virtual	~NodeTree();
-	virtual void Create(BaseNode* root = nullptr);
+	virtual void Create(BaseNode* root);
 	virtual void Destroy();
 	BaseNode* GetRoot() { return m_root; }
 

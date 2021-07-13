@@ -53,12 +53,9 @@ const size_t DirNode::GetSize() const
 
 bool DirNode::ContainsChild(const string_local& node_name)
 {
-	for (auto item : m_children)
+	if (FindChildByName(node_name))
 	{
-		if (item->IsNameEqualsTo(node_name))
-		{
-			return true;
-		}
+		return true;
 	}
 	return false;
 }

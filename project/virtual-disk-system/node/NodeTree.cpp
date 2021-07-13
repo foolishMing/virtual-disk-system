@@ -13,16 +13,9 @@ NodeTree::~NodeTree()
 
 void NodeTree::Create(BaseNode* root)
 {
-	if (root)
-	{
-		m_root = root;
-	}
-	else
-	{
-		string_local nil_str = TEXT("root");
-		m_root = new DirNode(nil_str);
-		Log::Info(TEXT("node tree is created."));
-	}
+	assert(root);
+	m_root = root;
+	Log::Info(TEXT("node tree is created."));
 }
 
 void NodeTree::Destroy()
@@ -64,11 +57,10 @@ bool NodeTree::InsertNode(BaseNode* node, BaseNode* new_child)
 }
 
 
-//1、使用双端队列维护
-//2、使用深搜遍历所有节点
-//3、从前向后依次取出节点（队首一定始终是叶子节点）
-//	 3-1、解除和父节点之间的关系
-//   3-2、删除该节点
+//使用深搜遍历所有节点
+//若有儿子节点，删除所有儿子节点
+//与父节点解除关系
+//最后删掉这个孤儿节点
 bool NodeTree::DeleteNode(BaseNode* node)
 {
 	assert(nullptr != node);

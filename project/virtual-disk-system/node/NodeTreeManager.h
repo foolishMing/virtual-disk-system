@@ -44,8 +44,9 @@ class NodeTreeManager {
 public:
 	explicit NodeTreeManager();
 	~NodeTreeManager();
-	virtual void Create(BaseNode* root = nullptr);
+	virtual void Create();
 	virtual void Destroy();
+	bool Load(NodeTree* tree);
 public:
 	string_local GetCurrentPath() const; //获取当前(目录)节点的路径
 
@@ -105,14 +106,12 @@ public:
 
 private:
 	NodeTree* m_tree = nullptr;
-	std::vector<DirNode*> m_drivens;	//驱动列表(根目录)
-	DirNode* m_cur_driven = nullptr;	//当前驱动(根目录)
+	DirNode* m_cur_driven = nullptr; //当前驱动
 	DirNode* m_working_dir = nullptr;		//工作目录
-
-	const std::vector<string_local> m_driver_tokens = { TEXT("C:"), TEXT("D:"), TEXT("E:"), TEXT("F:"), TEXT("G") };
+	const std::vector<string_local> m_driven_tokens = { TEXT("C:"), TEXT("D:"), TEXT("E:"), TEXT("F:"), TEXT("G") };
 	
 	//初始化驱动（盘符）
-	void InitDrivens();
+	bool InitDrivens();
 
 	//是否为绝对路径
 	bool IsAbsolutePath(const std::vector<string_local>& tokens);

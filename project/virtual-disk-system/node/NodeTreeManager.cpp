@@ -15,10 +15,10 @@ NodeTreeManager::~NodeTreeManager()
 
 }
 
-void NodeTreeManager::Create(BaseNode* root)
+void NodeTreeManager::Create()
 {
 	m_tree = new NodeTree();
-	m_tree->Create(root);
+	m_tree->Create(new DirNode(TEXT("root")));
 	InitDrivens();
 	Log::Info(TEXT("node tree manager is created."));
 }
@@ -31,14 +31,32 @@ void NodeTreeManager::Destroy()
 		m_tree->Destroy();
 		m_tree = nullptr;
 	}
-	if (!m_drivens.empty()) //删除驱动列表里的指针
-	{
-		m_drivens.clear();	
-	}
 	Log::Info(TEXT("node tree manager is destroyed."));
 }
 
-
+bool NodeTreeManager::Load(NodeTree* tree)
+{
+	assert(tree);
+	auto old_tree = m_tree;
+	//设置新树
+	m_tree = tree;
+	//加载盘符
+	bool init_success = InitDrivens();
+	if (!init_success)
+	{
+		Console::Write::PrintLine(TEXT("虚拟磁盘加载失败,找不到C:盘符"));
+		//恢复原树
+		m_tree = old_tree;
+		return false;
+	}
+	//删除原树
+	if (old_tree)
+	{
+		old_tree->Destroy();
+	}
+	Log::Info(TEXT("node tree manager is reloaded."));
+	return true;
+}
 
 
 string_local NodeTreeManager::GetCurrentPath() const
@@ -130,27 +148,20 @@ void NodeTreeManager::PrintStatisticInfo(StatisticInfo& info)
 }
 
 
-void NodeTreeManager::InitDrivens()
+bool NodeTreeManager::InitDrivens()
 {
 	assert(m_tree);
-	if (m_drivens.empty())
+	auto root_dir = static_cast<DirNode*>(m_tree->GetRoot());
+	//初始化盘符
+	for (const auto& driven_name : m_driven_tokens)
 	{
-		for (auto item : m_driver_tokens)
-		{
-			auto node = new DirNode(item);
-			m_tree->InsertNode(m_tree->GetRoot(), node);
-			m_drivens.push_back(node);
-		}
+		if (root_dir->ContainsChild(driven_name))continue;
+		m_tree->InsertNode(root_dir, new DirNode(driven_name));
 	}
-	for (const auto& item : m_drivens)
-	{
-		if (item->GetName() == m_driver_tokens[0])
-		{
-			m_cur_driven = item;
-			break;
-		}
-	}
+	m_cur_driven = static_cast<DirNode*>(root_dir->FindChildByName(m_driven_tokens[0]));
+	//初始化工作路径
 	m_working_dir = m_cur_driven;
+	return (m_cur_driven) ? true : false;
 }
 
 
@@ -429,16 +440,17 @@ bool NodeTreeManager::RenameNodeByTokens(const std::vector<string_local>& tokens
 
 
 //<udpate>
-//未完成：统计递归打印的总目录数及总文件数
+//待完成：链接节点相关逻辑
 //如果tokens为空，则等价于dir .
 //查找目标节点
 //如果目标节点是文件，则打印文件信息
 //选项/ad打印子目录信息
 //选项/s递归打印子目录及文件信息
+//若递归，则需要统计路径下所有目录与文件
 bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch)	
 {
 	BaseNode* target_node = FindNodeByTokensInternal(tokens);
-	bool is_recursive = option_switch._s;
+	const bool is_recursive = option_switch._s;
 	//target_node保证不为空
 	assert(nullptr != target_node);
 	//目标节点为文件节点，打印信息
@@ -458,16 +470,17 @@ bool NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_
 		q.pop();
 		//打印当前目录下的子目录及文件信息
 		PrintDirectoryInfo(node, g_info, option_switch._ad);
-		//将子目录放在待打印目录节点队列中
-		if (is_recursive)
+		if (!is_recursive)
 		{
-			for (auto child : node->Children())
+			break;
+		}
+		//将子目录放在待打印目录节点队列中
+		for (auto child : node->Children())
+		{
+			if (child->IsDirectory())
 			{
-				if (child->IsDirectory())
-				{
-					DirNode* child_dir = static_cast<DirNode*>(child);
-					q.push(child_dir);
-				}
+				DirNode* child_dir = static_cast<DirNode*>(child);
+				q.push(child_dir);
 			}
 		}
 	}
@@ -1005,21 +1018,24 @@ ReturnType NodeTreeManager::LoadFromPath(const string_local& path_str)
 	tinyxml2::XMLDocument xml_doc;
 	if (xml_doc.LoadFile(StringTools::UnicodeToUtf8(path_str.c_str())))
 	{
-		Console::Write::PrintLine(TEXT("无法解析指定的XML文件"));
 		return ReturnType::LoadXmlFileFailed;
 	}
 	auto xml_root = xml_doc.RootElement();
 	//读取XML文件
-	BaseNode* root = ReadXml(xml_root, nullptr);
-	if (root == nullptr)
+	BaseNode* new_root = ReadXml(xml_root, nullptr);
+	if (nullptr == new_root)
 	{
-		Console::Write::PrintLine(TEXT("无法解析指定的XML文件"));
 		return ReturnType::LoadXmlFileFailed;
 	}
-	//销毁原树
-	this->Destroy();
-	//重建新树
-	this->Create(root);
+	//创建新虚拟磁盘
+	auto new_tree = new NodeTree();
+	new_tree->Create(new_root);
+	//加载该虚拟磁盘
+	bool ok = this->Load(new_tree);
+	if (!ok)
+	{
+		return ReturnType::LoadXmlFileFailed;
+	}
 	return ReturnType::Success;
 }
 
@@ -1109,9 +1125,10 @@ BaseNode* NodeTreeManager::ReadXml(tinyxml2::XMLElement* xml_item, DirNode* pare
 	node->SetId(node_id);
 	node->SetLatestModifiedTimeStamp(node_timestamp);
 	//插入当前节点
-	if (parent && node) 
+	if (parent && node && !parent->ContainsChild(node->GetName())) 
 	{
-		m_tree->InsertNode(parent, node);
+		parent->AppendChild(node);
+		node->SetParent(parent);
 	}
 	if (!node->IsDirectory())
 	{
