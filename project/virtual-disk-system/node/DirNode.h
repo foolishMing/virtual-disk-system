@@ -1,3 +1,4 @@
+//<Ä¿Â¼½Úµã>
 #pragma once 
 #ifndef  __DIRNODE_H__
 #define __DIRNODE_H__

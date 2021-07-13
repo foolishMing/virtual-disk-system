@@ -956,16 +956,85 @@ bool NodeTreeManager::IsSameNode(BaseNode* lhs, BaseNode* rhs)
 }
 
 
-ReturnType NodeTreeManager::SaveToPath(const Path& path)
+ReturnType NodeTreeManager::SaveToPath(const string_local& path_str)
 {
-
+	assert(!PathTools::IsDiskPathExist(path_str));
+	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();	
+	auto xml_root = WriteXml(static_cast<DirNode*>(m_tree->GetRoot()), nullptr, doc);
+	doc->LinkEndChild(xml_root);
+	doc->SaveFile(StringTools::UnicodeToUtf8(path_str.c_str()));
 	return ReturnType::Success;
 }
 
-
-ReturnType NodeTreeManager::LoadFromPath(const Path& path)
+//<udpate>
+//load要做容错处理，如果xml数据格式有问题，则需要返回相应的错误信息
+ReturnType NodeTreeManager::LoadFromPath(const string_local& path_str)
 {
+	assert(PathTools::IsDiskPathExist(path_str));
+	//udpate ... 
 	return ReturnType::Success;
 }
+
+//name : char*
+//id : uint64_t
+//timestamp : uint64_t
+//parentId : uint64_t
+//symlinkId : uint64_t
+//symlinkName : char*
+//data : char*
+//children : XMLElement
+tinyxml2::XMLElement* NodeTreeManager::WriteXml(DirNode* dir, DirNode* parent, tinyxml2::XMLDocument* doc)
+{
+	assert(dir && doc);
+	tinyxml2::XMLElement* xml_dir = doc->NewElement("DirNode");
+	xml_dir->SetAttribute("name", StringTools::UnicodeToUtf8(dir->GetName().c_str()));
+	xml_dir->SetAttribute("id", dir->GetId());
+	xml_dir->SetAttribute("type", static_cast<int>(dir->GetType()));
+	xml_dir->SetAttribute("timestamp", dir->GetLatestModifiedTimeStamp());
+	if (parent)
+	{
+		xml_dir->SetAttribute("parentId", std::to_string(parent->GetId()).c_str());
+	}
+	tinyxml2::XMLElement* ele_children = doc->NewElement("Children");
+	std::vector<BaseNode*> children = dir->Children();
+	ele_children->SetAttribute("count", children.size());
+	for (const auto& node : children)
+	{
+		tinyxml2::XMLElement* ele_node = nullptr;
+		//创建目录子节点
+		if (node->IsDirectory())
+		{
+			auto dir_node = static_cast<DirNode*>(node);
+			ele_node = WriteXml(dir_node, dir, doc);
+		}
+		//创建文件子节点
+		else if (node->IsFile())
+		{
+			auto file_node = static_cast<FileNode*>(node);
+			ele_node = doc->NewElement("FileNode");
+			ele_node->SetAttribute("data", file_node->GetData());
+			ele_node->SetAttribute("dataSize", file_node->GetSize());
+		}
+		//创建链接子节点
+		else
+		{
+			auto link_node = static_cast<SymlinkNode*>(node);
+			ele_node = doc->NewElement("LinkNode");
+			ele_node->SetAttribute("symlinkId", link_node->GetSymlinkNode()->GetId());
+			ele_node->SetAttribute("symlinkName", StringTools::UnicodeToUtf8(link_node->GetSymlinkName().c_str()));
+		}
+		//设置子节点的基本属性
+		ele_node->SetAttribute("name", StringTools::UnicodeToUtf8(node->GetName().c_str()));
+		ele_node->SetAttribute("id", std::to_string(node->GetId()).c_str());
+		ele_node->SetAttribute("type", static_cast<int>(node->GetType()));
+		ele_node->SetAttribute("timestamp", std::to_string(node->GetLatestModifiedTimeStamp()).c_str());
+		ele_node->SetAttribute("parentId", std::to_string(node->GetId()).c_str());
+		//追加子节点
+		ele_children->LinkEndChild(ele_node);
+	}
+	xml_dir->LinkEndChild(ele_children);
+	return xml_dir;
+}
+
 
 

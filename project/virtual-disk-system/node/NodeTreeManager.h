@@ -9,6 +9,7 @@
 #include "NodeTree.h"
 #include "FileNode.h"
 #include "SymlinkNode.h"
+#include "../util/tinyxml2.h"
 
 /*
 1、如何基于tokens搜索路径
@@ -26,10 +27,10 @@ enum class SelectType
 struct StatisticInfo
 {
 public:
+	size_t tot_size = 0;//总字节数
 	uint64_t tot_cnt = 0;//节点数量
 	uint64_t dir_cnt = 0;//目录数量
-	//文件数量 = tot_cnt - dir_cnt
-	size_t tot_size = 0;//总字节数
+	//file_cnt = tot_cnt - dir_cnt //文件数量
 	bool operator += (const StatisticInfo& rhs)
 	{
 		tot_cnt += rhs.tot_cnt;
@@ -95,11 +96,11 @@ public:
 
 	//序列化
 	//save @path
-	ReturnType SaveToPath(const Path& path);
+	ReturnType SaveToPath(const string_local& path_str);
 
 	//反序列化
 	//load @path
-	ReturnType LoadFromPath(const Path& path);
+	ReturnType LoadFromPath(const string_local& path_str);
 
 
 private:
@@ -161,7 +162,10 @@ private:
 	//以名称为索引，删除文件节点
 	bool DeleteNodeByWildcardFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive);
 
+	//写xml
+	tinyxml2::XMLElement* WriteXml(DirNode* dir, DirNode* parent, tinyxml2::XMLDocument* doc);
 
+	
 };
 
 #endif // !__NODETREEMANAGER_H__

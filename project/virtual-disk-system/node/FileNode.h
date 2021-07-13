@@ -1,3 +1,5 @@
+//<文件节点>
+//-成员属性: 创建时间（时间戳）、文件数据（字符流）、文件大小（int）
 #pragma once
 #ifndef __FILENODE_H__
 #define __FILENODE_H__

@@ -52,6 +52,8 @@ public:
 
 	static std::string WStringToString(std::wstring wstr);
 
+	static char* UnicodeToUtf8(const wchar_t* unicode);
+
 private:
 	//×Ö·û´®×ªÐ¡Ð´
 	static string_local ToLowercase(const string_local& s);

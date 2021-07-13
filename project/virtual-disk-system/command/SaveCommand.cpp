@@ -11,7 +11,7 @@ SaveCommand::~SaveCommand()
 
 }
 
-void SaveCommand::Handle(const CommandArg& arg, NodeTreeManager& proxy)
+void SaveCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 {
 	//检查命令语法
 	if (!arg.options.empty() || arg.paths.size() != 1)
@@ -46,4 +46,5 @@ void SaveCommand::Handle(const CommandArg& arg, NodeTreeManager& proxy)
 		save_path_str.append(xml_suffix_str);
 	}
 	//将当前NodeTree保存到XML文件中
+	ReturnType ret = manager.SaveToPath(save_path_str);
 }

@@ -11,7 +11,7 @@ LoadCommand::~LoadCommand()
 
 }
 
-void LoadCommand::Handle(const CommandArg& arg, NodeTreeManager& proxy)
+void LoadCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 {
 	//检查命令语法
 	if (!arg.options.empty() || arg.paths.size() != 1)
@@ -46,7 +46,6 @@ void LoadCommand::Handle(const CommandArg& arg, NodeTreeManager& proxy)
 		Console::Write::PrintLine(TEXT("不是合法的XML格式文件，无法打开"));//error : 文件格式不正确
 		return;
 	}
-	//销毁原NodeTree
-	//读取XML，创建新NodeTree
-
+	//读取XML，销毁原NodeTree,创建新NodeTree
+	ReturnType ret = manager.LoadFromPath(load_path_str);
 }

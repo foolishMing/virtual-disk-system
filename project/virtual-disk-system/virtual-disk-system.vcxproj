@@ -189,6 +189,7 @@
     <ClCompile Include="util\Path.cpp" />
     <ClCompile Include="util\PathTool.cpp" />
     <ClCompile Include="util\StringTool.cpp" />
+    <ClCompile Include="util\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -222,6 +223,7 @@
     <ClInclude Include="util\Path.h" />
     <ClInclude Include="util\PathTool.h" />
     <ClInclude Include="util\StringTool.h" />
+    <ClInclude Include="util\tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

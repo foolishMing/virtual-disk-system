@@ -15,7 +15,8 @@ SymlinkNode::~SymlinkNode()
 void SymlinkNode::SetSymlinkNode(NodeType link_type, BaseNode* dst_node)
 {
 	m_type = link_type;
-	m_dst_node = dst_node;
+	m_target_node = dst_node;
+	m_target_name = dst_node->GetName();
 }
 
 const size_t SymlinkNode::GetSize() const
