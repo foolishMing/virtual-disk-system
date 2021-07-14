@@ -28,19 +28,17 @@ void NodeTree::Destroy()
 	Log::Info(TEXT("--destroy node tree complete--"));
 }
 
-
+//注意：
+//在软链接下插入节点，相关逻辑需要在外层完成，
+//因为其所持有的引用路径为动态解析，依赖于系统当前工作路径，
+//如果写在NodeTree内，就需要将NodeTree与工作路径耦合在一起，会增加系统的复杂度
 bool NodeTree::InsertNode(BaseNode* node, BaseNode* new_child) 
 {
-	assert(nullptr != node && nullptr != new_child);
+	assert(node && new_child);
 	assert(node->IsDirectory());
 	if (nullptr == node || nullptr == new_child)
 	{
 		Log::Error(TEXT("非法操作：尝试在树上访问空指针"));
-		return false;
-	}
-	if (!node->IsDirectory())
-	{
-		Log::Error(TEXT("非法操作：尝试在非目录节点下插入子节点"));
 		return false;
 	}
 	auto dir = (DirNode*)node;
@@ -64,7 +62,6 @@ bool NodeTree::InsertNode(BaseNode* node, BaseNode* new_child)
 bool NodeTree::DeleteNode(BaseNode* node)
 {
 	assert(nullptr != node);
-	Log::Info(TEXT("delete node ") + node->GetName());
 	//如果非目录节点则删除
 	if (!node->IsDirectory())
 	{
@@ -90,6 +87,7 @@ bool NodeTree::DeleteNode(BaseNode* node)
 	//解除和父节点的关系
 	RemoveButNotDeleteNode(node);
 	//删除当前节点
+	Log::Info(TEXT("delete node ") + node->GetName());
 	delete node;
 	return true;
 }

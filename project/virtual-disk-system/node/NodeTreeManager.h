@@ -107,7 +107,8 @@ public:
 private:
 	NodeTree* m_tree = nullptr;
 	DirNode* m_cur_driven = nullptr; //当前驱动
-	DirNode* m_working_dir = nullptr;		//工作目录
+	//BaseNode* m_working_node = nullptr;		//工作目录
+	std::deque<BaseNode*> m_working_queue; //工作目录
 	const std::vector<string_local> m_driven_tokens = { TEXT("C:"), TEXT("D:"), TEXT("E:"), TEXT("F:"), TEXT("G") };
 	
 	//初始化驱动（盘符）
@@ -124,10 +125,10 @@ private:
 
 	//打印统计信息
 	void PrintStatisticInfo(StatisticInfo& info);
-
 	
 	//查找目标节点
-	BaseNode* FindNodeByTokensInternal(const std::vector<string_local>& tokens);
+	BaseNode* FindNodeByTokensInternal(const std::vector<string_local>& tokens, std::deque<BaseNode*> working_que);
+
 
 	//获得节点路径
 	string_local GetPathByNode(BaseNode* node) const;
@@ -152,9 +153,10 @@ private:
 
 	//从磁盘拷贝到目录下
 	void CopyFromDiskToMemoryToDirectory(const std::vector<string_local>& file_path_vec, DirNode* target_dir, const OptionSwitch& option_switch);
+
 	//从磁盘拷贝到文件下
 	void CopyFromDiskToMemoryFile(const std::vector<string_local>& file_path_vec, FileNode* target_node, const OptionSwitch& option_switch);
-
+	
 	//从内存拷贝到目录下
 	void CopyFromMemoryToMemoryDirectory(const std::vector<FileNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch);
 
@@ -163,10 +165,13 @@ private:
 
 	//写xml
 	tinyxml2::XMLElement* WriteDirToXml(DirNode* dir, tinyxml2::XMLDocument& doc);
+
 	//读xml
 	BaseNode* ReadXml(tinyxml2::XMLElement* xml_item, DirNode* parent);
+
 	//从xml对象中解析符号链接节点
 	bool InsertSymlinkNodeByXml(std::vector<tinyxml2::XMLElement*>& link_elems);
+
 };
 
 #endif // !__NODETREEMANAGER_H__

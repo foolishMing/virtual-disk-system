@@ -14,7 +14,6 @@ SymlinkNode::~SymlinkNode()
 }
 
 
-
 const size_t SymlinkNode::GetSize() const
 {
 	return 0;
