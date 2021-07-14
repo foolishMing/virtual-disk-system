@@ -61,8 +61,21 @@ bool NodeTreeManager::Load(NodeTree* tree)
 
 string_local NodeTreeManager::GetCurrentPath() const
 {
-	assert(m_tree && m_working_dir);
-	auto ret = GetPathByNode(m_working_dir);
+	assert(m_tree && !m_working_stack.empty());
+	//auto ret = GetPathByNode(m_working_dir);
+	string_local ret = {};
+	for (const auto& item : m_working_stack)
+	{
+		ret += item->GetName();
+		if (item != m_working_stack.back())
+		{
+			ret += TEXT("\\");
+		}
+	}
+	if (m_working_stack.size() == 1)
+	{
+		ret += TEXT("\\");
+	}
 	return ret;
 }
 
@@ -160,7 +173,8 @@ bool NodeTreeManager::InitDrivens()
 	}
 	m_cur_driven = static_cast<DirNode*>(root_dir->FindChildByName(m_driven_tokens[0]));
 	//初始化工作路径
-	m_working_dir = m_cur_driven;
+	//m_working_dir = m_cur_driven;
+	m_working_stack = { m_cur_driven };
 	return (m_cur_driven) ? true : false;
 }
 
@@ -213,16 +227,96 @@ bool NodeTreeManager::IsAncestor(BaseNode* pre_node, BaseNode* next_node)
 	return false;
 }
 
+
 bool NodeTreeManager::IsParentDirToken(string_local& token)
 {
 	assert(!token.empty());
 	return StringTools::IsEqual(token, Constant::gs_parent_dir_token);
 }
 
+
 bool NodeTreeManager::IsCurrentDirToken(string_local& token)
 {
 	assert(!token.empty());
 	return StringTools::IsEqual(token, Constant::gs_cur_dir_token);
+}
+
+//查找链接文件
+FileNode* NodeTreeManager::FindSymlinkedFile(SymlinkNode* node)
+{
+	return nullptr;
+}
+
+//出于简化逻辑考虑，link_path必须是绝对路径
+DirNode* NodeTreeManager::FindSymlinkedDirectory(SymlinkNode* node)
+{
+	if (node->IsFileLink())
+	{
+		return nullptr;	//error : 找不到目录链接
+	}
+	Path path(node->GetTargetPath());
+	auto tokens = path.Tokens();
+	assert(IsAbsolutePath(tokens));
+	//以盘符为起点搜索
+	auto cur_node = m_cur_driven;
+	tokens.erase(tokens.begin());
+	//空路径，返回当前工作目录
+	if (tokens.empty())
+	{
+		auto working_node = m_working_stack.back();
+		if (working_node->IsDirectory())
+		{
+			return static_cast<DirNode*>(working_node);
+		}
+		else
+		{
+			return FindSymlinkedDirectory(static_cast<SymlinkNode*>(working_node));
+		}
+	}
+	std::queue<string_local, std::deque<string_local>> q(std::deque<string_local>(tokens.begin(), tokens.end()));
+	while (!q.empty())
+	{
+		auto token = q.front();
+		q.pop();
+		//匹配当前目录
+		if (IsCurrentDirToken(token))
+		{
+			continue;
+		}
+		//匹配上一级目录
+		if (IsParentDirToken(token))
+		{
+			auto parent = cur_node->GetParent();
+			if (parent == m_tree->GetRoot())
+			{
+				return nullptr; //error : 找不到目录链接
+			}
+			cur_node = static_cast<DirNode*>(parent);
+			continue;
+		}
+		//匹配下一级目录
+		BaseNode* next_node = cur_node->FindChildByName(token);
+		if (nullptr == next_node || next_node->IsFile() || next_node->IsFileLink())
+		{
+			return nullptr; //error : 找不到目录链接
+		}
+		//进入到下一个目录节点
+		if (next_node->IsDirectory())
+		{
+			cur_node = static_cast<DirNode*>(next_node);
+			continue;
+		}
+		//获取目录链接对应的目录节点
+		if (next_node->IsDirectoryLink())
+		{
+			cur_node = FindSymlinkedDirectory(static_cast<SymlinkNode*>(next_node));
+		}
+		if (cur_node == nullptr || cur_node->IsFile() || cur_node->IsDirectory())
+		{
+			return nullptr;
+		}
+	}
+	return cur_node;
 }
 
 
@@ -232,66 +326,132 @@ bool NodeTreeManager::IsCurrentDirToken(string_local& token)
 //2、token为.或..是合法的
 //3、token为..时，需要判断空指针
 //4、如果待查找的尾节点是.或..应当进行特殊处理
-//5、若回溯，不允许从驱动节点回溯至根节点
+//5、需要处理路径上的链接节点
 BaseNode* NodeTreeManager::FindNodeByTokensInternal(const std::vector<string_local>& tokens)
 {
-	BaseNode* target_node = nullptr;
-	auto cur_dir = static_cast<DirNode*>((IsAbsolutePath(tokens)) ? m_tree->GetRoot() : m_working_dir);
-	const int tail = static_cast<int>(tokens.size());
-	//搜索目录节点
-	for (int index = 0; index < tail - 1; index++)
+	//初始化工作目录
+	//auto cur_dir = static_cast<DirNode*>((IsAbsolutePath(tokens)) ? m_tree->GetRoot() : m_working_dir);
+	std::deque<BaseNode*> working_stack;
+	if (IsAbsolutePath(tokens))
 	{
-		string_local token = tokens[index];
-		DirNode* next_dir = nullptr;
-		//.
+		working_stack = { m_tree->GetRoot() };
+	}
+	else
+	{
+		working_stack = m_working_stack;
+	}	 
+	std::queue<string_local, std::deque<string_local>> q(std::deque<string_local>(tokens.begin(), tokens.end()));
+	while (q.size() > 1)
+	{
+		if (working_stack.empty())
+		{
+			return nullptr; //error : 找不到路径
+		}
+		auto token = q.front();
+		q.pop();
+		//匹配当前目录
 		if (IsCurrentDirToken(token))
 		{
 			continue;
 		}
-		//..
-		if(IsParentDirToken(token))
+		//匹配上一级目录
+		if (IsParentDirToken(token))
 		{
-			BaseNode* parent = cur_dir->GetParent();
-			if (nullptr == parent || m_tree->GetRoot() == parent) return nullptr;//父节点不存在
-			next_dir = static_cast<DirNode*>(parent);
+			working_stack.pop_back();
+			if (working_stack.empty())
+			{
+				return nullptr; //error : 找不到路径
+			}
+			continue;
 		}
-		//查找后继节点
-		for (BaseNode* child : cur_dir->Children())
+		//匹配下一级目录
+		auto working_node = working_stack.back();
+		//在目录节点下查找下一级目录
+		if (working_node->IsDirectory())
 		{
-			if (child->GetName() != token) continue;
-			if (!child->IsDirectory()) // 目标节点不是目录，无法继续搜索
+			auto next_node = static_cast<DirNode*>(working_node)->FindChildByName(token);
+			if (nullptr == next_node || next_node->IsFile() || next_node->IsFileLink())
+			{
+				return nullptr; //error : 找不到路径
+			}
+			working_stack.push_back(next_node);
+			continue;
+		}
+		//获取链接节点指向的目录，在该目录下查找子节点
+		if(working_node->IsDirectoryLink())
+		{
+			DirNode* working_dir = FindSymlinkedDirectory(static_cast<SymlinkNode*>(working_node));
+			if (nullptr == working_dir)
+			{
+				return nullptr; //error : 找不到路径
+			}
+			BaseNode* next_node = working_dir->FindChildByName(token);
+			if (nullptr == next_node || next_node->IsFile() || next_node->IsFileLink())
+			{
+				return nullptr; //error : 找不到路径
+			}
+			working_stack.push_back(next_node);
+			continue;
+		}
+	}
+	if (q.size() > 0)
+	{
+		auto token = q.back();
+		q.pop();
+		//获取当前工作目录
+		BaseNode* cur_node = working_stack.back();
+		DirNode* cur_dir = nullptr;
+		if (cur_node->IsDirectory())
+		{
+			cur_dir = static_cast<DirNode*>(cur_node);
+		}
+		else //if(cur_node->IsDirectoryLink())
+		{
+			cur_dir = FindSymlinkedDirectory(static_cast<SymlinkNode*>(cur_node));
+		}
+		//返回当前目录节点
+		if (IsCurrentDirToken(token))
+		{
+			return cur_dir;
+		}
+		//返回上一级目录节点
+		if (IsParentDirToken(token))
+		{
+			working_stack.pop_back();
+			if (working_stack.empty())
 			{
 				return nullptr;
 			}
-			next_dir = static_cast<DirNode*>(child);
-			break;
+			auto parent_node = working_stack.back();
+			if (parent_node->IsDirectory())
+			{
+				return parent_node;
+			}
+			else //if (parent_node->IsDirectoryLink())
+			{
+				return FindSymlinkedDirectory(static_cast<SymlinkNode*>(parent_node));
+			}
 		}
-		if (nullptr == next_dir) return nullptr; //目标节点不存在
-		//更新当前所在目录
-		cur_dir = next_dir;
-	}
-	auto last_token = tokens.back();
-	//目标节点为当前节点.，更新之
-	if (IsCurrentDirToken(last_token))
-	{
-		return cur_dir;
-	}
-	//目标节点为父节点..，更新之
-	if (IsParentDirToken(last_token))
-	{
-		auto parent = cur_dir->GetParent();
-		if (nullptr == parent || m_tree->GetRoot() == parent)
+		//返回下一级目录或文件节点
+		for (const auto& item : cur_dir->Children())
 		{
-			return nullptr;
-		}
-		return parent;
-	}
-	//目标节点为子节点，更新之
-	for (auto child : cur_dir->Children())
-	{
-		if (child->IsNameEqualsTo(last_token))
-		{
-			return child;
+			//模糊匹配
+			if (!StringTools::IsStringFuzzyEqualTo(item->GetName(), token))
+			{
+				continue;
+			}
+			if (item->IsDirectory() || item->IsDirectory())
+			{
+				return item;
+			}
+			if (item->IsDirectoryLink())
+			{
+				return FindSymlinkedDirectory(static_cast<SymlinkNode*>(item));
+			}
+			if (item->IsFileLink())
+			{
+				return FindSymlinkedFile(static_cast<SymlinkNode*>(item));
+			}
 		}
 	}
 	return nullptr;
@@ -299,73 +459,108 @@ BaseNode* NodeTreeManager::FindNodeByTokensInternal(const std::vector<string_loc
 
 
 //<update>
-//待完成：若路径创建失败，则需要删除本次操作新建的所有节点
+//待完成：若路径创建失败，保留已成功创建的节点
 //先判断能否在cur_dir下获取到以token为名的节点
 //如果目标节点是文件节点，则mkdir失败，跳出循环
 //在cur_dir下创建以token为名的节点
 //不允许直接在根目录root下创建新节点（因为根目录下面是驱动目录，驱动应当是只读的）
 //需要对.和..token进行特殊处理
 //创建节点时，需要判断token是否合法
+//需要处理路径上的链接节点
 bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 {
-	DirNode* cur_dir = static_cast<DirNode*>((IsAbsolutePath(tokens)) ? m_tree->GetRoot() : m_working_dir);
+	//初始化工作目录
+	//DirNode* cur_dir = static_cast<DirNode*>((IsAbsolutePath(tokens)) ? m_tree->GetRoot() : m_working_dir);
+	std::deque<BaseNode*> working_stack;
+	if (IsAbsolutePath(tokens))
+	{
+		working_stack = { m_tree->GetRoot() };
+	}
+	else 
+	{
+		working_stack = m_working_stack;
+	}
 	std::queue<string_local, std::deque<string_local>> q(std::deque<string_local>(tokens.begin(),tokens.end()));
-	BaseNode* temp_node_root = nullptr;//本次操作创建的第一个(临时)节点
 	while (!q.empty())
 	{
 		string_local token = q.front();
 		q.pop();
-		BaseNode* next_node = nullptr;
-		//当前目录
+		//匹配当前目录
 		if (IsCurrentDirToken(token))
 		{
 			continue;
 		}
-		//上级目录
+		//匹配上级目录
 		if (IsParentDirToken(token))
 		{
-			next_node = cur_dir->GetParent();
-			if (nullptr == next_node) return false;
+			working_stack.pop_back();
+			if (working_stack.empty())
+			{
+				return false; //error : 找不到路径
+			}
+			continue;
 		}
-		//在cur_dir下查找目标节点
+		//取出工作栈顶节点
+		auto cur_node = working_stack.back();
+		DirNode* cur_dir = nullptr;
+		if (cur_node->IsDirectory())
+		{
+			cur_dir = static_cast<DirNode*>(cur_node);
+		}
+		else// if(cur_node->IsDirectoryLink())
+		{
+			cur_dir = FindSymlinkedDirectory(static_cast<SymlinkNode*>(cur_node));
+		}
+		if (cur_dir == nullptr)
+		{
+			return false; //error : 找不到路径
+		}
+		Log::Info(TEXT("symlink : ") + cur_node->GetName() + TEXT("->") + cur_dir->GetName());
+		BaseNode* next_node = nullptr;
+		//匹配下一级节点
 		for (auto child : cur_dir->Children())
 		{
-			if(child->IsNameEqualsTo(token))
+			if(StringTools::IsEqual(token, child->GetName()))
 			{
 				next_node = child;
 				break;
 			}
 		}
-		//若目标节点已存在
+		//若目标节点已存在,匹配当前节点
 		if (nullptr != next_node)
 		{
-			//如果目标节点是目录节点，则更新当前节点，并向后查询
+			//如果目标节点是目录节点，则入栈
 			if (next_node->IsDirectory())
 			{
-				cur_dir = static_cast<DirNode*>(next_node);
+				working_stack.push_back(next_node);
 				continue;
 			}
 			//如果目标节点是文件节点，则mkdir失败，跳出循环
-			else
+			else if(next_node->IsFile() || next_node->IsDirectory())
 			{
-				return false;
+				return false; //error : 不合法的路径
+			}
+			else //if (next_node->IsDirectoryLink())
+			{
+				auto next_dir = FindSymlinkedDirectory(static_cast<SymlinkNode*>(next_node));
+				if (nullptr == next_dir)
+				{
+					return false; //error : 不合法的路径
+				}
+				Log::Info(TEXT("symlink : ") + next_node->GetName() + TEXT("->") + next_dir->GetName());
+				working_stack.push_back(next_dir);
 			}
 		}
-		//在cur_dir下插入目标节点，并更新cur_dir
-		else
+		//在cur_dir下插入目标节点,目标节点类型必定为Directory
+		else //if(nullptr == next_node)
 		{
-			if (cur_dir == m_tree->GetRoot()) //不允许在根目录下创建新的节点
+			if (cur_dir == m_tree->GetRoot()) 
 			{
-				return false;
+				return false; //error : 不允许在根目录下创建新的节点
 			}
 			if (!PathTools::IsTokensFormatLegal({ token }))
 			{
 				Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//文件、目录或卷名称语法错误
-				//创建失败，删除本次操作新建的所有节点
-				if (nullptr != temp_node_root)
-				{
-					m_tree->DeleteNode(temp_node_root);
-				}
 				return false;
 			}
 			next_node = new DirNode(token);
@@ -374,10 +569,6 @@ bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 			{
 				return false;
 			}
-			if (nullptr == temp_node_root)
-			{
-				temp_node_root = next_node;
-			}
 			cur_dir = static_cast<DirNode*>(next_node);
 		}
 	}
@@ -385,6 +576,7 @@ bool NodeTreeManager::MkdirByTokens(const std::vector<string_local>& tokens)
 }
 
 
+//要考虑到工作路径上存在目录链接的情况
 bool NodeTreeManager::ChangeDirByTokens(const std::vector<string_local>& tokens)
 {
 	//显示工作目录

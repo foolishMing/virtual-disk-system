@@ -103,13 +103,20 @@ public:
 	//load @path
 	ReturnType LoadFromPath(const string_local& path_str);
 
+	//查找链接目录
+	DirNode* FindSymlinkedDirectory(SymlinkNode* node);
+
+	//查找链接文件
+	FileNode* FindSymlinkedFile(SymlinkNode* node);
 
 private:
 	NodeTree* m_tree = nullptr;
 	DirNode* m_cur_driven = nullptr; //当前驱动
-	DirNode* m_working_dir = nullptr;		//工作目录
+	//DirNode* m_working_dir = nullptr; //工作目录
 	const std::vector<string_local> m_driven_tokens = { TEXT("C:"), TEXT("D:"), TEXT("E:"), TEXT("F:"), TEXT("G") };
 	
+	std::deque<BaseNode*> m_working_stack; //工作栈
+
 	//初始化驱动（盘符）
 	bool InitDrivens();
 
