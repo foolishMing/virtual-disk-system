@@ -50,24 +50,21 @@ public:
 public:
 	string_local GetCurrentPath() const; //获取当前(目录)节点的路径
 
-	 //查询输入路径是否存在
-	bool IsPathExist(const std::vector<string_local>& tokens);
-
 	//列出目录中的文件和子目录列表
 	//dir [/s] [/ad] [path1] [path2] ...
-	bool DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch);	
+	ReturnType DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch);	
 
 	//创建路径
 	//md path [path1] ...
-	bool MkdirByTokens(const std::vector<string_local>& tokens);
+	ReturnType MkdirByTokens(const std::vector<string_local>& tokens);
 
 	//切换路径或显示当前路径
 	//cd [path]
-	bool ChangeDirByTokens(const std::vector<string_local>& tokens);	
+	ReturnType ChangeDirByTokens(const std::vector<string_local>& tokens);	
 
 	//重命名
 	//ren src dst
-	bool RenameNodeByTokens(const std::vector<string_local>& tokens, string_local dst_name);
+	ReturnType RenameNodeByTokens(const std::vector<string_local>& tokens, string_local dst_name);
 
 	//移除目录
 	//rd [/s] path [path1] ...
@@ -82,14 +79,14 @@ public:
 	//copy [/y] src_path dst_path
 	ReturnType CopyFromMemoryToMemory(const std::vector<string_local>& src_tokens, const std::vector<string_local>& dst_tokens, const OptionSwitch& option_switch);
 
-	//为src创建symbol链接
+	//为src创建symlink链接
 	//mklink [/d] sybolPath srcPath
-	ReturnType MklinkByTokensAndOptions(const std::vector<string_local>& symbol_tokens, const Path& src_path, const OptionSwitch& option_switch);
+	ReturnType MklinkByPathAndOptions(const Path& link_path, const Path& src_path, const OptionSwitch& option_switch);
 
 
 	//移动目录或文件
 	//move [/y] srcPath dstPath
-	ReturnType MoveByTokensAndOptions(const std::vector<string_local>& src_tokens, const std::vector<string_local>& dst_tokens, const OptionSwitch& option_switch);
+	ReturnType MoveByTokensAndOptions(const Path& src_path, const Path&  dst_path, const OptionSwitch& option_switch);
 
 	//删除文件
 	//del [/s] path [path1] ...
@@ -117,11 +114,30 @@ private:
 	
 	std::deque<BaseNode*> m_working_stack; //工作栈
 
+private:
 	//初始化驱动（盘符）
 	bool InitDrivens();
 
 	//是否为绝对路径
 	bool IsAbsolutePath(const std::vector<string_local>& tokens);
+
+	void SetMyWorkingStack(const std::deque<BaseNode*> working_stack);
+	std::deque<BaseNode*> GetMyWorkingStack() const{ return m_working_stack; }
+
+	std::deque<BaseNode*> GetWorkingStackByTokens(const std::vector<string_local>& tokens);
+
+	//查找节点所在目录
+	DirNode* FindWhichDirectoryIsNodeUnderByTokens(const std::vector<string_local>& tokens);
+
+	//获得节点指向的实际目录
+	DirNode* GetTrueDirNode(BaseNode* node);
+
+	//获得节点指向的实际文件
+	FileNode* GetTrueFileNode(BaseNode* node);
+
+	//判断节点是不是目录或目录链接
+	bool IsDirOrDirLink(BaseNode* node);
+
 
 	//打印文件信息
 	void PrintFileNodeInfo(BaseNode* cur_node);
@@ -133,20 +149,20 @@ private:
 	void PrintStatisticInfo(StatisticInfo& info);
 
 	
-	//查找目标节点
-	BaseNode* FindNodeByTokensInternal(const std::vector<string_local>& tokens);
+	//查找真实的目标节点
+	BaseNode* FindTrueNodeByTokensInternal(const std::vector<string_local>& tokens);
 
 	//获得节点路径
-	string_local GetPathByNode(BaseNode* node) const;
+	string_local GetTruePathOfNode(BaseNode* node) const;
 
 	//判断pre_node是不是next_node的祖先
-	bool IsAncestor(BaseNode* pre_node, BaseNode* next_node);
+	bool IsTrueAncestor(BaseNode* pre_node, BaseNode* next_node);
 
 	//判断token是不是.
-	bool IsCurrentDirToken(string_local& token);
+	bool IsCurrentDir(string_local& token);
 
 	//判断token是不是..
-	bool IsParentDirToken(string_local& token);
+	bool IsParentDir(string_local& token);
 
 	//判断两个节点是否相同
 	bool IsSameNode(BaseNode* lhs, BaseNode* rhs);
@@ -162,8 +178,8 @@ private:
 	//从磁盘拷贝到文件下
 	void CopyFromDiskToMemoryFile(const std::vector<string_local>& file_path_vec, FileNode* target_node, const OptionSwitch& option_switch);
 
-	//从内存拷贝到目录下
-	void CopyFromMemoryToMemoryDirectory(const std::vector<FileNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch);
+	//把文件从内存目录拷贝到内存目录下
+	void CopyFromMemoryToMemoryDirectory(const std::vector<BaseNode*>& node_list, DirNode* target_dir, const OptionSwitch& option_switch);
 
 	//以名称为索引，删除文件节点
 	bool DeleteNodeByWildcardFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive);

@@ -47,19 +47,16 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 			return;
 		}
 	}
-	//dir工作目录
-	if (arg.paths.empty())
+	auto paths = arg.paths;
+	//若无路径参数，默认显示当前工作目录
+	if (paths.empty())
 	{
-		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions({Constant::gs_cur_dir_token}, option_switch);
-		if (!ok)
-		{
-			Log::Error(TEXT("未知错误：dir工作目录 ") + node_tree_manager.GetCurrentPath() + TEXT(" 失败"));
-		}
-		return;
+		Path path(Constant::gs_cur_dir_token);
+		
+		paths.emplace_back(path);
 	}
 	//遍历路径列表
-	const size_t path_cnt = arg.paths.size();
-	for (const Path& path : arg.paths)
+	for (const Path& path : paths)
 	{
 		//获得源路径tokens
 		if (!path.IsValid())
@@ -71,20 +68,17 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 		}
 		const auto path_str = path.ToString();
 		const auto tokens = path.Tokens();
-		//检查源路径是否存在
-		bool is_find_path = node_tree_manager.IsPathExist(tokens);
-		if (!is_find_path)
-		{
-			//路径不存在，打印工作目录
-			Console::Write::PrintLine(node_tree_manager.GetCurrentPath() + TEXT(" 的目录"));
-			Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound); //error : 系统找不到指定的虚拟磁盘目录
-			continue;
-		}
 		//打印当前路径下的子目录与文件信息
-		bool ok = node_tree_manager.DisplayDirNodeByTokensAndOptions(tokens, option_switch);
-		if (!ok)
+		ReturnType ret = node_tree_manager.DisplayDirNodeByTokensAndOptions(tokens, option_switch);
+		if (ret == ReturnType::UnExpectedException)
 		{
 			Log::Error(TEXT("未知错误：dir目录 ") + path_str + TEXT(" 失败"));
+		}
+		//路径不存在，打印工作目录
+		else if (ret == ReturnType::MemoryPathIsNotFound)
+		{
+			Console::Write::PrintLine(node_tree_manager.GetCurrentPath() + TEXT(" 的目录"));
+			Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound); //error : 系统找不到指定的虚拟磁盘目录
 		}
 	}
 }

@@ -19,7 +19,7 @@ public:
 	virtual	~NodeTree();
 	virtual void Create(BaseNode* root);
 	virtual void Destroy();
-	BaseNode* GetRoot() { return m_root; }
+	BaseNode* GetRoot() const{ return m_root; }
 
 	//为节点添加新的子节点
 	bool InsertNode(BaseNode* node, BaseNode* new_child); 

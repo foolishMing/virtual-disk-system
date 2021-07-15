@@ -75,8 +75,13 @@ enum class ReturnType
 	MemoryPathIsNotDirectoryOrFile,//虚拟磁盘路径既不是目录也不是文件
 
 	MemoryPathNameIsIllegal,//不合法的路径名称
+	MemoryFileIsExist,//虚拟磁盘中存在一个重名文件，或找不到文件
+	MemoryPathIsExist,//虚拟磁盘路径已存在
 
 	LoadXmlFileFailed,//无法解析指定的XML文件
+	TypeOfLinkAndSourceIsNotMatch,//链接和链接对象类型不匹配
+
+	SymlinkPathIsInvalid,//无效的目录链接
 };
 
 //目录相关信息
@@ -91,6 +96,8 @@ struct DirInfo
 
 //错误提示
 namespace ErrorTips {
+	extern const string_local gsUnhandledException;
+
 	//不是内部或外部命令,也不是可运行的程序
 	extern const string_local gsCommandIsNotFound;	
 
@@ -141,6 +148,12 @@ namespace ErrorTips {
 
 	//真实磁盘路径既不是目录也不是文件
 	extern const string_local gsDiskPathIsNotDirectoyOrFile;
+
+	//链接与链接对象类型不匹配
+	extern const string_local gsTypeOfLinkAndSourceIsNotMatch;
+
+	//无效的目录链接
+	extern const string_local gsSymlinkPathIsInvalid;
 }
 
 //字符集

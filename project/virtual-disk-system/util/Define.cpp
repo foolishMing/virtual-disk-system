@@ -63,6 +63,8 @@ uint64_t getTotalSystemMemory()
 
 namespace ErrorTips 
 {
+	const string_local gsUnhandledException = TEXT("未知错误");
+
 	const string_local gsCommandIsNotFound = TEXT("不是内部或外部命令,也不是可运行的程序");
 	const string_local gsCommandIsIllegal = TEXT("命令语法不正确");
 
@@ -92,6 +94,10 @@ namespace ErrorTips
 	const string_local gsMemoryDirIsNotEmpty = TEXT("虚拟磁盘目录不是空的");
 
 	const string_local gsDiskPathIsNotDirectoyOrFile = TEXT("真实磁盘路径既不是目录也不是文件");
+
+	const string_local gsTypeOfLinkAndSourceIsNotMatch = TEXT("链接与链接对象类型不匹配");
+
+	const string_local gsSymlinkPathIsInvalid = TEXT("无效的链接路径");
 };
 
 namespace CharSet 

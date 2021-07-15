@@ -38,37 +38,27 @@ void MklinkCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 		return;
 	}
 	//检查待链接路径是否存在
-	auto srcPath = arg.paths[1];
-	const auto src_path_tokens = srcPath.Tokens();
-	{
-		bool exist_path = manager.IsPathExist(src_path_tokens);
-		if (!exist_path)//error : 待链接路径不存在
-		{
-			Console::Write::PrintLine(TEXT("链接目录或文件 ") + srcPath.ToString() + TEXT(" 不存在"));
-			return;
-		}
-	}
-	//检查快捷方式是否已存在
+	//Console::Write::PrintLine(TEXT("链接目录或文件 ") + srcPath.ToString() + TEXT(" 不存在"));
+	//检查软链接是否已存在
+	//Console::Write::PrintLine(TEXT("快捷方式 ") + linkPath.ToString() + TEXT(" 已存在"));
 	auto linkPath = arg.paths[0];
-	const auto symbol_path_tokens = linkPath.Tokens();
-	{
-		bool exist_path = manager.IsPathExist(symbol_path_tokens);
-		if (exist_path)//error : 快捷方式已存在
-		{
-			Console::Write::PrintLine(TEXT("快捷方式 ") + linkPath.ToString() + TEXT(" 已存在"));
-			return;
-		}
-	}
-	//为待链接路径创建快捷方式
-	ReturnType ret = manager.MklinkByTokensAndOptions(symbol_path_tokens, srcPath, option_switch);
+	auto srcPath = arg.paths[1];
+	//为待链接路径创建软链接
+	ReturnType ret = manager.MklinkByPathAndOptions(linkPath, srcPath, option_switch);
 	if (ret == ReturnType::MemoryPathIsNotFound)
 	{
-		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);
-		return;
+		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);//error : 路径不存在
 	}
-	if (ret == ReturnType::MemoryPathNameIsIllegal)
+	else if (ret == ReturnType::MemoryPathNameIsIllegal)
 	{
-		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsIllegal);
-		return;
+		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsIllegal);//error : 文件名不合法
+	}
+	else if (ret == ReturnType::TypeOfLinkAndSourceIsNotMatch)
+	{
+		Console::Write::PrintLine(ErrorTips::gsTypeOfLinkAndSourceIsNotMatch);//error : 链接与链接对象类型不匹配
+	}
+	else if (ret == ReturnType::MemoryFileIsExist)
+	{
+		Console::Write::PrintLine(ErrorTips::gsMemoryFileIsExist);//error : 重名文件已存在
 	}
 }

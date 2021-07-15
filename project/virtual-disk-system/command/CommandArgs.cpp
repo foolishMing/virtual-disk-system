@@ -27,16 +27,16 @@ void CommandArg::Analyse(const string_local& in)
 	{
 		cmd_token = cmd_str.substr(0, cmd_str.length() - 2);
 		Path path(Constant::gs_parent_dir_token);
-		path.Split();
-		paths.push_back(path);
+		//path.Split();
+		paths.emplace_back(path);
 	}
 	//分离cmd_type的路径后缀`.`
 	else if(cmd_str.size() > 1 && StringTools::IsEqual(StringTools::GetStringSuffix(cmd_str,1), Constant::gs_cur_dir_token))
 	{
 		cmd_token = cmd_str.substr(0, cmd_str.length() - 1);
 		Path path(Constant::gs_cur_dir_token);
-		path.Split();
-		paths.push_back(path);
+		//path.Split();
+		paths.emplace_back(path);
 	}
 	else {
 		cmd_token = cmd_str;
@@ -53,7 +53,7 @@ void CommandArg::Analyse(const string_local& in)
 				auto ch = item[i];
 				if (ch == CharSet::char_slash)
 				{
-					options.push_back(buffer);
+					options.emplace_back(buffer);
 					buffer = TEXT("/");
 				}
 				else
@@ -61,14 +61,14 @@ void CommandArg::Analyse(const string_local& in)
 					buffer += ch;
 				}
 			}
-			options.push_back(buffer);
+			options.emplace_back(buffer);
 		}
 		//path
 		else 
 		{
 			Path path(item);
-			path.Split();
-			paths.push_back(path);	
+			//path.Split();
+			paths.emplace_back(path);	
 		}
 	}
 }

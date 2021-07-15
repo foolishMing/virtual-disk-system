@@ -37,7 +37,7 @@ void DirNode::AppendChild(BaseNode* node)
 		//udpate : 打印日志（警告）
 		return;
 	}
-	m_children.push_back(node);
+	m_children.emplace_back(node);
 }
 
 const size_t DirNode::GetSize() const

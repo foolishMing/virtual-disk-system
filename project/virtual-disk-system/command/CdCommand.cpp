@@ -40,16 +40,11 @@ void CdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 		return;
 	}
 	auto tokens = path.Tokens();
-	//检查路径是否存在
-	bool exist_path = node_tree_manager.IsPathExist(tokens);
-	if (!exist_path)
+	//切换路径
+	const ReturnType ret = node_tree_manager.ChangeDirByTokens(tokens);
+	if (ret == ReturnType::MemoryPathIsNotFound)
 	{
-		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);
+		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);//error : 找不到路径
 		return;
-	}
-	bool ret = node_tree_manager.ChangeDirByTokens(tokens);
-	if (!ret)
-	{
-		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);//error : 路径不存在
 	}
 }

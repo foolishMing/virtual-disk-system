@@ -56,7 +56,7 @@ void CopyCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manag
 	bool is_dst_disk = (dst_path_str[0] == CharSet::char_at) ? true : false;
 	if (!is_dst_disk)
 	{
-		//检查目标路径是否存在
+		//检查目标路径是否语法正确
 		if (!dst_path.IsValid())
 		{
 			Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//error : 文件、目录或卷名语法不正确
@@ -67,12 +67,6 @@ void CopyCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manag
 		if (dst_tokens.empty())
 		{
 			Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//error : 文件、目录或卷名语法不正确
-			return;
-		}
-		bool is_find_dst_path = node_tree_manager.IsPathExist(dst_tokens);
-		if (!is_find_dst_path)
-		{
-			Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound + L" " + dst_path_str); //error : 系统找不到指定的虚拟磁盘目录
 			return;
 		}
 		//从磁盘复制到内存
@@ -115,18 +109,25 @@ void CopyCommand::CopyFileFromDiskToMemory(const Path& src_path, const Path& dst
 	src_path_str = src_path_str.substr(1, src_path_str.length() - 1);
 	//获取源文件路径列表
 	std::vector<string_local> file_path_list = {};
-	PathTools::SearchDiskFilesByWildcard(src_path_str.c_str(), file_path_list);
+	 PathTools::SearchDiskFilesByWildcard(src_path_str.c_str(), file_path_list);
 	//检查源文件路径列表是否为空
 	if (file_path_list.empty())
 	{
-		Console::Write::PrintLine(ErrorTips::gsDiskPathIsNotFound + TEXT(" ") + src_path_str);//error : 系统找不到指定的磁盘路径名称
+		Console::Write::PrintLine(ErrorTips::gsDiskPathIsNotFound + TEXT(" ") + src_path_str);//error : 系统找不到指定的真实磁盘路径名称
 		return;
 	}
 	//进行复制操作
 	auto dst_tokens = dst_path.Tokens();
 	ReturnType ret =  manager.CopyFromDiskToMemory(file_path_list, dst_tokens,option_switch);
 	//处理返回值
-	//update ...
+	if (ret == ReturnType::MemoryPathIsNotFound)
+	{
+		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound + L" " + dst_path.ToString()); //error : 系统找不到指定的虚拟磁盘目录
+	}
+	else if (ret == ReturnType::UnExpectedException)
+	{
+		Console::Write::PrintLine(ErrorTips::gsCommandIsIllegal);
+	}
 }
 
 

@@ -17,7 +17,7 @@ void StringTools::StringSplitBySpace(const string_local& in, std::vector<string_
 	string_local buf;
 	while (str >> buf) 
 	{
-		out.push_back(buf);
+		out.emplace_back(buf);
 	}
 }
 
@@ -52,7 +52,7 @@ bool StringTools::StringSplitBySpaceAndQuotes(const string_local& in, std::vecto
 				continue;
 			}
 			//从缓冲区读出一个token
-			out.push_back(buffer);
+			out.emplace_back(buffer);
 			buffer = {};
 		}
 		//遇到引号
@@ -69,7 +69,7 @@ bool StringTools::StringSplitBySpaceAndQuotes(const string_local& in, std::vecto
 	//清空缓冲区
 	if (!buffer.empty())
 	{
-		out.push_back(buffer);
+		out.emplace_back(buffer);
 	}
 	//存在未匹配的单引号，不合法的输入
 	if (is_quote_open) 

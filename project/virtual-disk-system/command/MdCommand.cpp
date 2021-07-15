@@ -42,32 +42,26 @@ void MdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 			continue;
 		}
 		const auto tokens = path.Tokens();
-		//检查路径是否存在
-		{
-			bool exist_path = node_tree_manager.IsPathExist(tokens);
-			if (exist_path)//error : 路径已存在
-			{
-				Console::Write::PrintLine(TEXT("子目录或文件 ") + path.ToString() + TEXT(" 已存在"));
-				if (path_cnt > 1) Console::Write::PrintLine(TEXT("处理: ") + path.ToString() + TEXT(" 时出错"));
-				continue;
-			}
-		}	
-		assert(!tokens.empty());//不能创建空路径
-		assert(tokens.back() != Constant::gs_cur_dir_token);//不能创建当前目录
-		assert(tokens.back() != Constant::gs_parent_dir_token);//不能创建上级目录
 		//创建目录
 		{
-			bool md_success = node_tree_manager.MkdirByTokens(tokens);
-			if (false == md_success)
+			ReturnType md_ret = node_tree_manager.MkdirByTokens(tokens);			
+			if (ReturnType::Success == md_ret)
+			{
+				Console::Write::PrintLine(TEXT("目录 ") + path_str + TEXT(" 创建成功"));
+			}
+			else if (ReturnType::MemoryPathIsExist == md_ret)
+			{
+				Console::Write::PrintLine(TEXT("子目录或文件 ") + path.ToString() + TEXT(" 已存在"));
+			}
+			else if (ReturnType::MemoryPathNameIsIllegal == md_ret)
+			{
+				Console::Write::PrintLine(ErrorTips::gsTokenNameIsIllegal);//文件、目录或卷名称语法错误
+			}
+			else
 			{
 				Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);//error : 创建目录失败
 				if (path_cnt > 1) Console::Write::PrintLine(TEXT("处理 : ") + path_str + TEXT(" 时出错"));
 				continue;
-			}
-			else
-			{
-				Console::Write::PrintLine(TEXT("目录 ") + path_str + TEXT(" 创建成功"));
-				Log::Info(TEXT("目录 ") + path_str + TEXT(" 创建成功"));
 			}
 		}
 	}

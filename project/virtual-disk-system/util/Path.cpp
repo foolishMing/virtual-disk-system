@@ -5,6 +5,7 @@
 Path::Path(const string_local& path)
 {
 	m_path = path;
+	Split();
 }
 
 Path::~Path()
@@ -63,7 +64,7 @@ bool Path::SplitToTokensInternal()
 				return false; //error : 路径名语法不正确，token是空串
 			}			
 			//读缓冲区，取出一个token 
-			m_tokens.push_back(buffer);
+			m_tokens.emplace_back(buffer);
 			buffer = {};
 			continue;
 		}
@@ -78,7 +79,7 @@ bool Path::SplitToTokensInternal()
 		{
 			return false;//error : 路径名语法不正确，token是空串
 		}
-		m_tokens.push_back(buffer);
+		m_tokens.emplace_back(buffer);
 	}
 	return true;
 }

@@ -48,17 +48,20 @@ void RenCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 	}
 	//获得源路径tokens
 	auto tokens = src_path.Tokens();
-	//检查源路径是否存在
-	bool is_find_path = node_tree_manager.IsPathExist(tokens);
-	if (!is_find_path)
-	{
-		Console::Write::PrintLine(ErrorTips::gsMemoryFileIsNotFound);//error : 系统找不到指定的虚拟磁盘文件
-		return;
-	}
 	//修改名称
-	bool rename_success = node_tree_manager.RenameNodeByTokens(tokens, dst_path_str);
-	if (!rename_success)
+	ReturnType ret = node_tree_manager.RenameNodeByTokens(tokens, dst_path_str);
+	switch (ret)
 	{
-		//Log::LogError();//rename src_path dst_token_name失败
+	case ReturnType::AccessDenied:
+		Console::Write::PrintLine(ErrorTips::gsMemoryPathAccessDenied);//error : 非法访问
+		break;
+	case ReturnType::MemoryPathIsNotFound:
+		Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);//error : 找不到路径
+		break;
+	case ReturnType::MemoryFileIsExist:
+		Console::Write::PrintLine(ErrorTips::gsMemoryFileIsExist);//error : 已存在同名文件
+		break;
+	default:
+		break;
 	}
 }

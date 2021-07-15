@@ -54,6 +54,10 @@ void DelCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 		{
 			Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);
 		}
+		else if (ret == ReturnType::SymlinkPathIsInvalid)
+		{
+			Console::Write::PrintLine(ErrorTips::gsSymlinkPathIsInvalid);
+		}
 	}
 }
 

@@ -52,13 +52,6 @@ void RdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 			continue;
 		}
 		auto tokens = path.Tokens();
-		//检查路径是否存在
-		bool exist_path = node_tree_manager.IsPathExist(tokens);
-		if (!exist_path)
-		{
-			Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);//error : 系统找不到指定的虚拟磁盘路径
-			return;
-		}
 		//删除目录
 		ReturnType ret = node_tree_manager.RemoveDirByTokensAndOptions(tokens, option_switch);
 		switch (ret)
@@ -68,7 +61,7 @@ void RdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 			break;
 		case ReturnType::UnExpectedException:
 			Console::Write::PrintLine(TEXT("删除路径 ") + path_str + TEXT(" 时发生了未预期的错误"));
-				Log::Error(TEXT("删除路径 ") + path_str + TEXT(" 时发生了未预期的错误"));
+			Log::Error(TEXT("删除路径 ") + path_str + TEXT(" 时发生了未预期的错误"));
 			break;
 		case ReturnType::DirNameIsInvalid:
 			Console::Write::PrintLine(ErrorTips::gsDirNameInvalid);
@@ -78,6 +71,9 @@ void RdCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manager
 			break;
 		case ReturnType::MemoryDirIsNotEmpty:
 			Console::Write::PrintLine(ErrorTips::gsMemoryDirIsNotEmpty);
+			break;
+		case ReturnType::MemoryPathIsNotFound:
+			Console::Write::PrintLine(ErrorTips::gsMemoryPathIsNotFound);
 			break;
 		default:
 			break;
