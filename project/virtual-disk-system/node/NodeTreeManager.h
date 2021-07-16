@@ -143,10 +143,10 @@ private:
 	void PrintFileNodeInfo(BaseNode* cur_node);
 
 	//打印目录信息
-	void PrintDirectoryInfo(BaseNode* node, StatisticInfo& g_info, bool is_ad = false);
+	void PrintDirectoryInfo(BaseNode* node, StatisticInfo& g_info, const OptionSwitch& option);
 
 	//打印统计信息
-	void PrintStatisticInfo(StatisticInfo& info);
+	void PrintStatisticInfo(StatisticInfo& info, const OptionSwitch& option);
 
 	
 	//查找真实的目标节点

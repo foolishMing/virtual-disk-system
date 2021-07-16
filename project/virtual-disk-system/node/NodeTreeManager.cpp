@@ -118,10 +118,10 @@ void NodeTreeManager::PrintFileNodeInfo(BaseNode* cur_node)
 
 
 //<udpate ...>
-//未完成：输出内容格式化
 //未完成：将返回值类型修改为DirInfo
 //is_ad == true,只打印子目录节点
-void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, StatisticInfo& g_info, bool is_ad)//打印目录信息
+//对于目录，若非盘符，则需要打印.和..
+void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, StatisticInfo& g_info, const OptionSwitch& option)//打印目录信息
 {
 	assert(dir && dir->IsDirectory());
 	StatisticInfo info;
@@ -129,12 +129,26 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, StatisticInfo& g_info, b
 	Console::Write::PrintLine(TEXT(""));
 	Console::Write::PrintLine(GetTruePathOfNode(cur_dir) + TEXT(" 的目录"));
 	Console::Write::PrintLine(TEXT(""));
-	
+	auto left_margin = 15;
+	//对于非盘符节点，打印.和..目录
+	if (!IsSameNode(cur_dir, m_cur_driven))
+	{
+		std::wcout << StringTools::TimeStampToDateTimeString(dir->GetLatestModifiedTimeStamp())
+			<< TEXT("    ")
+			<< std::left << std::setw(left_margin) << TEXT("<DIR>")
+			<< Constant::gs_cur_dir_token << std::endl;
+		std::wcout << StringTools::TimeStampToDateTimeString(dir->GetLatestModifiedTimeStamp())
+			<< TEXT("    ")
+			<< std::left << std::setw(left_margin) << TEXT("<DIR>")
+			<< Constant::gs_parent_dir_token << std::endl;
+	}
+
 	auto children = cur_dir->Children();
 	info.tot_cnt = children.size();
 	//遍历子节点，统计并打印节点信息{修改时间、节点类型、节点大小、节点名称}
 	for (BaseNode* cur_node : children)
 	{
+		//统计目录所占空间大小
 		info.tot_size += cur_node->GetSize();
 		//打印目录节点信息
 		if (cur_node->IsDirectory())
@@ -143,27 +157,39 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, StatisticInfo& g_info, b
 			auto dir = static_cast<DirNode*>(cur_node);
 			std::wcout << StringTools::TimeStampToDateTimeString(dir->GetLatestModifiedTimeStamp()) 
 				<< TEXT("    ") 
-				<< std::left << std::setw(15) << TEXT("<DIR>") 
+				<< std::left << std::setw(left_margin) << TEXT("<DIR>")
 				<< dir->GetName() << std::endl;
 			continue;
 		}
-		if (is_ad) continue;
+		if (option._ad) continue;
 		//打印文件节点信息
 		PrintFileNodeInfo(cur_node);
 	}
-	PrintStatisticInfo(info);
 	g_info += info;
+	//打印当前目录时，需要将.和..的目录信息统计在内
+	if (!IsSameNode(cur_dir, m_cur_driven))
+	{
+		info.tot_cnt += 2;
+		info.dir_cnt += 2;
+	}
+	PrintStatisticInfo(info, option);
 }
 
 
-void NodeTreeManager::PrintStatisticInfo(StatisticInfo& info)
+// /s递归选项下，不打印目录的统计信息
+void NodeTreeManager::PrintStatisticInfo(StatisticInfo& info, const OptionSwitch& option)
 {
+	const int left_margin = 15;
 	//{文件数量、总字节}
-	std::wcout << std::right << std::setw(20) << std::to_wstring(info.tot_cnt - info.dir_cnt) << TEXT(" 个文件")
-		<< std::right << std::setw(20) << std::to_wstring(info.tot_size) << TEXT("  字节") << std::endl;
-	//{目录数量、可用字节}
-	std::wcout << std::right << std::setw(20) << std::to_wstring(info.dir_cnt) << TEXT(" 个目录")
-		<< std::right << std::setw(20) << std::to_wstring(getTotalSystemMemory()) << TEXT("  可用字节") << std::endl;
+	int64_t file_cnt = (option._ad) ? static_cast<int64_t>(0) : (info.tot_cnt - info.dir_cnt);
+	std::wcout << std::right << std::setw(left_margin) << std::to_wstring(file_cnt) << TEXT(" 个文件")
+		<< std::right << std::setw(left_margin) << std::to_wstring(info.tot_size) << TEXT("  字节") << std::endl;
+	if (!option._s)
+	{
+		//{目录数量、可用字节}
+		std::wcout << std::right << std::setw(left_margin) << std::to_wstring(info.dir_cnt) << TEXT(" 个目录")
+			<< std::right << std::setw(left_margin) << std::to_wstring(getTotalSystemMemory()) << TEXT("  可用字节") << std::endl;
+	}	
 }
 
 
@@ -706,6 +732,8 @@ ReturnType NodeTreeManager::RenameNodeByTokens(const std::vector<string_local>& 
 //如果目标节点是
 //选项/ad打印子目录信息
 //选项/s递归打印子目录及文件信息
+// /s下，不统计目录信息
+// /ad下，不统计文件信息
 ReturnType NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<string_local>& tokens, const OptionSwitch& option_switch)	
 {
 	assert(!tokens.empty());
@@ -732,10 +760,10 @@ ReturnType NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<s
 		DirNode* dir = q.front();
 		q.pop();
 		//打印当前目录下的子目录及文件信息
-		PrintDirectoryInfo(dir, g_info, option_switch._ad);
+		PrintDirectoryInfo(dir, g_info, option_switch);
 		if (!is_recursive)
 		{
-			break;
+			break;//非递归，终止遍历
 		}
 		//将子目录放在待打印目录节点队列中
 		for (auto child : dir->Children())
@@ -751,7 +779,9 @@ ReturnType NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<s
 	{
 		Console::Write::PrintLine(TEXT("\n     所列文件总数:"));
 		g_info.tot_size = cur_dir_node->GetSize();
-		PrintStatisticInfo(g_info);
+		OptionSwitch os = option_switch;
+		os._s = false;
+		PrintStatisticInfo(g_info, os);
 	}
 	return ReturnType::Success;
 }
@@ -807,6 +837,13 @@ ReturnType NodeTreeManager::RemoveDirByTokensAndOptions(const std::vector<string
 	{
 		return ReturnType::AccessDenied;
 	}
+	//如果是目录链接，则只删除其本身
+	if (target_node->IsDirectoryLink())
+	{
+		bool ok = m_tree->DeleteNode(target_node);
+		return ok ? ReturnType::Success : ReturnType::UnExpectedException;
+	}
+	//如果是目录
 	DirNode* cur_dir = static_cast<DirNode*>(target_node);
 	//空目录，直接删除
 	if (cur_dir->Children().empty())
@@ -1094,6 +1131,12 @@ ReturnType NodeTreeManager::MklinkByPathAndOptions(const Path& link_path, const 
 	if (src_tokens.empty() || dst_tokens.empty())
 	{
 		return ReturnType::MemoryPathIsNotFound;
+	}
+	//检查源路径是否为绝对路径
+	if (!IsAbsolutePath(src_tokens))
+	{
+		Console::Write::PrintLine(TEXT("源路径不是绝对路径"));
+		return ReturnType::UnExpectedException;
 	}
 	//获取源路径所在目录
 	auto src_node_token = src_tokens.back();
