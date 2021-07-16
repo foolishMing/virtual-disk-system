@@ -6,9 +6,9 @@
 #define __NODETREEMANAGER_H__
 
 #include "../util/Common.h"
-#include "NodeTree.h"
-#include "FileNode.h"
-#include "SymlinkNode.h"
+#include "../datastruct/NodeTree.h"
+#include "../datastruct/FileNode.h"
+#include "../datastruct/FileNode.h"
 #include "../util/tinyxml2.h"
 
 /*

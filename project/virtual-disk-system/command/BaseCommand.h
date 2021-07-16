@@ -4,7 +4,7 @@
 
 #include "CommandArgs.h"
 #include "../util/common.h"
-#include "../node/NodeTreeManager.h"
+#include "../service/NodeTreeManager.h"
 
 
 _interface_ IBaseCommand

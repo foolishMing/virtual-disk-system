@@ -14,9 +14,4 @@
 
 
 
-namespace DateTimeTools
-{
-	int StampToStandardDateTime(time_t stc, string_local& dst);
-}
-
 #endif // !COMMON_H

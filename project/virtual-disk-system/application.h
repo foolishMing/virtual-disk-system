@@ -9,8 +9,8 @@
 #include <string>
 #include "./command/BaseCommand.h"
 #include "./command/CommandFactory.h"
-#include "./node/NodeTree.h"
-#include "./node/NodeTreeManager.h"
+#include "./datastruct/NodeTree.h"
+#include "./service/NodeTreeManager.h"
 
 class Application : Object {
 public:
