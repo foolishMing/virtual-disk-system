@@ -124,10 +124,10 @@ private:
 	void SetMyWorkingStack(const std::deque<BaseNode*> working_stack);
 	std::deque<BaseNode*> GetMyWorkingStack() const{ return m_working_stack; }
 
-	std::deque<BaseNode*> GetWorkingStackByTokens(const std::vector<string_local>& tokens);
+	std::deque<BaseNode*> GetTemporaryWorkingStackByTokens(const std::vector<string_local>& tokens);
 
 	//查找节点所在目录
-	DirNode* FindWhichDirectoryIsNodeUnderByTokens(const std::vector<string_local>& tokens);
+	DirNode* FindWhichDirectoryIsNodeUnderByTokens(const std::vector<string_local>& tokens, std::deque<BaseNode*>& working_stack);
 
 	//获得节点指向的实际目录
 	DirNode* GetTrueDirNode(BaseNode* node);
@@ -150,7 +150,7 @@ private:
 
 	
 	//查找真实的目标节点
-	BaseNode* FindTrueNodeByTokensInternal(const std::vector<string_local>& tokens);
+	BaseNode* FindTrueNodeByTokensInternal(const std::vector<string_local>& tokens, std::deque<BaseNode*>& working_stack);
 
 	//获得节点路径
 	string_local GetTruePathOfNode(BaseNode* node) const;
@@ -159,10 +159,10 @@ private:
 	bool IsTrueAncestor(BaseNode* pre_node, BaseNode* next_node);
 
 	//判断token是不是.
-	bool IsCurrentDir(string_local& token);
+	bool IsCurrentDir(const string_local& token);
 
 	//判断token是不是..
-	bool IsParentDir(string_local& token);
+	bool IsParentDir(const string_local& token);
 
 	//判断两个节点是否相同
 	bool IsSameNode(BaseNode* lhs, BaseNode* rhs);

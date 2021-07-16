@@ -19,6 +19,7 @@ DirNode::~DirNode()
 
 BaseNode* DirNode::FindChildByName(const string_local& node_name)
 {
+	//查找子目录
 	for (auto& item : m_children)
 	{
 		if (item->IsNameEqualsTo(node_name))
@@ -26,6 +27,15 @@ BaseNode* DirNode::FindChildByName(const string_local& node_name)
 			return item;
 		}
 	}
+	//特判.和..
+	//if (StringTools::IsEqual(node_name, Constant::gs_cur_dir_token))
+	//{
+	//	return this;
+	//}
+	//if (StringTools::IsEqual(node_name, Constant::gs_parent_dir_token))
+	//{
+	//	return this->GetParent();
+	//}
 	return nullptr;
 }
 

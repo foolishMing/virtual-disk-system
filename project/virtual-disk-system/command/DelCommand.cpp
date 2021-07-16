@@ -37,6 +37,7 @@ void DelCommand::Handle(const CommandArg& arg, NodeTreeManager& manager)
 	}
 	if (arg.paths.size() == 0)
 	{
+		//paths.emplace_back(Path{ Constant::gs_cur_dir_token });
 		Console::Write::PrintLine(ErrorTips::gsCommandIsIllegal);//error : 命令语法不正确
 		return;
 	}
