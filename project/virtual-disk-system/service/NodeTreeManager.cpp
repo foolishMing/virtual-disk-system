@@ -88,7 +88,7 @@ void NodeTreeManager::PrintFileNodeInfo(BaseNode* cur_node)
 	//打印文件节点信息
 	if (cur_node->IsFile())
 	{
-		auto file_node = static_cast<FileNode*>(cur_node);
+		auto file_node = dynamic_cast<FileNode*>(cur_node);
 		std::wcout << StringTools::TimeStampToDateTimeString(file_node->GetLatestModifiedTimeStamp())
 			<< TEXT("    ")
 			<< std::right << std::setw(14) << std::to_wstring(file_node->GetSize())
@@ -97,7 +97,7 @@ void NodeTreeManager::PrintFileNodeInfo(BaseNode* cur_node)
 	//打印文件链接信息
 	else if(cur_node->IsFileLink())
 	{
-		auto link_node = static_cast<SymlinkNode*>(cur_node);
+		auto link_node = dynamic_cast<SymlinkNode*>(cur_node);
 		std::wcout << StringTools::TimeStampToDateTimeString(link_node->GetLatestModifiedTimeStamp())
 			<< TEXT("    ")
 			<< std::left << std::setw(15) << TEXT("<SYMLINK>")
@@ -107,7 +107,7 @@ void NodeTreeManager::PrintFileNodeInfo(BaseNode* cur_node)
 	//打印目录链接信息
 	else
 	{
-		auto link_node = static_cast<SymlinkNode*>(cur_node);
+		auto link_node = dynamic_cast<SymlinkNode*>(cur_node);
 		std::wcout << StringTools::TimeStampToDateTimeString(link_node->GetLatestModifiedTimeStamp())
 			<< TEXT("    ")
 			<< std::left << std::setw(15) << TEXT("<SYMLINKD>")
@@ -125,7 +125,7 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, StatisticInfo& g_info, c
 {
 	assert(dir && dir->IsDirectory());
 	StatisticInfo info;
-	DirNode* cur_dir = static_cast<DirNode*>(dir);
+	DirNode* cur_dir = dynamic_cast<DirNode*>(dir);
 	Console::Write::PrintLine(TEXT(""));
 	Console::Write::PrintLine(GetTruePathOfNode(cur_dir) + TEXT(" 的目录"));
 	Console::Write::PrintLine(TEXT(""));
@@ -154,7 +154,7 @@ void NodeTreeManager::PrintDirectoryInfo(BaseNode* dir, StatisticInfo& g_info, c
 		if (cur_node->IsDirectory())
 		{
 			info.dir_cnt++;
-			auto dir = static_cast<DirNode*>(cur_node);
+			auto dir = dynamic_cast<DirNode*>(cur_node);
 			std::wcout << StringTools::TimeStampToDateTimeString(dir->GetLatestModifiedTimeStamp()) 
 				<< TEXT("    ") 
 				<< std::left << std::setw(left_margin) << TEXT("<DIR>")
@@ -196,14 +196,14 @@ void NodeTreeManager::PrintStatisticInfo(StatisticInfo& info, const OptionSwitch
 bool NodeTreeManager::InitDrivens()
 {
 	assert(m_tree);
-	auto root_dir = static_cast<DirNode*>(m_tree->GetRoot());
+	auto root_dir = dynamic_cast<DirNode*>(m_tree->GetRoot());
 	//初始化盘符
 	for (const auto& driven_name : m_driven_tokens)
 	{
 		if (root_dir->ContainsChild(driven_name))continue;
 		m_tree->InsertNode(root_dir, new DirNode(driven_name));
 	}
-	m_cur_driven = static_cast<DirNode*>(root_dir->FindChildByName(m_driven_tokens[0]));
+	m_cur_driven = dynamic_cast<DirNode*>(root_dir->FindChildByName(m_driven_tokens[0]));
 	//初始化工作路径
 	SetMyWorkingStack({ m_cur_driven });
 	return (m_cur_driven) ? true : false;
@@ -259,9 +259,9 @@ DirNode* NodeTreeManager::GetTrueDirNode(BaseNode* node)
 	}
 	if (node->IsDirectory())
 	{
-		return static_cast<DirNode*>(node);
+		return dynamic_cast<DirNode*>(node);
 	}
-	auto dir = FindSymlinkedDirectory(static_cast<SymlinkNode*>(node));
+	auto dir = FindSymlinkedDirectory(dynamic_cast<SymlinkNode*>(node));
 	Log::Info(TEXT("symlink : ") + node->GetName() + TEXT("->") + dir->GetName());
 	return dir;
 }
@@ -274,9 +274,9 @@ FileNode* NodeTreeManager::GetTrueFileNode(BaseNode* node)
 	}
 	if (node->IsFile())
 	{
-		return static_cast<FileNode*>(node);
+		return dynamic_cast<FileNode*>(node);
 	}
-	auto file = FindSymlinkedFile(static_cast<SymlinkNode*>(node));
+	auto file = FindSymlinkedFile(dynamic_cast<SymlinkNode*>(node));
 	return file;
 }
 
@@ -343,15 +343,15 @@ DirNode* NodeTreeManager::FindSymlinkedDirectory(SymlinkNode* node)
 	auto tokens = path.Tokens();
 	assert(IsAbsolutePath(tokens));
 	//从根节点开始搜索
-	DirNode* cur_dir = static_cast<DirNode*>(m_tree->GetRoot());
+	DirNode* cur_dir = dynamic_cast<DirNode*>(m_tree->GetRoot());
 	std::queue<string_local, std::deque<string_local>> q(std::deque<string_local>(tokens.begin(), tokens.end()));
 	while (!q.empty())
 	{
 		if (nullptr == cur_dir)
 		{
-			return false;//error : 找不到链接的目录
+			return nullptr;//error : 找不到链接的目录
 		}
-		auto token = q.front();
+		const string_local token = q.front();
 		q.pop();
 		//匹配当前目录
 		if (IsCurrentDir(token))
@@ -364,9 +364,9 @@ DirNode* NodeTreeManager::FindSymlinkedDirectory(SymlinkNode* node)
 			auto parent = cur_dir->GetParent();
 			if (nullptr == parent)
 			{
-				return false;
+				return nullptr;
 			}
-			cur_dir = static_cast<DirNode*>(parent);
+			cur_dir = dynamic_cast<DirNode*>(parent);
 			continue;
 		}
 		//匹配下一级目录(可以是.或者..)
@@ -374,8 +374,9 @@ DirNode* NodeTreeManager::FindSymlinkedDirectory(SymlinkNode* node)
 		//空节点或者根目录是不合法的
 		if (nullptr == next_node || IsSameNode(next_node, m_tree->GetRoot()))
 		{
-			return nullptr;
+			return nullptr;//error : 找不到目录链接
 		}
+		//非目录（或目录链接）节点是不合法的
 		if (!IsDirOrDirLink(next_node))
 		{
 			return nullptr; //error : 找不到目录链接
@@ -383,13 +384,13 @@ DirNode* NodeTreeManager::FindSymlinkedDirectory(SymlinkNode* node)
 		//进入到下一个目录节点
 		if (next_node->IsDirectory())
 		{
-			cur_dir = static_cast<DirNode*>(next_node);
+			cur_dir = dynamic_cast<DirNode*>(next_node);
 			continue;
 		}
 		//获取目录链接对应的目录节点
 		if (next_node->IsDirectoryLink())
 		{
-			cur_dir = FindSymlinkedDirectory(static_cast<SymlinkNode*>(next_node));
+			cur_dir = FindSymlinkedDirectory(dynamic_cast<SymlinkNode*>(next_node));
 		}
 	}
 	return cur_dir;
@@ -424,7 +425,7 @@ BaseNode* NodeTreeManager::FindTrueNodeByTokensInternal(const std::vector<string
 		{
 			return nullptr; //error : 找不到路径
 		}
-		auto token = q.front();
+		const string_local token = q.front();
 		q.pop();
 		//匹配当前目录
 		if (IsCurrentDir(token))
@@ -457,18 +458,18 @@ BaseNode* NodeTreeManager::FindTrueNodeByTokensInternal(const std::vector<string
 	}
 	if (q.size() > 0)
 	{
-		auto token = q.back();
+		const auto token = q.back();
 		q.pop();
 		//获取当前工作目录
 		BaseNode* cur_node = working_stack.back();
 		DirNode* cur_dir = nullptr;
 		if (cur_node->IsDirectory())
 		{
-			cur_dir = static_cast<DirNode*>(cur_node);
+			cur_dir = dynamic_cast<DirNode*>(cur_node);
 		}
 		else //if(cur_node->IsDirectoryLink())
 		{
-			cur_dir = FindSymlinkedDirectory(static_cast<SymlinkNode*>(cur_node));
+			cur_dir = FindSymlinkedDirectory(dynamic_cast<SymlinkNode*>(cur_node));
 		}
 		//返回当前目录节点
 		if (IsCurrentDir(token))
@@ -490,7 +491,7 @@ BaseNode* NodeTreeManager::FindTrueNodeByTokensInternal(const std::vector<string
 			}
 			else //if (parent_node->IsDirectoryLink())
 			{
-				return FindSymlinkedDirectory(static_cast<SymlinkNode*>(parent_node));
+				return FindSymlinkedDirectory(dynamic_cast<SymlinkNode*>(parent_node));
 			}
 		}
 		//返回下一级目录或文件节点
@@ -507,11 +508,11 @@ BaseNode* NodeTreeManager::FindTrueNodeByTokensInternal(const std::vector<string
 			}
 			if (item->IsDirectoryLink())
 			{
-				return FindSymlinkedDirectory(static_cast<SymlinkNode*>(item));
+				return FindSymlinkedDirectory(dynamic_cast<SymlinkNode*>(item));
 			}
 			if (item->IsFileLink())
 			{
-				return FindSymlinkedFile(static_cast<SymlinkNode*>(item));
+				return FindSymlinkedFile(dynamic_cast<SymlinkNode*>(item));
 			}
 		}
 	}
@@ -633,7 +634,7 @@ ReturnType NodeTreeManager::ChangeDirByTokens(const std::vector<string_local>& t
 		{
 			return ReturnType::MemoryPathIsNotFound;//error : 路径不存在
 		}
-		auto token = q.front();
+		const string_local token = q.front();
 		q.pop();
 		//匹配当前目录
 		if (IsCurrentDir(token))
@@ -751,7 +752,7 @@ ReturnType NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<s
 		return ReturnType::Success;
 	}
 	//打印目标目录节点子目录及文件信息
-	DirNode* cur_dir_node = static_cast<DirNode*>(target_node);
+	DirNode* cur_dir_node = dynamic_cast<DirNode*>(target_node);
 	std::queue<DirNode*> q = {};
 	q.push(cur_dir_node);
 	StatisticInfo g_info;
@@ -770,7 +771,7 @@ ReturnType NodeTreeManager::DisplayDirNodeByTokensAndOptions(const std::vector<s
 		{
 			if (child->IsDirectory())
 			{
-				DirNode* child_dir = static_cast<DirNode*>(child);
+				DirNode* child_dir = dynamic_cast<DirNode*>(child);
 				q.push(child_dir);
 			}
 		}
@@ -844,7 +845,7 @@ ReturnType NodeTreeManager::RemoveDirByTokensAndOptions(const std::vector<string
 		return ok ? ReturnType::Success : ReturnType::UnExpectedException;
 	}
 	//如果是目录
-	DirNode* cur_dir = static_cast<DirNode*>(target_node);
+	DirNode* cur_dir = dynamic_cast<DirNode*>(target_node);
 	//空目录，直接删除
 	if (cur_dir->Children().empty())
 	{
@@ -880,13 +881,13 @@ ReturnType NodeTreeManager::CopyFromDiskToMemory(const std::vector<string_local>
 	//目标路径是目录
 	if (target_node->IsDirectory())
 	{
-		DirNode* target_dir = static_cast<DirNode*>(target_node);
+		DirNode* target_dir = dynamic_cast<DirNode*>(target_node);
 		CopyFromDiskToMemoryToDirectory(file_path_vec, target_dir, option_switch);
 	}
 	//目标路径是文件
 	else if (target_node->IsFile())
 	{
-		FileNode* target_file = static_cast<FileNode*>(target_node);
+		FileNode* target_file = dynamic_cast<FileNode*>(target_node);
 		CopyFromDiskToMemoryFile(file_path_vec, target_file, option_switch);
 	}
 	else 
@@ -966,7 +967,7 @@ DirNode* NodeTreeManager::FindWhichDirectoryIsNodeUnderByTokens(const std::vecto
 		auto node = FindTrueNodeByTokensInternal(src_dir_tokens, working_stack);
 		if (node != nullptr && node->IsDirectory())
 		{
-			src_dir = static_cast<DirNode*>(node);
+			src_dir = dynamic_cast<DirNode*>(node);
 		}
 	}
 	return src_dir;
@@ -1013,7 +1014,7 @@ ReturnType NodeTreeManager::CopyFromMemoryToMemory(const std::vector<string_loca
 	//拷贝到目录
 	if (dst_node->IsDirectory())
 	{
-		CopyFromMemoryToMemoryDirectory(src_nodes, static_cast<DirNode*>(dst_node), option_switch);
+		CopyFromMemoryToMemoryDirectory(src_nodes, dynamic_cast<DirNode*>(dst_node), option_switch);
 	}
 	//拷贝到文件
 	else if(dst_node->IsFile())
@@ -1061,7 +1062,7 @@ void NodeTreeManager::CopyFromMemoryToMemoryDirectory(const std::vector<BaseNode
 		char* data = nullptr;
 		if (file_node->IsFile())
 		{
-			data = static_cast<FileNode*>(node)->GetData();
+			data = dynamic_cast<FileNode*>(node)->GetData();
 		}
 		else
 		{
@@ -1109,7 +1110,7 @@ void NodeTreeManager::OverwriteFileNode(BaseNode* node, const char* content,cons
 {
 	assert(node != nullptr);
 	assert(node->IsFile());
-	FileNode* file_node = static_cast<FileNode*>(node);
+	FileNode* file_node = dynamic_cast<FileNode*>(node);
 	file_node->SetData(content, size);
 }
 
@@ -1125,8 +1126,8 @@ ReturnType NodeTreeManager::MklinkByPathAndOptions(const Path& link_path, const 
 	{
 		return ReturnType::MemoryPathNameIsIllegal;
 	}
-	const auto src_tokens = src_path.Tokens();
-	const auto dst_tokens = link_path.Tokens();
+	const auto& src_tokens = src_path.Tokens();
+	const auto& dst_tokens = link_path.Tokens();
 	//检查源路径与目标路径是否为空
 	if (src_tokens.empty() || dst_tokens.empty())
 	{
@@ -1139,7 +1140,7 @@ ReturnType NodeTreeManager::MklinkByPathAndOptions(const Path& link_path, const 
 		return ReturnType::UnExpectedException;
 	}
 	//获取源路径所在目录
-	auto src_node_token = src_tokens.back();
+	const auto& src_node_token = src_tokens.back();
 	auto temp_working_stack = GetTemporaryWorkingStackByTokens(src_tokens);
 	DirNode* src_parent_dir = FindWhichDirectoryIsNodeUnderByTokens(src_tokens,temp_working_stack);
 	if (src_parent_dir == nullptr)
@@ -1195,7 +1196,7 @@ ReturnType NodeTreeManager::MklinkByPathAndOptions(const Path& link_path, const 
 	//创建软链接节点，并插入树中
 	symlink_node = new SymlinkNode(dst_node_token);
 	NodeType link_type = (is_directory_link) ? NodeType::SymlinkD : NodeType::SymlinkF;
-	static_cast<SymlinkNode*>(symlink_node)->SetTarget(link_type, src_path.ToString());
+	dynamic_cast<SymlinkNode*>(symlink_node)->SetTarget(link_type, src_path.ToString());
 	m_tree->InsertNode(dst_parent_dir, symlink_node);
 	return ReturnType::Success;
 }
@@ -1251,7 +1252,7 @@ ReturnType NodeTreeManager::MoveByTokensAndOptions(const Path& src_path, const P
 	{
 		return ReturnType::AccessDenied;//error : 拒绝访问
 	}
-	const auto dst_node_token = dst_tokens.back();
+	const auto& dst_node_token = dst_tokens.back();
 	BaseNode* dst_node = nullptr;
 	if (IsCurrentDir(dst_node_token))
 	{
@@ -1292,7 +1293,7 @@ ReturnType NodeTreeManager::MoveByTokensAndOptions(const Path& src_path, const P
 		//目标节点是目录，进入
 		else if (dst_node->IsDirectory())
 		{
-			target_dir = static_cast<DirNode*>(dst_node);
+			target_dir = dynamic_cast<DirNode*>(dst_node);
 		}
 	}
 	if (target_dir == nullptr)
@@ -1354,7 +1355,7 @@ ReturnType NodeTreeManager::DelByTokensAndOption(const Path& path, const OptionS
 	{
 		return ReturnType::MemoryPathIsNotFound;
 	}
-	auto file_name_pattern = tokens.back();
+	const auto& file_name_pattern = tokens.back();
 	auto temp_working_stack = GetTemporaryWorkingStackByTokens(tokens);
 	DirNode* parent_dir = FindWhichDirectoryIsNodeUnderByTokens(tokens,temp_working_stack);
 	if (nullptr == parent_dir)
@@ -1420,7 +1421,7 @@ ReturnType NodeTreeManager::DelByTokensAndOption(const Path& path, const OptionS
 bool NodeTreeManager::DeleteNodeByWildcardFileName(DirNode* cur_dir, const string_local& file_name, bool is_recursive)
 {
 	assert(nullptr != cur_dir);
-	auto target_dir = static_cast<DirNode*>(cur_dir);
+	auto target_dir = dynamic_cast<DirNode*>(cur_dir);
 	std::queue<DirNode*> q;
 	q.push(target_dir);
 	while (!q.empty())
@@ -1462,7 +1463,7 @@ bool NodeTreeManager::DeleteNodeByWildcardFileName(DirNode* cur_dir, const strin
 		{
 			if (item->IsDirectory())
 			{
-				q.push(static_cast<DirNode*>(item));
+				q.push(dynamic_cast<DirNode*>(item));
 			}
 		}
 	}
@@ -1490,14 +1491,19 @@ ReturnType NodeTreeManager::SaveToPath(const string_local& path_str)
 	assert(!PathTools::IsDiskPathExist(path_str));
 	tinyxml2::XMLDocument doc;	
 	auto node_root = m_tree->GetRoot();
-	auto xml_root = WriteDirToXml(static_cast<DirNode*>(node_root), doc);
+	auto xml_root = WriteDirToXml(dynamic_cast<DirNode*>(node_root), doc);
 	xml_root->SetAttribute(XMLIdentifier::name, StringTools::UnicodeToUtf8(node_root->GetName().c_str()));
 	xml_root->SetAttribute(XMLIdentifier::id, node_root->GetId());
 	xml_root->SetAttribute(XMLIdentifier::type, static_cast<int>(node_root->GetType()));
 	xml_root->SetAttribute(XMLIdentifier::timestamp, node_root->GetLatestModifiedTimeStamp());
 	xml_root->SetAttribute(XMLIdentifier::parentId, 0);
 	doc.LinkEndChild(xml_root);
-	doc.SaveFile(StringTools::UnicodeToUtf8(path_str.c_str()));
+	auto save_ret = doc.SaveFile(StringTools::UnicodeToUtf8(path_str.c_str()));
+	if (save_ret != tinyxml2::XMLError::XML_SUCCESS)
+	{
+		Console::Write::PrintLine(TEXT("XML文件保存失败"));
+		return ReturnType::UnExpectedException;
+	}
 	return ReturnType::Success;
 }
 
@@ -1544,13 +1550,13 @@ tinyxml2::XMLElement* NodeTreeManager::WriteDirToXml(DirNode* dir,tinyxml2::XMLD
 		//创建目录对象
 		if (node->IsDirectory())
 		{
-			auto dir_node = static_cast<DirNode*>(node);
+			auto dir_node = dynamic_cast<DirNode*>(node);
 			ele_node = WriteDirToXml(dir_node, doc);
 		}
 		//创建文件对象
 		else if (node->IsFile())
 		{
-			auto file_node = static_cast<FileNode*>(node);
+			auto file_node = dynamic_cast<FileNode*>(node);
 			ele_node = doc.NewElement(XMLIdentifier::FileNode);
 			ele_node->SetAttribute(XMLIdentifier::data, file_node->GetData());
 			ele_node->SetAttribute(XMLIdentifier::dataSize, file_node->GetSize());
@@ -1558,7 +1564,7 @@ tinyxml2::XMLElement* NodeTreeManager::WriteDirToXml(DirNode* dir,tinyxml2::XMLD
 		//创建链接对象
 		else
 		{
-			auto link_node = static_cast<SymlinkNode*>(node);
+			auto link_node = dynamic_cast<SymlinkNode*>(node);
 			ele_node = doc.NewElement(XMLIdentifier::SymlinkNode);
 			ele_node->SetAttribute(XMLIdentifier::symlinkPath, StringTools::UnicodeToUtf8(link_node->GetTargetPath().c_str()));
 		}
@@ -1581,11 +1587,15 @@ tinyxml2::XMLElement* NodeTreeManager::WriteDirToXml(DirNode* dir,tinyxml2::XMLD
 BaseNode* NodeTreeManager::ReadXml(tinyxml2::XMLElement* xml_item, DirNode* parent)
 {
 	assert(xml_item);
-	auto node_name = StringTools::Utf8ToUnicode(xml_item->FindAttribute(XMLIdentifier::name)->Value());
-	auto node_id = xml_item->FindAttribute(XMLIdentifier::id)->Int64Value();
-	auto node_type = static_cast<NodeType>(xml_item->FindAttribute(XMLIdentifier::type)->IntValue());
-	auto node_timestamp = xml_item->FindAttribute(XMLIdentifier::timestamp)->Int64Value();
-	//auto node_parentId = xml_item->FindAttribute(XMLIdentifier::parentId)->Int64Value();
+	string_local node_name = StringTools::Utf8ToUnicode(xml_item->FindAttribute(XMLIdentifier::name)->Value());
+	int64_t node_id = xml_item->FindAttribute(XMLIdentifier::id)->Int64Value();
+	int32_t type_int = xml_item->FindAttribute(XMLIdentifier::type)->IntValue();
+	int64_t node_timestamp = xml_item->FindAttribute(XMLIdentifier::timestamp)->Int64Value();
+	if (!IsNodeAttributeIsValid(node_name, node_id, type_int, node_timestamp))
+	{
+		return nullptr;//error : xml数据异常
+	}
+	NodeType node_type = static_cast<NodeType>(type_int);
 	BaseNode* node = nullptr;
 	switch (node_type)
 	{
@@ -1594,21 +1604,20 @@ BaseNode* NodeTreeManager::ReadXml(tinyxml2::XMLElement* xml_item, DirNode* pare
 		break;
 	case NodeType::File:
 		node = new FileNode(node_name);
-		static_cast<FileNode*>(node)->SetData(
+		dynamic_cast<FileNode*>(node)->SetData(
 			xml_item->FindAttribute(XMLIdentifier::data)->Value(),
 			xml_item->FindAttribute(XMLIdentifier::dataSize)->Int64Value());
 		break;
 	case NodeType::SymlinkD:
 	case NodeType::SymlinkF:
 		node = new SymlinkNode(node_name);
-		static_cast<SymlinkNode*>(node)->SetTarget(
+		dynamic_cast<SymlinkNode*>(node)->SetTarget(
 			node_type, 
 			StringTools::Utf8ToUnicode(xml_item->FindAttribute(XMLIdentifier::symlinkPath)->Value()));
 		break;
 	default:
 		break;
 	}
-	assert(node);
 	node->SetId(node_id);
 	node->SetLatestModifiedTimeStamp(node_timestamp);
 	//插入当前节点
@@ -1625,7 +1634,7 @@ BaseNode* NodeTreeManager::ReadXml(tinyxml2::XMLElement* xml_item, DirNode* pare
 	for (auto iter = xml_item->FirstChild(); iter != 0; iter = iter->NextSibling())
 	{
 		auto ele = iter->ToElement();
-		auto child = ReadXml(ele, static_cast<DirNode*>(node));
+		auto child = ReadXml(ele, dynamic_cast<DirNode*>(node));
 	}
 	return node;
 }
@@ -1646,7 +1655,7 @@ bool NodeTreeManager::InsertSymlinkNodeByXml(std::vector<tinyxml2::XMLElement*>&
 		auto parent_node = m_tree->FindNodeById(attr_parentId);
 		assert(parent_node);
 		//获得父节点
-		auto parent_dir = static_cast<DirNode*>(parent_node);
+		auto parent_dir = dynamic_cast<DirNode*>(parent_node);
 		//创建链接节点
 		SymlinkNode* node = new SymlinkNode(StringTools::Utf8ToUnicode(attr_name), parent_dir);
 		//设置链接路径
@@ -1660,3 +1669,26 @@ bool NodeTreeManager::InsertSymlinkNodeByXml(std::vector<tinyxml2::XMLElement*>&
 	}
 	return true;
 }
+
+//可能存在的问题：没有校验FileNode->data && SymlinkNode->path
+bool NodeTreeManager::IsNodeAttributeIsValid(const string_local& name, const int64_t& id, const int32_t& type, const int64_t& timestamp)
+{
+	//token不能包含非法字符
+	if (!PathTools::IsTokensFormatLegal({ name }))
+	{
+		return false;
+	}
+	//id、timestamp不能是负数
+	if (id < static_cast<int64_t>(0) || timestamp < static_cast<int64_t>(0))
+	{
+		return false;
+	}
+	//type必须是在nodetype范围内
+	if (!static_cast<int32_t>(NodeType::Directory) == type || !static_cast<int32_t>(NodeType::File) == type || 
+		!static_cast<int32_t>(NodeType::SymlinkF) == type || !static_cast<int32_t>(NodeType::SymlinkD) == type)
+	{
+		return false;
+	}
+	return true;
+}
+

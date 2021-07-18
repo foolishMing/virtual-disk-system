@@ -73,7 +73,7 @@ bool NodeTree::DeleteNode(BaseNode* node)
 		delete node;
 		return true;
 	}
-	DirNode* cur_dir = static_cast<DirNode*>(node);
+	DirNode* cur_dir = dynamic_cast<DirNode*>(node);
 	std::vector<BaseNode*> vec = cur_dir->Children();
 	//É¾³ý¶ù×ÓÁÐ±í
 	if (!vec.empty())
@@ -101,7 +101,7 @@ bool NodeTree::RemoveButNotDeleteNode(BaseNode* node)
 	{
 		return true;
 	}
-	auto parent = static_cast<DirNode*>(node->GetParent());
+	auto parent = dynamic_cast<DirNode*>(node->GetParent());
 	node->SetParent(nullptr);
 	auto children = parent->Children();
 	for (int i = 0; i < children.size(); i++)
@@ -129,7 +129,7 @@ BaseNode* NodeTree::FindNodeById(uint64_t id)
 		}
 		if (node->IsDirectory())
 		{
-			auto dir = static_cast<DirNode*>(node);
+			auto dir = dynamic_cast<DirNode*>(node);
 			auto children = dir->Children();
 			for (const auto& item : children)
 			{

@@ -31,7 +31,7 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 {
 	OptionSwitch option_switch;
 	//解析选项列表
-	for (auto opt : arg.options)
+	for (const auto& opt : arg.options)
 	{
 		if (StringTools::IsEqual(opt, Constant::gs_option_ad))// /ad
 		{
@@ -47,12 +47,11 @@ void DirCommand::Handle(const CommandArg& arg, NodeTreeManager& node_tree_manage
 			return;
 		}
 	}
-	auto paths = arg.paths;
+	std::vector<Path> paths = arg.paths;
 	//若无路径参数，默认显示当前工作目录
 	if (paths.empty())
 	{
 		Path path(Constant::gs_cur_dir_token);
-		
 		paths.emplace_back(path);
 	}
 	//遍历路径列表

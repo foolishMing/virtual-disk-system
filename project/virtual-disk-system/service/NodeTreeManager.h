@@ -190,6 +190,9 @@ private:
 	BaseNode* ReadXml(tinyxml2::XMLElement* xml_item, DirNode* parent);
 	//从xml对象中解析符号链接节点
 	bool InsertSymlinkNodeByXml(std::vector<tinyxml2::XMLElement*>& link_elems);
+
+	//校验从xml中读取的对象属性是否合法
+	bool IsNodeAttributeIsValid(const string_local& name, const int64_t& id, const int32_t& type, const int64_t& timestamp);
 };
 
 #endif // !__NODETREEMANAGER_H__
