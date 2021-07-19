@@ -265,10 +265,10 @@ std::string StringTools::WStringToString(std::wstring wstr)
 {
 	std::string result;
 	//获取缓冲区大小，并申请空间，缓冲区大小事按字节计算的  
-	int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+	int len = static_cast<int>(WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), static_cast<int>(wstr.size()), NULL, 0, NULL, NULL));
 	char* buffer = new char[len + 1];
 	//宽字节编码转换成多字节编码  
-	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), buffer, len, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), static_cast<int>(wstr.size()), buffer, len, NULL, NULL);
 	buffer[len] = TEXT('\0');
 	//删除缓冲区并返回值  
 	result.append(buffer);
@@ -280,9 +280,9 @@ std::string StringTools::WStringToString(std::wstring wstr)
 char* StringTools::UnicodeToUtf8(const wchar_t* wchar)
 {
 	char * m_char;
-	int len = WideCharToMultiByte(CP_ACP, 0, wchar, wcslen(wchar), NULL, 0, NULL, NULL);
+	int len = WideCharToMultiByte(CP_ACP, 0, wchar, static_cast<int>(wcslen(wchar)), NULL, 0, NULL, NULL);
 	m_char = new char[len + 1];
-	WideCharToMultiByte(CP_ACP, 0, wchar, wcslen(wchar), m_char, len, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, wchar, static_cast<int>(wcslen(wchar)), m_char, len, NULL, NULL);
 	m_char[len] = '\0';
 	return m_char;
 }
@@ -290,9 +290,9 @@ char* StringTools::UnicodeToUtf8(const wchar_t* wchar)
 wchar_t* StringTools::Utf8ToUnicode(const char* cchar)
 {
 	wchar_t *m_wchar;
-	int len = MultiByteToWideChar(CP_ACP, 0, cchar, strlen(cchar), NULL, 0);
+	int len = MultiByteToWideChar(CP_ACP, 0, cchar, static_cast<int>(strlen(cchar)), NULL, 0);
 	m_wchar = new wchar_t[len + 1];
-	MultiByteToWideChar(CP_ACP, 0, cchar, strlen(cchar), m_wchar, len);
+	MultiByteToWideChar(CP_ACP, 0, cchar, static_cast<int>(strlen(cchar)), m_wchar, len);
 	m_wchar[len] = '\0';
 	return m_wchar;
 }

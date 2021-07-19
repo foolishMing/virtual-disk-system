@@ -59,8 +59,8 @@ bool PathTools::IsTokensFormatLegal(const std::vector<string_local>& tokens)
 bool PathTools::GetFullDiskPath(const wchar_t* wildcardPath, const LPCWSTR file_name, string_local& full_path)
 {
 	string_local path(wildcardPath);
-	int pos_slash = path.find_last_of(CharSet::char_slash);
-	int pos_back_slash = path.find_last_of(CharSet::char_backslash);
+	int pos_slash = static_cast<int>(path.find_last_of(CharSet::char_slash));
+	int pos_back_slash = static_cast<int>(path.find_last_of(CharSet::char_backslash));
 	int pos_min = min(pos_slash, pos_back_slash);
 	int pos_max = max(pos_slash, pos_back_slash);
 	//基于pos_max获得前缀串
