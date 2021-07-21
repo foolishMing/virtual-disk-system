@@ -8,10 +8,10 @@
 int main(int argc, char* argv[])
 {	
 	_wsystem(TEXT("title 虚拟磁盘系统"));
-	std::shared_ptr<Application> app = std::make_shared<Application>();
-	app.get()->Create();
-	app.get()->Run();
-	app.get()->Destroy();
+	Application app;
+	app.Create();
+	app.Run();
+	app.Destroy();
 	Console::Write::Print(TEXT("输入任意字符后退出:"));
 	string_local str;
 	Console::Read::ReadLine(str);
